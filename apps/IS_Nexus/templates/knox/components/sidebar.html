@@ -1,0 +1,15 @@
+{% load static %}
+<aside class="h-screen w-full max-w-[256px] top-0 sticky" id="sideMenuBarWrapper">
+    <div id="sideMenuBar" class="absolute w-[256px] top-0 left-0 overflow-hidden">
+        <a href="/dashboard/" class="flex items-center space-x-2 justify-center py-4">
+            <img class="w-8" src="{% static 'knox/images/logo.svg' %}" alt="IS">
+            <span class="text-transparent bg-clip-text font-bold text-2xl bg-gradient-info">IntelliSYNC</span>
+        </div>
+        <div class="!h-px !bg-transparent !bg-gradient-to-r !from-transparent !via-black/40 !to-transparent"></div>
+        <div>
+            <ul class="menu w-full rounded-box space-y-1">
+                {% autoescape off %} {{ menu_html }} {% endautoescape %}
+            </ul>
+        </div>
+    </div>
+</aside>

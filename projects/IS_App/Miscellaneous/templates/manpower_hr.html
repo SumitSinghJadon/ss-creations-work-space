@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+
+{% block main %} 
+<main class="overflow-x-auto h-full w-full relative flex flex-col">
+    <div class="bg-base-200 px-2 py-1 rounded-lg flex justify-between items-center sticky left-0 top-0 z-40">
+        <div>
+            <h1 class="font-semibold">Daily Manpower</h1>
+        </div>
+        <div class="flex items-center space-x-8">
+            <form action="" method="GET" class="flex items-center space-x-2"> 
+                <select name="mmr_code" id="mmr_code" class="select select-sm select-bordered" required>
+                    <option value="">Select MMR</option>
+                    {% for mmr_val in mmr_list %}
+                    <option {% if request.GET.mmr_code == mmr_val.id|stringformat:"i" %}selected{% endif %} value="{{ mmr_val.id }}">{{ mmr_val.mmr_code }}</option>
+                    {% endfor %}
+                </select>
+                <input type="date" name="dayno" id="dayno" class="input input-sm input-bordered min-w-[140px]" required value="{% if request.GET.dayno %}{{ request.GET.dayno }}{% else %}{{ curr_date }}{% endif %}">
+                <select name="unit_code" class="select select-sm select-bordered" required>
+                    <option value="">Select Unit</option>
+                    {% for unit_val in unit_list %}
+                    <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Search</button>
+            </form>
+            <button type="button" onclick="$('#form-submit-btn').click()" class="btn btn-sm btn-success">Save</button>
+        </div>
+    </div>
+
+    <div class="flex justify-between mt-2 bg-base-100">
+        <table class=" table table-sm [&>*_th]:border [&>*_td]:border bg-base-100" style="width:50%">
+            <thead>
+                <th>#</th>
+                <th>Approve</th>
+                <th>Onroll</th>
+                <th>Present</th>
+                <th>Variant</th>
+            </thead>
+
+            <tbody>
+                {% for dept_summ in dept_desg_summ_list %}
+                <tr>
+                    <td>{{ dept_summ.cat_name }}</td>
+                    <td>{{ dept_summ.app_manp }}</td>
+                    <td>{{ dept_summ.onroll }}</td>
+                    <td>{{ dept_summ.present_emp }}</td>
+                    <td>{{ dept_summ.variant }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3"> Present Tailor : {{ present_tailor }} </td>
+                    <td colspan="2"> </td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="text-xl font-semibold flex justify-center pr-4 space-x-2 text-center">
+            <div class="rounded-box shadow-lg border p-3">
+                <span>Plan MMR </span> <br> <br>
+                <span class="text-2xl font-bold">{{ plan_mmr }}</span>
+            </div>
+            <div class="rounded-box shadow-lg border p-3">
+                <span>Actual MMR</span> <br> <br>
+                <span class="text-2xl font-bold">{{ actual_mmr }}</span>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" class="relative mt-2"> {% csrf_token %}
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-10 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Approve Manpower</th>
+                    <th>Onroll Manpower</th>
+                    <th>Present Manpower</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept in dept_desg_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>
+                        <input type="number" hidden value="{{forloop.counter0}}" name="counter">
+                        <input type="number" hidden value="{{dept.app_id}}" name="app_id[{{forloop.counter0}}]">
+                        {{ forloop.counter }}
+                    </td>
+                    <td><input type="number" hidden value="{{dept.dep_code}}" name="dept_code[{{forloop.counter0}}]">{{ dept.dep_name }}</td>
+                    <td><input type="number" hidden value="{{dept.des_code}}" name="desg_code[{{forloop.counter0}}]">{{ dept.des_name }}</td>
+                    <td><input type="number" hidden value="{{dept.app_manp}}" name="app_manp[{{forloop.counter0}}]">{{ dept.app_manp }}</td>
+                    <td {% if dept.app_manp < dept.onroll %} style="background-color: rgb(255, 148, 148);" {% endif %} ><input type="number" hidden value="{{dept.onroll}}" name="onroll[{{forloop.counter0}}]">{{ dept.onroll }}</td>
+                    <td><input type="number" hidden value="{{dept.onroll}}" name="onroll[{{forloop.counter0}}]">{{ dept.present_manp }}</td>
+                    <td style="padding: 0 !important;">
+						<input type="text" name="remarks[{{ forloop.counter0 }}]" id="remarks{{ forloop.counter }}" value="{% if dept.remarks %}{{ dept.remarks }}{% endif %}" style="height: 36px;width: 100%;" class="number-input" list="order_list"></td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" hidden id="form-submit-btn">
+    </form>
+</main>
+{% endblock main %}
+
+
+{% block form %} 
+<div style="overflow: scroll;">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}"> {% csrf_token %}
+        <input type="submit" class="hidden">
+        <select name="mmr_code" id="mmr_code" style="width: 125px; border: 1px solid black;" >
+            <option value="">Select MMR</option>
+            {% for mmr_val in mmr_list %}
+            <option {% if request.GET.mmr_code == mmr_val.id|stringformat:"i" %}selected{% endif %} value="{{ mmr_val.id }}">{{ mmr_val.mmr_code }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" name="dayno" id="dayno" value="{% if request.GET.dayno %}{{ request.GET.dayno }}{% else %}{{ curr_date }}{% endif %}">
+        <select name="unit_code" id="unit_code" style="width: 125px; border: 1px solid black;" >
+            <option value="">Select Unit</option>
+            {% for unit_val in unit_list %}
+            <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+            {% endfor %}
+        </select>
+        {% if request.GET.unit_code %}
+
+        <div class="flex justify-between bg-base-100 z-10">
+            <table class=" table table-sm [&>*_th]:border [&>*_td]:border" style="width:50%">
+                <thead>
+                    <th>#</th>
+                    <th>Approve</th>
+                    <th>Onroll</th>
+                    <th>Present</th>
+                    <th>Variant</th>
+                </thead>
+
+                <tbody>
+                    {% for dept_summ in dept_desg_summ_list %}
+                    <tr>
+                        <td>{{ dept_summ.cat_name }}</td>
+                        <td>{{ dept_summ.app_manp }}</td>
+                        <td>{{ dept_summ.onroll }}</td>
+                        <td>{{ dept_summ.present_emp }}</td>
+                        <td>{{ dept_summ.variant }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3"> Present Tailor : {{ present_tailor }} </td>
+                        <td colspan="2"> </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="text-2xl font-semibold flex flex-col justify-center pr-4">
+                <div>Plan MMR : {{ plan_mmr }}</div>
+                <div>Actual MMR : {{ actual_mmr }}</div>
+            </div>
+        </div>
+        
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-20 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Approve Manpower</th>
+                    <th>Onroll Manpower</th>
+                    <th>Present Manpower</th>
+                    <th>Remarks</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dept in dept_desg_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>
+                        <input type="number" hidden value="{{forloop.counter0}}" name="counter">
+                        <input type="number" hidden value="{{dept.app_id}}" name="app_id[{{forloop.counter0}}]">
+                        {{ forloop.counter }}
+                    </td>
+                    <td><input type="number" hidden value="{{dept.dep_code}}" name="dept_code[{{forloop.counter0}}]">{{ dept.dep_name }}</td>
+                    <td><input type="number" hidden value="{{dept.des_code}}" name="desg_code[{{forloop.counter0}}]">{{ dept.des_name }}</td>
+                    <td><input type="number" hidden value="{{dept.app_manp}}" name="app_manp[{{forloop.counter0}}]">{{ dept.app_manp }}</td>
+
+                    <td {% if dept.app_manp < dept.onroll %} style="background-color: rgb(255, 148, 148);" {% endif %} ><input type="number" hidden value="{{dept.onroll}}" name="onroll[{{forloop.counter0}}]">{{ dept.onroll }}</td>
+                    <td><input type="number" hidden value="{{dept.onroll}}" name="onroll[{{forloop.counter0}}]">{{ dept.present_manp }}</td>
+                    <td style="padding: 0 !important;">
+						<input type="text" name="remarks[{{ forloop.counter0 }}]" id="remarks{{ forloop.counter }}" value="{% if dept.remarks %}{{ dept.remarks }}{% endif %}" style="height: 36px;width: 100%;" class="number-input" list="order_list"></td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <input type="submit" class="hidden" value="">
+    </form>
+</div>
+{% endblock form %}
+
+
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+
+  /*      $("#add-new-btn").on("click", function(){
+            let dept_sing = $("#dept_sing").val()
+            let desg_sing = $("#desg_sing").val()
+            let manp_sing = $("#manp_sing").val()
+            let unit_code = $("#unit_code").val()
+            $.ajax({
+                method : 'POST',
+                url : '',
+                data : {
+                    'flag' : 'add_btn',
+                    'dept_sing' : dept_sing,
+                    'desg_sing' : desg_sing,
+                    'manp_sing' : manp_sing,
+                    'unit_code' : unit_code,
+                    'csrfmiddlewaretoken' : "{{ csrf_token }}"
+                },
+                success : function() {
+                    alert("Data saved")
+                }, 
+                error: function(e){
+                    alert("Something went wrong")
+                    console.log(e)
+                }
+            })
+        }) */
+    })
+
+function add_row(i){
+    //$('#myTable > tbody:last').append('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>'); 
+    //$('#example thead tr:last').clone(true).appendTo( '#example thead' );
+    //$('#tr' + i).after('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>');
+    $('#tr' + i).after($('#tr' + i).clone());
+
+}
+
+function remove_row(i){
+    //$('#myTable > tbody:last').append('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>'); 
+    $('#tr' + i).remove();
+}
+
+
+</script>
+
+{% endblock script %}

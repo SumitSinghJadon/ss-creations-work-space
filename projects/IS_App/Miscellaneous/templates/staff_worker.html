@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block main %} 
+<main class="overflow-x-auto h-full w-full relative flex flex-col">
+    <div class="bg-base-200 px-2 py-1 rounded-lg flex justify-between items-center sticky left-0 top-0">
+        <div>
+            <h1 class="font-semibold">Daily Manpower</h1>
+        </div>
+        <div class="flex items-center space-x-2">
+        <!--    <form action="" method="GET" class="flex items-center space-x-2">
+                <label class="label !p-0 w-44">
+                    <select name="unit_code" class="select-2">
+                        <option>-- Location --</option>
+                        {% for unit_val in unit_list %}
+                        <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="label !p-0 w-32">
+                    <select name="month" class="select-2">
+                        <option>-- Month --</option>
+                        {% for item in month_list %}
+                        <option {% if request.GET.month == item.m_num|stringformat:"i" %}selected{% endif %} value="{{ item.m_num }}">{{ item.m_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="label !p-0 w-32">
+                    <select name="year" class="select-2">
+                        <option>-- Year --</option>
+                        {% for year_no in year_list %}
+                        <option {% if request.GET.year == year_no|stringformat:"i" %}selected{% endif %} value="{{ year_no }}">{{ year_no }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <button type="submit" class="btn btn-sm btn-primary">Search</button>
+            </form>
+        -->
+        </div>
+    </div>
+
+    <div class="relative mt-2">
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th></th>
+                    <th></th>
+                    <th colspan="6">{{ prev_date }}</th>
+                    <th colspan="6">{{ today_date }}</th>
+                </tr>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th></th>
+                    <th></th>
+                    <th colspan="2">Staff</th>
+                    <th colspan="2">Worker</th>
+                    <th colspan="2">Total</th>
+                    <th colspan="2">Staff</th>
+                    <th colspan="2">Worker</th>
+                    <th colspan="2">Total</th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Unit</th>
+                    <th>OnRoll</th>
+                    <th>Present</th>
+                    <th>OnRoll</th>
+                    <th>Present</th>
+                    <th>OnRoll</th>
+                    <th>Present</th>
+                    <th>OnRoll</th>
+                    <th>Present</th>
+                    <th>OnRoll</th>
+                    <th>Present</th>
+                    <th>OnRoll</th>
+                    <th>Present</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for dept in staff_worker_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>
+                        <input type="hidden" value="{{forloop.counter0}}" name="counter"> {{ forloop.counter }}
+                    </td>
+                    <td>{{ dept.unit_name }}</td>
+                    <td>{{ dept.prev_onroll_staff }}</td>
+                    <td>{{ dept.prev_present_staff }}</td>
+                    <td>{{ dept.prev_onroll_worker }}</td>
+                    <td>{{ dept.prev_present_worker }}</td>
+                    <td>{{ dept.prev_onroll }}</td>
+                    <td>{{ dept.prev_present }}</td>
+                    <td>{{ dept.today_onroll_staff }}</td>
+                    <td>{{ dept.today_present_staff }}</td>
+                    <td>{{ dept.today_onroll_worker }}</td>
+                    <td>{{ dept.today_present_worker }}</td>
+                    <td>{{ dept.today_onroll }}</td>
+                    <td>{{ dept.today_present }}</td>					
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $("#get_data").on("click", function(){
+            unit_code = $("#unit_code").val()
+            month = $("#month").val()
+            year = $("#year").val()
+            new_url = `?unit_code=${unit_code}&month=${month}&year=${year}`
+            window.location.replace(new_url);
+        })
+    })
+</script>
+{% endblock script %}
+
+

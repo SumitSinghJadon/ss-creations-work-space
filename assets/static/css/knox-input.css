@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* [#ff0080] */
+/* @apply bg-gradient-to-tl from-indigo-500 via-purple-500 to-pink-500; */
+
+@layer components {
+    .btn { 
+        @apply normal-case no-animation; 
+    }
+
+    .btn-md {
+        @apply h-11 max-h-min min-h-min;
+    }
+
+    .bg-gradient-primary {
+        @apply bg-gradient-to-tl to-primary from-accent text-white bg-cover bg-center;
+    }
+
+    .bg-gradient-info {
+        @apply bg-gradient-to-r from-rose-500 via-lime-500 to-indigo-500;
+    }
+
+    .text-gradient {
+        @apply bg-gradient-primary bg-clip-text text-transparent;
+    }
+
+    .input {
+        @apply focus:outline-none;
+    }
+
+    .input-md {
+        @apply !h-10;
+    }
+
+    .text-input-md {
+        @apply input input-md input-bordered w-full;
+    }
+
+    .center-all {
+        @apply flex items-center justify-center;
+    }
+
+    .center-y {
+        @apply flex items-center;
+    }
+
+    .center-x {
+        @apply flex justify-center;
+    }
+
+    .text-muted {
+        @apply text-gray-500;
+    }
+
+    .shadow-soft {
+        box-shadow: 0px 0.3rem 1rem 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .shadow-soft-lg {
+        --tw-shadow: 0 .3125rem .625rem 0.03rem rgba(0, 0, 0, .12);
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    }
+
+    .shadow-soft-xl {
+        --tw-shadow: 0 20px 27px 0 rgba(0,0,0,0.05);
+        --tw-shadow-colored: 0 20px 27px 0 var(--tw-shadow-color);
+        box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    }
+}
+

@@ -1,0 +1,217 @@
+<form method="POST" class="flex flex-col overflow-auto" id="form_size"> {% csrf_token %}
+    {% if request.GET.trans_type == 'finish' %}
+    <input type="hidden" name="flag" value="save_finish_qty">
+    <!-- <input type="submit" class="hidden" id="submit-btn"> -->
+
+    <table id="size-wise-cut-qty-table" class="table table-bordered">
+        <thead>
+            <tr class="sticky top-0">
+                <th rowspan="2">Size</th>
+                <th class="!p-2">Color</th>
+                <th rowspan="2">Sample Qty</th>
+                <th rowspan="2">Total Stitch Qty</th>
+                <th rowspan="2">Total finish Qty</th>
+                <th rowspan="2">Balance Qty</th>
+                <th rowspan="2">FINISHING Qty</th>
+                <th rowspan="2">Reason</th>
+            </tr>
+        </thead>
+        <tbody class="z-0">
+            {% for row in sq_data %}
+            <tr>
+                <th class="!p-0 text-center">{{ row.size  }}</th>
+                <td class="!py-0">{{ row.color }}
+                    <input type="hidden" name="booking_id" value="{{ row.booking_id_id }}" class=" booking_cls !input-sm">
+                    <input type="hidden" name="size" value="{{ row.size }}" class=" size_cls !input-sm">
+                    <input type="hidden" name="color" value="{{ row.color }}" class=" color_cls !input-sm">
+                    <input type="hidden" name="tra_id" value="{{ row.tra_id }}" class=" color_cls !input-sm">
+                </td>
+                <td class="!p-0">{{ row.size_qty }}</td>
+                <td class="!p-0">{{ row.total_stitch_qty }}</td>
+                <td class="!p-0">{{ row.total_finish_qty }}</td>
+                <td class="!p-0">{{ row.balance_finish_qty }}</td>
+                <td class="!p-0">
+                    <input type="hidden" name="balance_finish_qty" value="{{ row.balance_finish_qty }}" class=" balance_finish_qty color_cls !input-sm">
+                    <input type="number" max ="{{ row.balance_finish_qty }}" value="{{ row.trans_finish_qty }}" name="finish_qty" class="finish_qty_cls !input-sm">
+                </td>
+                <td class="!p-0"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif request.GET.trans_type == 'dispatch' %}
+
+    <input type="hidden" name="flag" value="save_dispatch_qty">
+    <table id="size-wise-cut-qty-table" class="table table-bordered">
+        <thead>
+            <tr class="sticky top-0">
+                <th rowspan="2">Size</th>
+                <th class="!p-2">Color</th>
+                <th rowspan="2">Sample Qty</th>
+                <th rowspan="2">Total Finish Qty</th>
+                <th rowspan="2">Total Dispatch Qty</th>
+                <th rowspan="2">Balance Qty</th>
+                <th rowspan="2">Dispatch Qty</th>
+                <th rowspan="2">Reason</th>
+            </tr>
+        </thead>
+        <tbody class="z-0">
+            {% for row in sq_data %}
+            <tr>
+                <th class="!p-0 text-center">{{ row.size  }}</th>
+                <td class="!py-0">{{ row.color }}
+                    <input type="hidden" name="booking_id" value="{{ row.booking_id_id }}" class=" booking_cls !input-sm">
+                    <input type="hidden" name="size" value="{{ row.size }}" class=" size_cls !input-sm">
+                    <input type="hidden" name="color" value="{{ row.color }}" class=" color_cls !input-sm">
+                    <input type="hidden" name="tra_id" value="{{ row.tra_id }}" class=" color_cls !input-sm">
+                </td>
+                <td class="!p-0">{{ row.size_qty }}</td>
+                <td class="!p-0">{{ row.total_finish_qty }}</td>
+                <td class="!p-0">{{ row.total_dispatch_qty }}</td>
+                <td class="!p-0">{{ row.balance_dispatch_qty }}</td>
+                <td class="!p-0">
+                    <input type="hidden" name="balance_dispatch_qty" value="{{ row.balance_dispatch_qty }}" class=" balance_dispatch_qty color_cls !input-sm">
+                    <input type="number" max ="{{ row.balance_dispatch_qty }}" value="{{ row.trans_dispatch_qty }}" name="dispatch_qty" class="dispatch_qty_cls !input-sm">
+                </td>
+                <td class="!p-0"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% elif request.GET.trans_type == 'stitch' %}
+
+    <input type="hidden" name="flag" value="save_stitch_qty">    
+    <table id="size-wise-cut-qty-table" class="table table-bordered">
+        <thead>
+            <tr class="sticky top-0">
+                <th rowspan="2">Size</th>
+                <th class="!p-2">Color</th>
+                <th rowspan="2">Sample Qty</th>
+                <th rowspan="2">Total Cut Qty</th>
+                <th rowspan="2">Total Stitch Qty</th>
+                <th rowspan="2">Balance Qty</th>
+                <th rowspan="2">Stitching Qty</th>
+                <th rowspan="2">Reason</th>
+            </tr>
+        </thead>
+        <tbody class="z-0">
+            {% for row in sq_data %}
+            <tr>
+                <th class="!p-0 text-center">{{ row.size  }}</th>
+                <td class="!py-0">{{ row.color }}
+                    <input type="hidden" name="booking_id" value="{{ row.booking_id_id }}" class=" booking_cls !input-sm">
+                    <input type="hidden" name="size" value="{{ row.size }}" class=" size_cls !input-sm">
+                    <input type="hidden" name="color" value="{{ row.color }}" class=" color_cls !input-sm">
+                    <input type="hidden" name="tra_id" value="{{ row.tra_id }}" class=" color_cls !input-sm">
+
+                </td>
+                <td class="!p-0">{{ row.size_qty }}</td>
+                <td class="!p-0">{{ row.total_cut_qty }}</td>
+                <td class="!p-0">{{ row.total_stitch_qty }}</td>
+                <td class="!p-0">{{ row.balance_stitch_qty }}</td>
+                <td class="!p-0">
+                    <input type="hidden" name="balance_stitch_qty" value="{{ row.balance_stitch_qty }}" class=" balance_stitch_qty color_cls !input-sm">
+                    <input type="number" max ="{{ row.balance_stitch_qty }}" value="{{ row.trans_stitch_qty }}" name="stitch_qty" class="stitch_qty_cls !input-sm">
+
+                </td>
+                <td class="!p-0"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+
+    {% elif request.GET.trans_type == 'cutting' %}
+
+    <input type="hidden" name="flag" value="save_cutting_qty">
+    <table id="size-wise-cut-qty-table" class="table table-bordered">
+        <thead>
+            <tr class="sticky top-0">
+                <th rowspan="2">Size</th>
+                <th class="!p-2">Color</th>
+                <th rowspan="2">Sample Qty</th>
+                <th rowspan="2">Total Cut Qty</th>
+                <th rowspan="2">Balance Qty</th>
+                <th rowspan="2">Cutting Qty</th>
+                <th rowspan="2">Reason</th>
+            </tr>
+        </thead>
+        <tbody class="z-0">
+            {% for row in sq_data %}
+            <tr>
+                <th class="!p-0 text-center">{{ row.size  }}</th>
+                <td class="!py-0">{{ row.color }}
+                    <input type="hidden" name="booking_id" value="{{ row.booking_id_id }}" class=" booking_cls !input-sm">
+                    <input type="hidden" name="size" value="{{ row.size }}" class=" size_cls !input-sm">
+                    <input type="hidden" name="color" value="{{ row.color }}" class=" color_cls !input-sm">
+                    <input type="hidden" name="tra_id" value="{{ row.tra_id }}" class=" color_cls !input-sm">
+                </td>
+                <td class="!p-0">{{ row.size_qty }}</td>
+                <td class="!p-0">{{ row.total_cut_qty }}</td>
+                <td class="!p-0">{{ row.balance_cut_qty }}</td>
+                <td class="!p-0">
+                    <input type="hidden" name="balance_cut_qty" value="{{ row.balance_cut_qty }}" class=" balance_cut_qty color_cls !input-sm">
+                    <input type="number" max ="{{ row.balance_cut_qty }}" value="{{ row.trans_cutting_qty }}" name="cut_qty" class="cut_qty_cls !input-sm">
+
+                </td>
+                <td class="!p-0"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% elif request.GET.trans_type == 'other' %}
+
+    <input type="hidden" name="flag" value="save_other_qty">
+    <table id="size-wise-cut-qty-table" class="table table-bordered">
+        <thead>
+            <tr class="sticky top-0">
+                <th rowspan="2">Size</th>
+                <th class="!p-2">Color</th>
+                <th rowspan="2">Sample Qty</th>
+                <th rowspan="2">Total Qty</th>
+                <th rowspan="2">Balance Qty</th>
+                <th rowspan="2">Qty</th>
+                <th rowspan="2">Reason</th>
+            </tr>
+        </thead>
+        <tbody class="z-0">
+            {% for row in sq_data %}
+            <tr>
+                <th class="!p-0 text-center">{{ row.size  }}</th>
+                <td class="!py-0">{{ row.color }}
+                    <input type="hidden" name="booking_id" value="{{ row.booking_id_id }}" class=" booking_cls !input-sm">
+                    <input type="hidden" name="size" value="{{ row.size }}" class=" size_cls !input-sm">
+                    <input type="hidden" name="color" value="{{ row.color }}" class=" color_cls !input-sm">
+                    <input type="hidden" name="tra_id" value="{{ row.tra_id }}" class=" color_cls !input-sm">
+                </td>
+                <td class="!p-0">{{ row.size_qty }}</td>
+                <td class="!p-0">{{ row.total_cut_qty }}</td>
+                <td class="!p-0">{{ row.balance_cut_qty }}</td>
+                <td class="!p-0">
+                    <input type="hidden" name="balance_cut_qty" value="{{ row.balance_cut_qty }}" class=" balance_cut_qty color_cls !input-sm">
+                    <input type="number" max ="{{ row.balance_cut_qty }}" value="{{ row.trans_cutting_qty }}" name="cut_qty" class="cut_qty_cls !input-sm">
+
+                </td>
+                <td class="!p-0"></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+</form>
+
+<script>
+    function get_def_btn(i) {
+        result = $("#result"+ i).val()
+        if(result =='Fail' || result =='Alter') {
+            $("#def_btn" + i).show();
+        } else {
+            $("#def_btn" + i).hide();
+        }
+    }
+
+    function show_model(id) {
+        $("#form_size" + id).show();
+    }
+</script>

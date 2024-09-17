@@ -1,0 +1,96 @@
+{% extends 'form.html' %}
+
+{% block filterRight %}
+    <div class="hidden">
+        {% if request.GET.id %}
+        <button id="form-delete-btn" onclick="form_delete_modal.showModal()" class="btn btn-sm btn-error px-6">Delete</button>
+        {% endif %}
+        <button id="form-save-btn" class="btn btn-sm btn-success px-6">
+            {% if request.GET.id %}Update{% else %}Save{% endif %}
+        </button>
+    </div>
+
+    <form action="" method="get" class="flex w-full space-x-2">
+        <select name="year" class="select select-sm select-bordered" required>
+            <option value="" selected disabled>Year</option>
+            {% for year in year_list %}
+            <option {% if year == current_year %} selected {% endif %}>{{ year }}</option>
+            {% endfor %}
+        </select>
+        <select name="month" class="select select-sm select-bordered min-w-[100px]" required>
+            <option value="" selected disabled>Month</option>
+            {% for month in month_list %}
+            <option value="{{ month.value }}"  {% if month.value == current_month %} selected {% endif %}>{{ month.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Search" class="btn btn-success btn-sm"> 
+    </form>
+{% endblock filterRight %}
+
+{% block form %}
+
+<div class="table-wrapper w-full h-full overflow-auto">
+    <table class="table-hard">
+        <thead>
+            <tr class="sticky top-0 bg-slate-300 text-black">
+                <th>Date</th>
+                <th>Shift</th>
+                <th>In</th>
+                <th>Out</th>
+                <th>Total Hours</th>
+                <th>Late Hours</th>
+                <th>Early Out</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in data %}
+                <tr class='{{ item.css_cls }}'>
+                    <td>{{ item.date|default_if_none:'' }}</td>
+                    <td>{{ item.shift|default_if_none:'' }}</td>
+                    {% if item.m_in %} 
+                        <td class="bg-amber-200">{{ item.m_in }}</td> 
+                    {% else %}
+                        <td>{{ item.in|default_if_none:'' }}</td>
+                    {% endif %}
+                    
+                    {% if item.m_out %} 
+                        <td class="bg-amber-200">{{ item.m_out|default_if_none:'' }}</td> 
+                    {% else %}
+                        <td>{{ item.out|default_if_none:'' }}</td>
+                    {% endif %}
+                    <td>{{ item.total_hours|default_if_none:'' }}</td>
+                    {% if item.status == 'P-P' %}
+                        <td>{{ item.late_hours|default_if_none:'' }}</td>
+                        <td>{{ item.early_hours|default_if_none:'' }}</td>
+                    {% else %}
+                        <td></td>
+                        <td></td>
+                    {% endif %}
+                    <td>{{ item.status|default_if_none:'' }}</td>
+                    <td>
+                        {%if item.in == '' and item.out == '' and item.status != 'WO-WO' %}
+                            <a href="/ess/leave-application/?date={{ item.date }}" class="btn btn-xs btn-success">Apply Leave</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="bg-slate-300 text-black text-base sticky -bottom-0.5 [&>th]:!p-0.5">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ total_working_hours }}</td>
+                <td>{{ total_late_hours }}</td>
+                <td>{{ total_early_hours }}</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+{% endblock form %}

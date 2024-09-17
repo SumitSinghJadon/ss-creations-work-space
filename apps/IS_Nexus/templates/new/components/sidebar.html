@@ -1,0 +1,22 @@
+{% load static %}
+
+<aside class="w-[240px] h-full" id="sideMenuBar">
+    <div class="shadow-soft rounded-box h-full">
+        <div class="flex space-x-2 items-center justify-center p-2 pl-4 overflow-hidden">
+            <img class="w-7" src="{% static '/images/logo.svg' %}" alt="IS">
+            <a href="/" class="text-transparent bg-clip-text font-bold text-2xl bg-gradient-info">IntelliSYNC</a>
+            <button onClick='toggleSidebar()' class="bg-gradient-primary md:hidden p-2 bg-clip-text text-transparent text-lg hover:bg-gradient-to-br" id="mob-sidebar-toggle-btn">
+                <span class="btn btn-ghost btn-sm" id="sidebar-active-btn"><i class="fa-regular fa-xmark"></i></span>
+            </button>
+        </div>
+    
+        <div class="overflow-auto h-full">
+            <ul class="menu w-full rounded-box space-y-1 p-1 text-nowrap" id="menuLinkWrapper">
+                {% autoescape off %} {{ menu_html }} {% endautoescape %}
+            </ul>
+        </div>
+    </div>
+</aside>
+
+
+

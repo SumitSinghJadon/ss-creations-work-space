@@ -1,0 +1,57 @@
+<p>Dear Sir / Madam,</p>
+
+<p>A <Leave> has been submitted by Mr/Mrs/Ms {{ application_list.user.full_name }}</p>
+<table border>
+    <tr><th>Employee Name</th><td>{{ application_list.user.full_name }}</td></tr>
+    <tr><th>Employee Code</th><td>{{ application_list.user.username }}</td></tr>
+    <tr><th>Unit</th><td>{{ application_list.user.location }}</td></tr>
+    <tr><th>Department</th><td>{{ application_list.dep }}</td></tr>
+    <tr><th>Type</th><td>{{ application_list.application_type }}</td></tr>
+
+    {% if application_list.application_type == 'Leave' %}
+
+        <tr><th>Days</th><td>{{ application_list.day_count|default_if_none:'' }}</td></tr>
+        <tr><th>Half / Full Day</th><td>{{ application_list.get_day_part_display|default_if_none:'' }}</td></tr>
+        <tr><th>From Date</th><td>{{ application_list.from_date|date:"d-m-Y" }}</td></tr>
+        <tr><th>Till Date</th><td>{{ application_list.till_date|date:"d-m-Y" }}</td></tr>
+        <tr><th>Status</th><td>{{ application_list.status }}</td></tr>
+        <tr><th>Leave Type</th><td>{{ application_list.leave_type|default_if_none:'' }}</td></tr>
+        <tr><th>Reason</th><td>{{ application_list.reason }}</td></tr>
+
+    {% elif application_list.application_type == 'Comp-off'  %}
+
+        <tr><th>Comp-off Date</th><td>{{ application_list.from_date|date:"d-m-Y" }}</td></tr>
+        <tr><th>Working Date</th><td>{{ application_list.till_date|date:"d-m-Y" }}</td></tr>
+        <tr><th>Day Part</th><td>{{ application_list.get_day_part_display|default_if_none:'' }}</td></tr>
+        <tr><th>Reason</th><td>{{ application_list.reason }}</td></tr>
+
+    {% elif application_list.application_type == 'OD'  %}
+        
+        <tr><th>Days</th><td>{{ application_list.day_count|default_if_none:'' }}</td></tr>
+        <tr><th>Half / Full Day</th><td>{{ application_list.get_day_part_display|default_if_none:'' }}</td></tr>
+        <tr><th>From Date</th><td>{{ application_list.from_date|date:'d-m-Y h:i A' }}</td></tr>
+        <tr><th>Till Date</th><td>{{ application_list.till_date|date:'d-m-Y h:i A' }}</td></tr>
+        <tr><th>Status</th><td>{{ application_list.status }}</td></tr>
+        <tr><th>Visit Location Type</th> :{{ application_list.visit_location_type|default_if_none:'' }}</td></tr>
+        <tr><th>Visit Location</th> :{{ application_list.address|default_if_none:'' }}</td></tr>
+        <tr><th>Purpose of Visit</th> :{{ application_list.purpose|default_if_none:'' }}</td></tr>
+    
+    {% elif application_list.application_type == 'Miss Punch'  %}
+        <tr><th>Miss Punch Date</th><td>{{ application_list.from_date|date:"d-m-Y" }}</td></tr>
+        <tr><th>Miss Punch Time</th><td>{{ application_list.time }}</td></tr>
+        <tr><th>Day Part</th><td>{{ application_list.get_day_part_display|default_if_none:'' }}</td></tr>
+        <tr><th>Status</th><td>{{ application_list.status }}</td></tr>
+        <tr><th>Reason</th><td>{{ application_list.reason }}</td></tr>
+    {% endif %}
+</table>
+<p>
+
+    Click on the buttons below for Approve / Reject or log into HRMS-ESS Portal<br>
+    <a target="_blank" href="http://{{ url }}/ess/approve-over-mail?id={{ application_list.id }}&emp={{ rpr_hr_paycode }}" style="display: inline-block; padding: 10px 10px; background-color: #17b51c; color: #ffffff; text-decoration: none; border-radius: 5px; margin-right: 10px;">Approve</a>
+    <a target="_blank" href="http://{{ url }}/ess/reject-over-mail?id={{ application_list.id }}&emp={{ rpr_hr_paycode }}" style="display: inline-block; padding: 10px 10px; background-color: #dc3545; color: #ffffff; text-decoration: none; border-radius: 5px;">Reject</a> 
+    
+    <br>
+    <br>
+    Best Regards<br>
+    HRMS Portal
+</p>

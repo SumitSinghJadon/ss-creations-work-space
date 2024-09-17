@@ -1,0 +1,56 @@
+<div class="h-full bg-base-100 shadow-soft rounded-box overflow-hidden flex flex-col knox-table-wrapper">
+    <div class="p-3 flex justify-between items-center">
+        <h1 class="font-semibold">Sampling Cost Summary</h1>
+        
+        <div class="join">
+            <input class="input input-bordered input-sm join-item knox-table-search" type="search" placeholder="Search in table" />
+
+            <select class="select select-bordered select-sm join-item kt-export">
+                <option disabled selected>Export</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+            </select>
+
+            <button class="btn btn-sm btn-primary join-item kt-export-btn">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper flex-grow overflow-auto">
+        <table class="knox-table table-sm" export-name="Screen Name" id="knox-table-2">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th>SrNo</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in data_list %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+    
+                </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <th></th>
+                    <th></th>
+                    {% for _ in '123456789' %}
+                    <th class="kt-total"></th>
+                    {% endfor %}
+                </tr>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td class="p-0"></td>
+                    {% for _ in '123456789' %}
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    {% endfor %}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+

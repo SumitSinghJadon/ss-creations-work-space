@@ -1,0 +1,97 @@
+{% extends 'form-table.html' %}
+
+{% block table-filter %}{% endblock table-filter %}
+
+{% block form %}
+<form action="" method="POST" class="flex flex-wrap"> {% csrf_token %}
+    <!-- Masters Type -->
+    <div class="w-1/3 pt-1">
+        <label class="float-input-label {% if data.id %} floated-label {% endif %}">
+            <span class="label-text z-40">Master Type</span>
+            <select data-col-index="2" name="master_type" id="master_type" class="select-input search-in-table select-2" required>
+                <option value="">NA</option>
+                {% for item in master_types_list %}
+                <option {% if data.master_type.id == item.id %}selected{% endif %} value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+
+    <!-- Name -->
+    <div class="w-1/3 pt-1">
+        <label class="float-input-label {% if data.name %} floated-label {% endif %}">
+            <span class="label-text">Name</span>
+            <input data-col-index="3" type="text" value="{{ data.name|default_if_none:'' }}" name="name" required class="text-input search-in-table">
+        </label>
+    </div>
+
+    <!-- value -->
+    <div class="w-1/3 pt-1">
+        <label class="float-input-label {% if data.value %} floated-label {% endif %}">
+            <span class="label-text">Value</span>
+            <input type="text" value="{{ data.value|default_if_none:'' }}" name="value" class="text-input">
+        </label>
+    </div>
+
+    <!-- Remarks -->
+    <div class="w-1/2 pt-1 flex">
+        <label class="float-input-label w-full {% if data.remark %} floated-label {% endif %}">
+            <span class="label-text">Remark</span>
+            <input type="text" value="{{ data.remark|default_if_none:'' }}" name="remark" class="text-input">
+        </label>
+    </div>
+
+    <!-- Checkbox -->
+    <div class="w-1/2 pt-1 space-x-2 px-1 flex">
+        <label class="checkbox-input-label w-full">
+            <span class="label-text">Is Active</span>
+            <input type="checkbox" name="is_active" value="True" checked {% if data.is_active == False %} data-checked=false {% endif %} class="!checkbox-success">
+        </label>
+        <div class="pt-2.5 flex space-x-2"> 
+            <input type="submit" class="btn btn-sm px-8 btn-success" value="{% if request.GET.pk %}Update{% else %}Save{% endif %}" id="submit-btn">
+            {% if request.GET.pk %}
+            <a title="New Entry" href="?" class="btn btn-info btn-sm"><i class="fa-regular fa-plus"></i></a>
+            <a title="Delete" href="?pk={{ data.id }}&action=delete" class="btn btn-error btn-sm"><i class="fa-regular fa-trash"></i></a>
+            {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock form %}
+
+{% block thead %}
+<tr class="bg-slate-300 text-black dt-col-search sticky top-0">
+    <th class="dt-nosearchable">SR</th>
+    <th class="dt-nosort dt-nosearchable">Edit</th>
+    <th>Master Type</th>
+    <th>Name</th>
+    <th>Value</th>
+    <th>Remark</th>
+    <th class="dt-nosearchable">Status</th>
+</tr>
+{% endblock thead %}
+
+{% block tbody %}
+{% for item in master_list %}
+<tr>
+    <th title="{{ item.code }}">{{ forloop.counter }}</th>
+    <td title="Edit" class="text-center !p-0">
+        {% if item.master_type__editable %}
+        <a href="?pk={{item.id}}&action=update" class="btn btn-warning btn-xs">
+            <i class="fa-light fa-pencil"></i>
+        </a>
+        {% endif %}
+    </td>
+    <td>{{ item.master_type__name }}</td>
+    <td>{{ item.name }}</td>
+    <td>{{ item.value|default_if_none:"" }}</td>
+    <td>{{ item.remark|default_if_none:"" }}</td>
+    <td>
+        {% if item.is_active %}
+        <i class="fa-solid fa-circle-check text-green-500"></i>
+        {% else %}
+        <i class="fa-solid fa-circle-xmark text-red-500"></i>
+        {% endif %}
+    </td>
+</tr>
+{% endfor %}
+{% endblock tbody %}

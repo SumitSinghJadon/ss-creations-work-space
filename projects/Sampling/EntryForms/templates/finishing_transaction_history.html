@@ -1,0 +1,81 @@
+{% extends 'form.html' %}
+{% load static %}
+
+{% block form %}
+
+<div class="w-full p-1 pt-3 overflow-auto">
+    <div class="table-wrapper overflow-y-auto">
+        <table id="size-wise-cut-qty-table" class="table table-bordered">
+            <thead>
+                <tr class="sticky top-0">
+                    <th rowspan="2">S.No</th>
+                    <th class="!p-2">Sample Booking No</th>
+                    <th rowspan="2">Cut Transaction No</th>
+                    <th rowspan="2">Buyer Name</th>
+                    <th rowspan="2">Style Name</th>
+                    <th rowspan="2">Sample Type</th>
+                    <th rowspan="2">Finishing Type</th>
+                    <th rowspan="2">Finishing Size</th>
+                    <th rowspan="2">Finishing Qty</th>
+                    <th rowspan="2">Handover Date</th>
+                    <th rowspan="2">QA Status</th>
+                    <th rowspan="2">QA Remarks</th>
+                    <th rowspan="2">Delay Reason</th>
+                    <th rowspan="2">Delay Remarks</th>
+                    <th rowspan="2">Hold Reason</th>
+                </tr>
+            </thead>
+            <tbody class="z-0">
+                {% for i in '123456789' %}
+                <tr>
+                    <th class="!p-0 text-center">{{ i }}</th>
+                    <td class="!py-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock form %}

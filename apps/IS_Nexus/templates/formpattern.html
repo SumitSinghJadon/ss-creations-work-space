@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{% block theme %}light{% endblock theme %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntteliSync</title>
+    {% include './components/head.html' %}
+</head>
+
+<body>
+    <div class="flex h-screen bg-base-100">
+        {% include './components/sidebar.html' %}
+
+        <div class="h-screen flex-grow flex flex-col overflow-hidden">
+            <!-- Site Header -->
+            {% include './components/header.html' %}
+
+            <!-- Main Content Wrapper -->
+            <main class="flex-grow w-full overflow-auto relative">
+                <div class="rounded-lg overflow-hidden p-3 shadow-inner bg-base-200 min-h-full h-full overflow-y-hidden">
+                    <!-- Main Content -->
+                    <div class="w-full rounded-xl space-y-2 flex flex-col h-full bg-base-100 p-3 shadow-lg overflow-hidden">
+                        <div class="flex bg-base-200 py-1 px-4 rounded-lg justify-between items-center">
+                            <div data-aos="zoom-in">
+                                <h1 class="font-semibold capitalize">{% block form_name %} {{ page_name }} {% endblock form_name %}</h1>
+                            </div>
+                            <div data-aos="zoom-in">
+ 
+        
+                                
+                                
+                            </div>
+                        </div>
+                        {% block form %} {% endblock form %}
+                    </div>
+                    <!-- // Main Content -->
+                </div>
+            </main>
+
+            <!-- Delete Alert -->
+            <dialog id="form_delete_modal" class="modal modal-bottom sm:modal-middle">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg">Confirmation</h3>
+                    <p class="py-4">Please confirm your intent to delete this entry. This action is irreversible and cannot be undone.</p>
+                    <div class="modal-action">
+                        <form method="dialog" class="space-x-3">
+                            <a class="btn btn-error" href="?action=delete&id={{request.GET.id}}">Delete</a>
+                            <button class="btn">Back</button>
+                        </form>
+                    </div>
+                </div>
+            </dialog>
+
+            <!-- Notification Panel -->
+            {% include './components/notification.html' %}
+        </div>
+    </div>
+    {% include './components/alert.html' %}
+</body>
+
+<script>
+    $(document).ready(function(){
+        // Form float level
+        $(".float-input-label input, .float-input-label select").focusin(function() {
+            $(this).closest("label").addClass("floated-label");
+            $(this).addClass("!input-primary");
+        })
+
+        $(".float-input-label input, .float-input-label select").on('focusout', function() {
+            if (!$(this).val()) {
+                $(this).closest("label").removeClass("floated-label");
+            }
+            $(this).removeClass("!input-primary");
+        })
+
+        $(".float-input-label select").on('change', function() {
+            if (!$(this).val()) {
+                $(this).closest("label").removeClass("floated-label");
+            } else {
+                $(this).closest("label").addClass("floated-label");
+            }
+            $(this).removeClass("!input-primary");
+        })
+
+        // Check checkbox value on update form
+        $("input[type=checkbox]").each(function(){
+            if ($(this).attr('data-checked')) {
+                let chk_val = $(this).data('checked');
+                $(this).prop('checked', chk_val)
+            }
+        })
+
+        // select-2 
+        $("#form-save-btn").on("click", function(){
+            $('form').find("#submit-btn").click();
+        })
+
+        // select-2 input customization
+        $(".select-2").select2();
+        $(".select2-container, .select-bordered, .selection, .select2-selection").addClass('!h-full');
+        $(".select2-selection").addClass('text-input');
+        $(".select2-selection__rendered").addClass('!pt-1');
+        $(".select2-selection__arrow").addClass('!top-1.5');
+    })
+</script>
+
+{% block script %}
+{% endblock script %}
+</html>

@@ -1,0 +1,78 @@
+{% extends 'form.html' %}
+{% load static %}
+
+{% block form %}
+
+<!-- Article Button -->
+<div class="w-full p-1 pt-3 overflow-auto">
+    <div class="table-wrapper overflow-y-auto">
+        <table id="size-wise-table" class="table table-bordered">
+            <thead>
+                <tr class="sticky top-0">
+                    <th rowspan="2">Sr.</th>
+                    <th class="!p-2">Given By Merchant</th>
+                    <th rowspan="2">Article Name</th>
+                    <th rowspan="2">Comment</th>
+                    <th class="!p-2">Given By QA</th>
+                    <th rowspan="2">EXPECTED DATE (If not given)</th>
+                </tr>
+                <tr class="sticky top-8">
+                    <th class="!py-1">
+                        <div class="w-full flex justify-around">
+                            <div class="btn btn-circle btn-warning btn-xs">NA</div>
+                            <div class="btn btn-circle btn-primary btn-xs">PA</div>
+                            <div class="btn btn-circle btn-error btn-xs"><i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="btn btn-circle btn-success btn-xs"><i class="fa-solid fa-check"></i>
+                            </div>
+                        </div>
+                    </th>
+                    <th class="!py-1">
+                        <div class="w-full flex justify-around">
+                            <div class="btn btn-circle btn-warning btn-xs">NA</div>
+                            <div class="btn btn-circle btn-primary btn-xs">PA</div>
+                            <div class="btn btn-circle btn-error btn-xs"><i class="fa-solid fa-xmark"></i>
+                            </div>
+                            <div class="btn btn-circle btn-success btn-xs"><i class="fa-solid fa-check"></i>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="z-0">
+                {% for i in article_breakup_list %}
+                <tr>
+                    <th class="!p-0 text-center">{{ i }}</th>
+                    <td class="!py-0">
+                        <div class="w-full flex justify-around">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-warning">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-primary">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-error">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-success">
+                        </div>
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!py-0">
+                        <div class="w-full flex justify-around">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-warning">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-primary">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-error">
+                            <input name="n-{{ i }}" type="radio" class="!radio !radio-success">
+                        </div>
+                    </td>
+                    <td class="!p-0">
+                        <input type="datetime-local" class="!input-sm">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock form %}

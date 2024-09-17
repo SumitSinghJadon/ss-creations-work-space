@@ -1,0 +1,199 @@
+{% extends 'form-table.html' %}
+
+{% block form %}
+<form action="{% url 'Comp-Off_application_form_page' %}" id="application_form" method="post" class="flex flex-wrap">
+    {% csrf_token %}
+    <!-- Employee Code -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Employee Code</span>
+            <input type="text" name="emp_code" value="{{ request.user.username }}" readonly required class="text-input">
+        </label>
+    </div>
+    <!-- Employee Name -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Employee Name</span>
+            <input type="text" name="emp_name" value="{{ request.user.full_name  }}" readonly required class="text-input">
+        </label>
+    </div>
+    <!-- Unit -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Location</span>
+            <select name="unit" class="select-input" readonly required>
+                <option value="{{ employee.loc_code }}" selected>{{ employee.loc_name }}</option>
+            </select>
+        </label>
+    </div>
+    <!-- Department -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Department</span>
+            <input type="text" name="department" value="{{ employee.dep_name }}" required readonly class="text-input">
+        </label>
+    </div>
+    <!-- Reporting Manager -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Reporting Manager</span>
+            <select name="reporting_manager" class="select-input">
+                <option selected value="{{ request.user.reporting_manager.id }}">{{ request.user.reporting_manager.full_name }}</option>
+            </select>
+        </label>
+    </div>
+    <!-- Application Type -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text z-40">Application Type</span>
+            <input type="text" name="application_type" class="text-input" value="Comp-off" readonly required>
+        </label>
+    </div>
+    <!-- Comp-off From -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Comp-off Date</span>
+            <input type="date" name="leave_from" min="{{ min_date|date:'Y-m-d' }}" required class="text-input">
+        </label>
+    </div>
+    <!-- Comp-off TIll -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label" id="msg">
+            <span class="label-text z-40">Working Date</span>
+            <input type="text" name="working_day" required class="text-input" id="enabled_dates">
+        </label>
+    </div>
+    <!-- Full Day/Half Day -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+            <select name="day_part" class="select-input select-2" required>
+                <option value="">--</option>
+                <option value="FD">Full Day</option>
+                <option value="HD">Half Day</option>
+            </select>
+        </label>
+    </div>
+    <!-- Address During Day Period -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Address During Day Period</span>
+            <input type="text" name="address" required class="text-input">
+        </label>
+    </div>
+    <!-- Mobile Number -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text z-40">Mobile Number</span>
+            <input type="number" autocomplete="nope" value="{{ data.emp_phn }}" name="phone" required class="text-input onlyNumberField" data-max-length="10">
+        </label>
+    </div>
+    <!-- Reason For Leave -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Reason For Leave</span>
+            <input type="text" name="reason" required class="text-input">
+        </label>
+    </div>
+    <div class="flex w-full justify-end pt-0.5 px-1">
+        <input type="Submit" value="Save" class="btn btn-success btn-sm px-8 mt-3">
+    </div>
+</form>
+<script>
+    $(document).ready(function () {
+        // {% autoescape off %}
+            var enabledDates= {{ enabled_dates }}
+        // {% endautoescape %}
+        function enableSpecificDates(date) {
+            var dateString = jQuery.datepicker.formatDate('yy-mm-dd', date);
+            return [enabledDates.indexOf(dateString) != -1];
+        }
+
+        $("#enabled_dates").datepicker({
+            dateFormat: 'yy-mm-dd',
+            beforeShowDay: enableSpecificDates,
+            onSelect:function(){$("#msg").addClass('floated-label')
+        }
+        });
+    })
+</script>
+{% endblock form %}
+{% block tfilter %}
+<div class="p-2">
+    <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Comp-Off Application History</h1>
+    <form action="" method="GET" class="flex flex-wrap">
+        <!-- Year -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Year</span>
+                <select name="year" class="select-input select-2" required>
+                    <option value="">--</option>
+                    {% for item in year_list %}
+                        <option {% if item.name == current_year %} selected {% endif %}>{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Month -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Month</span>
+                <select name="month" class="select-input select-2" required>
+                    <option value="">--</option>
+                    {% for item in month_list %}
+                        <option {% if item.value == current_month %} selected {% endif %} value="{{ item.value }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Application Status -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label {% if application_status %}floated-label{% endif %}">
+                <span class="label-text z-40">Application Status</span>
+                <select data-col-index="2" name="application_status" class="select-input select-2">
+                    <option value="">--</option>
+                    <option {% if application_status == 'Pending' %} selected {% endif %}>Pending</option>
+                    <option {% if application_status == 'Approved' %} selected {% endif %}>Approved</option>
+                    <option {% if application_status == 'Rejected' %} selected {% endif %}>Rejected</option>
+                </select>
+            </label>
+        </div>
+        <div class="w-1/4 pt-0.5 px-1">
+            <input type="Submit" value="Search" class="btn btn-success btn-sm px-8 mt-3">
+        </div>
+    </form>
+</div>
+
+{% endblock tfilter %}
+{% block thead %}
+    <td>Cancel</td>
+    <td>Application Type</td>
+    <td>Comp-off Date</td>
+    <td>Working Date</td>
+    <td>Day Part</td>
+    <td>Application Status</td>
+    <td>Reason</td>
+    <td>Applied On</td>
+    <td>Approved/Rejected On</td>
+    <td>Cancelled On</td>
+    <td>Approved/Rejected By</td>
+    <td>Remarks</td>
+{% endblock thead %}
+{% block tbody %}
+    {% for item in comoff_list %}
+        <tr>
+            <td>{% if item.status == 'Pending' %}<form method="POST">{% csrf_token %}<input type="hidden" name="application_id" value="{{ item.pk }}"><input type="submit" name="cancel_application" value="Cancel" class="btn btn-sm text-white bg-red-500 hover:bg-red-300"></form>{% endif %}</td>
+            <td>{{ item.application_type }}</td>
+            <td class="whitespace-nowrap">{{ item.from_date|date:"d-m-Y" }}</td>
+            <td class="whitespace-nowrap">{{ item.till_date|date:"d-m-Y" }}</td>
+            <td>{{ item.get_day_part_display }}</td>
+            <td class="{% if item.status == 'Pending' %} bg-warning {% elif item.status == 'Approved' %} bg-success {% elif item.status == 'Cancelled' %} bg-gray-500 text-white {% else %} bg-error {% endif %}">{{ item.status }}</td>
+            <td>{{ item.reason|default_if_none:'' }}</td>
+            <td>{{ item.applied_on|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.approved_on|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.cancelled_on|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.approved_by.full_name }}</td>
+            <td>{{ item.remarks|default_if_none:'' }}</td>
+        </tr>
+    {% endfor %}
+{% endblock tbody %}

@@ -1,0 +1,27 @@
+<aside class="absolute right-0 top-0 z-40 max-w-sm h-screen overflow-hidden">
+    <div class="p-2 bg-base-100 w-full h-full shadow-lg noti-wrapper border-l border-base-300 hidden">
+        <div class="flex justify-between bg-base-200 items-center px-3 rounded-lg font-semibold">
+            <h1>Notification (20) </h1>
+            <span class="btn btn-ghost btn-sm text-lg noti-close-btn">
+                <i class="fa-sharp fa-regular fa-circle-xmark"></i>
+            </span>
+        </div>
+        <div class="p-2 pl-5">
+            <ul class="space-y-3 list-disc">
+                <li>Lorem ipsum dolor sit abet.</li>
+                <li>Lorem ipsum dolor sit abet connecter adipisicing elit. Dolor, commove?</li>
+                <li>Lorem ipsum dolor sit abet.</li>
+                <li>Lorem ipsum dolor sit abet consenter adipisicing elit. Dolor, Comodo?</li>
+            </ul>
+        </div>
+    </div>
+</aside>
+
+<script>
+    $(document).ready(function(){
+        // Toggle Notification Bar
+        $(".noti-close-btn").on("click", function () {
+            $(".noti-wrapper").toggle("slide", { direction: "right" })
+        })
+    })
+</script>

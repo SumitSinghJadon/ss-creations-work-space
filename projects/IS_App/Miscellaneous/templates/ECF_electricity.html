@@ -1,0 +1,175 @@
+{% extends 'new/base.html' %}
+{% block main %}
+
+<div class="rounded-box bg-base-100 shadow-soft flex flex-col h-full overflow-hidden knox-table-wrapper">
+
+    <div class="flex flex-wrap">
+        <div class="h-full bg-base-100 rounded-box py-2 pt-0 shadow-soft flex flex-wrap">
+            <div class="py-1.5 px-3 flex justify-between items-center w-full border-b">
+                <h1 class="font-semibold"> Energy Cost Entry Form Electricity </h1>
+                <div class="flex space-x-2">
+                    <button type="button" class="btn btn-success btn-sm px-8" id="save-btn"> Refresh </button>
+                </div>
+            </div>
+    
+            <form method="POST" class="flex p-1 pt-1.5 w-full" id="claim-form">
+                {% csrf_token %}
+                <input type="submit" id="submit-btn" hidden>
+                <!-- <div class="divider w-full">  </div> -->
+    
+                <!-- UNIT -->
+                <div class="w-full md:w-1/5 p-0.5">
+                    <div class="knox-form-input">
+                        <label>
+                            <select name="unit" id="unit" class="knox-select" required>
+                                <option value=""> -- </option>
+                                {% for item in unit %}
+                                <option value="{{ item.id }}"> {{item.name}} </option>
+                                {% endfor %}
+                            </select>
+                            <span class="label-text"> UNIT </span>
+                        </label>
+                    </div>
+                </div>
+    
+                <!-- HEAD -->
+                <div class="w-full md:w-1/5 p-0.5">
+                    <div class="knox-form-input">
+                        <label>
+                            <select name="head" id="head" class="knox-select" required>
+                                {% for item in head %}
+                                <option value="{{ item.id }}"> {{item.name}} </option>
+                                {% endfor %}
+                            </select>
+                            <span class="label-text"> HEAD </span>
+                        </label>
+                    </div>
+                </div>
+                            
+                <!-- SUB HEAD -->
+                <div class="w-full md:w-1/5 p-0.5">
+                    <div class="knox-form-input">
+                        <label>
+                            <select name="sub_head" id="sub_head" class="knox-select" required>
+                               {% for item in sub_head %}
+                               <option value="{{ item.id }}"> {{item.name}} </option>
+                               {% endfor %}
+                            </select>
+                            <span class="label-text"> SUB HEAD </span>
+                        </label>
+                    </div>
+                </div>
+    
+                <!-- MONTH -->
+                <div class="w-full md:w-1/5 p-0.5">
+                    <div class="knox-form-input">
+                        <label>
+                            <select name="month" id="month" class="knox-select" required>
+                                <option value="">Please Select</option>
+                                {% for item in month_list %}
+                                    <option {% if month|stringformat:"i" == item.m_num %}selected{% endif %} value="{{ item.m_num }}">{{ item.m_name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="label-text"> MONTH </span>
+                        </label>
+                    </div>
+                </div>
+    
+                <!-- YEAR -->
+                <div class="w-full md:w-1/5 p-0.5">
+                    <div class="knox-form-input">
+                        <label>
+                            <select name="year" id="year" class="knox-select" required>
+                                <option value="">Please Select</option>
+                                {% for year_no in year_list %}
+                                    <option {% if year|stringformat:"i" == year_no|stringformat:"i" %}selected{% endif %} value="{{ year_no }}">{{ year_no }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="label-text"> YEAR </span>
+                        </label>
+                    </div>
+                </div>
+    
+            </form>
+        </div>
+    </div>
+
+    <div class="flex-grow table-wrapper overflow-auto">
+        <table class="knox-table table-sm">
+            <thead>
+                <tr class="sticky top-0 z-10">
+                    <th> S/N </th>
+                    <th> UNIT </th>
+                    <th> HEAD </th>
+                    <th> SUB HEAD </th>
+                    <th> DATE </th>
+                    <th> KWH READING </th>
+                    <th> MULTIPLIER </th>
+                    <th> UNIT CONSUMED </th>
+                    <th> KVAH READING </th>
+                    <th> POWRE FACTOR </th>
+                    <th> RATE </th>
+                    <th> VALUE </th>
+                </tr>
+            </thead>
+            <tbody>
+               
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><span class="kt-col-total"></span></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $("#save-btn").on("click", function() {
+        $("#claim-form").submit();
+    });
+
+    $("#financial_year").on("change", function() {
+        let financialYear = $(this).val();
+        $.ajax({
+            method: 'GET',
+            url: '{% url 'Electricity_Cost_Form' %}', 
+            async: true,
+            data: {
+                'flag': 'get_invoice_by_year',
+                'financial_year': financialYear,
+            },
+            success: function(data) {
+                if (data) {
+                    var html = '<option value=""></option>';
+                    $(data).each(function(index, item) {
+                        let option = `<option value='${item.invoiceno}'>${item.invoiceno}</option>`;
+                        html += option; 
+                    });
+                    $("#invoice_no").html(''); 
+                    $("#invoice_no").append(html).kf_select_refresh();  
+                } else {
+                    alert("Related Data Not Found.");
+                }
+            },
+            error: function(request, error) {
+                alert("Request: " + JSON.stringify(request));
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

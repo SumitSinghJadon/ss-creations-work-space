@@ -1,0 +1,164 @@
+{% extends 'base-3.html' %}
+{% load static %}
+
+
+{% block main %}
+<div class="h-full bg-base-100 shadow-soft rounded-box overflow-hidden flex flex-col knox-table-wrapper">
+    <div class="px-3 py-2 flex justify-between items-center">
+        <div>
+            <h1 class="font-bold text-lg">Cutting History</h1>
+        </div>
+        <div class="join">
+            <a href="/entry-forms/cutting-entry/" class="btn btn-sm btn-success px-6">New Entry</a>
+
+            <input class="input input-sm input-bordered join-item knox-table-search" type="search" placeholder="Search in table" />
+
+            <select class="select select-bordered select-sm join-item kt-export">
+                <option disabled selected>Export</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+            </select>
+
+            <button class="btn btn-sm btn-primary join-item kt-export-btn">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper flex-grow overflow-auto">
+        <table class="knox-table table-sm" id="knox-table-1">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th data-sort="number">S/N</th>
+                    <th>Booking no</th>
+                    <th>Transaction no</th>
+                    <th>Buyer name</th>
+                    <th>Style no</th>
+                    <th>Sample type</th>
+                    <th>cutting type</th>
+                    <th>cutting size</th>
+                    <th>cut qty</th>
+                    <th>cutter name</th>
+                    <th>cutting date</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in cutting_trans_list %}
+                    <tr>
+                        <th class="!p-0 text-center">{{ forloop.counter }}</th>
+                        <td class="!py-0">{{ row.booking_no }}</td>
+                        <td class="!py-0">{{ row.transaction_no }}</td>
+                        <td class="!py-0">{{ row.buyer_name }}</td>
+                        <td class="!py-0">{{ row.style_no }}</td>
+                        <td class="!py-0">{{ row.sample_type }}</td>
+                        <td class="!py-0">{{ row.cutting_type }}</td>
+                        <td class="!py-0">{{ row.cutting_size }}</td>
+                        <td class="!py-0">{{ row.cut_qty }}</td>
+                        <td class="!py-0">{{ row.cutter_name }}</td>
+                        <td class="!py-0">{{ row.cutting_date }}</td>
+                    </tr>
+                    {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td class="p-0"></td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<div class="hidden">
+    <div class="w-full rounded-xl space-y-2 flex flex-col h-full">
+        <!-- Filter Bar -->
+        <div class="py-1 px-3 rounded-xl shadow-lg w-full flex justify-between items-center bg-base-100" data-aos="zoom-in">
+            <div data-aos="zoom-in">
+                <h1 class="font-semibold capitalize">Cutting Dashboard</h1>
+            </div>
+            <div data-aos="zoom-in" class="flex space-x-2">
+                <a href="/entry-forms/cutting-entry/" class="btn btn-sm btn-success px-6">Add</a>
+                <!--<button id="form-save-btn" class="btn btn-sm btn-success px-6">Save</button>-->
+            </div>
+        </div>
+    
+        <form class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-xl" method="post" data-aos="zoom-in"> {% csrf_token %}
+            <table class="!w-full table [&>*_th]:border [&>*_td]:border data-table">
+                <thead>
+                    <tr class="sticky top-0 bg-blue-300 text-slate-800">
+                        <th rowspan="2">Sr.</th>
+                        <th rowspan="2">Booking no</th>
+                        <th rowspan="2">Transaction no</th>
+                        <th rowspan="2">Buyer name</th>
+                        <th rowspan="2">Style no</th>
+                        <th rowspan="2">Sample type</th>
+                        <th rowspan="2">cutting type</th>
+                        <th rowspan="2">cutting size</th>
+                        <th rowspan="2">cut qty</th>
+                        <th rowspan="2">cutter name</th>
+                        <th rowspan="2">cutting date</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for row in cutting_trans_list %}
+                    <tr>
+                        <th class="!p-0 text-center">
+                            {{ forloop.counter }}
+                        </th>
+                        <td class="!py-0">{{ row.booking_no }}</td>
+                        <td class="!py-0">{{ row.transaction_no }}</td>
+                        <td class="!py-0">{{ row.buyer_name }}</td>
+                        <td class="!py-0">{{ row.style_no }}</td>
+                        <td class="!py-0">{{ row.sample_type }}</td>
+                        <td class="!py-0">{{ row.cutting_type }}</td>
+                        <td class="!py-0">{{ row.cutting_size }}</td>
+                        <td class="!py-0">{{ row.cut_qty }}</td>
+                        <td class="!py-0">{{ row.cutter_name }}</td>
+                        <td class="!py-0">{{ row.cutting_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!--<input type="submit" class="hidden" id="submit-btn">-->
+        </form>
+    
+        <!-- Table footer -->
+        <div data-aos="zoom-in" class="py-1 px-3 rounded-xl shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center"></div>
+    </div>
+</div>
+{% endblock main %}
+
+

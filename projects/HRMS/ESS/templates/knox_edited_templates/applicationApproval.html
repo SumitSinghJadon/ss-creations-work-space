@@ -1,0 +1,769 @@
+{% extends 'form.html' %}
+
+{% block filterRight %}
+<div class="flex">
+    {% if pending_application != 0 %}
+    <div class="flex w-full">
+        <div class="py-1 px-1">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="text" name="approve_all" value="Approve" hidden>
+                <input type="submit" name="approve_all_submit" class="btn btn-success btn-sm" value="Approve All">
+            </form>
+        </div>
+        <div class="py-1 px-1">
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="text" name="reject_all" value="Reject" hidden>
+                <input type="submit" name="reject_all_submit" class="btn btn-warning btn-sm" value="Reject All">
+            </form>
+        </div>
+    </div>
+    {% endif %}
+    
+    <form action="" method="get" class="flex items-center space-x-2">
+        <!-- Employee Name -->
+        <select name="emp_paycode" required class="select-input select-2">
+            <option value="">Employee Name</option>
+            {% for items in data %}
+                <option value="{{ items.emp_paycode }}" {% if items.emp_paycode == emp_paycode %} selected {% endif %}>({{ items.emp_paycode }})|{{ items.emp_name }}</option>
+            {% endfor %}
+        </select>
+        <select name="year" required class="select-input select-2 min-w-[100px]">
+            <option value="">Year</option>
+            {% for item in year_list %}
+                <option {% if item.name == current_year %} selected {% endif %}>{{ item.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="month" required class="select-input select-2">
+            <option value="">Month</option>
+            {% for item in month_list %}
+                <option {% if item.value == current_month %} selected {% endif %} value="{{ item.value }}">{{ item.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="select-input select-2">
+            <option value="">Status</option>
+            <option {% if status == 'Pending' %} selected {% endif %}>Pending</option>
+            <option {% if status == 'Approved' %} selected {% endif %}>Approved</option>
+            <option {% if status == 'Rejected' %} selected {% endif %}>Rejected</option>
+        </select>
+        <input type="submit" id="submit-btn" value="Search" class="btn btn-sm btn-success">
+    </form>
+</div>
+{% endblock filterRight %}
+
+
+{% block form %}
+<div class="table-wrapper w-full h-full overflow-auto">
+    <table class="table-hard data-table">
+        <thead>
+            <tr class="sticky top-0 bg-slate-300 text-black">
+                <th>Application View</th>
+                <th>Approve</th>
+                <th>Reject</th>
+                <th>Name</th>
+                <th>Application Type</th>
+                <th>Status</th>
+                <th>Approved on</th>
+                <th>Cancelled on</th>
+                <th>From</th>
+                <th>Till</th>
+                <th>No. of Days</th>
+                <th>In Time</th>
+                <th>Out Time</th>
+                <th>Half / Full Day</th>
+                <th>Leave Type</th>
+                <th>Applied On</th>
+                <th>Attachment</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in leave_data %}
+                <tr class="whitespace-nowrap">
+                    <td><button class="btn btn-xs btn-success btn-outline view" data-id="{{ item.id }}" type="button">View</button></td>
+                    <td>{% if item.status == 'Pending' %}<form method="POST" action="">{% csrf_token %}<input type="text" name="application_id" value="{{ item.id }}" hidden><input class="btn btn-xs btn-success" type="submit" name="approve" value="Approve"></form>{% endif %}</td>
+                    <td>{% if item.status == 'Pending' %}<form method="POST" action="">{% csrf_token %}<input type="text" name="application_id" value="{{ item.id }}" hidden><input class="btn btn-xs btn-warning" type="submit" name="reject" value="Reject"></form>{% endif %}</td>
+                    <td>{{ item.emp_name }}</td>
+                    <td>{{ item.application_type }}</td>
+                    <td>{{ item.status }}</td>
+                    <td>{{ item.approved_on|date:'d-m-Y H:i' }}</td>
+                    <td>{{ item.cancelled_on|date:'d-m-Y H:i' }}</td>
+                    <td>{{ item.leave_from|date:"d-m-Y" }}</td>
+                    <td>{{ item.leave_till|date:"d-m-Y" }}</td>
+                    <td>{{ item.day_count|default_if_none:'' }}</td>
+                    <td>{{ item.mis_in_time|default_if_none:'' }}</td>
+                    <td>{{ item.mis_out_time|default_if_none:'' }}</td>
+                    <td>{{ item.day_part|default_if_none:'' }}</td>
+                    <td>{{ item.leave_type|default_if_none:'' }}</td>
+                    <td>{{ item.applied_on|date:'d-m-Y' }}</td>
+                    <td>
+                        {% if item.application_type == 'Leave' and item.attachment != None %}
+                            <a class="btn btn-success btn-sm leave_attachment" href="media/{{ item.attachment }}" target="_blank">View</a>
+                            <a class="btn btn-warning btn-sm leave_attachment" href="media/{{ item.attachment }}" download>Download</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Leave Application Modal -->
+<dialog id="leave_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <div class="p2">
+            <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Leave Application Form</h1>
+            <form action="" method="POST" class="flex flex-wrap">
+                {% csrf_token %}
+                <!-- Employee Code -->
+                <input type="hidden" name="id" class="application_id"/>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Code</span>
+                        <input type="text" readonly class="text-input emp_code">
+                    </label>
+                </div>
+                <!-- Employee Name -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Name</span>
+                        <input type="text" class="text-input emp_name" readonly>
+                    </label>
+                </div>
+                <!-- Unit -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Unit</span>
+                        <input type="text" class="text-input unit" readonly>
+                    </label>
+                </div>
+                <!-- Department -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Department</span>
+                        <input type="text" class="text-input department" readonly>
+                    </label>
+                </div>
+                <!-- Reporting Manager -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Reporting Manager</span>
+                        <input type="text" class="text-input reporting_manager" readonly>
+                    </label>
+                </div>
+                <!-- Application Type -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Application Type</span>
+                        <input type="text" class="text-input application_type" readonly>
+                    </label>
+                </div>
+                <!-- Leave From -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Leave From</span>
+                        <input type="date" class="text-input leave_from" readonly>
+                    </label>
+                </div>
+                <!-- Leave Till -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Leave Till</span>
+                        <input type="date" class="text-input leave_till" readonly>
+                    </label>
+                </div>
+                <!-- Full Day/Half Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+                        <input type="text" class="text-input day_part" readonly>
+                    </label>
+                </div>
+                <!-- Leave Type -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Leave Type</span>
+                        <input type="text" class="text-input leave_type" readonly>
+                    </label>
+                </div>
+                <!-- Reason For Leave -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Reason For Leave</span>
+                        <input type="text" class="text-input reason_for_leave" readonly>
+                    </label>
+                </div>
+                <!-- Attachment -->
+                <div class="w-1/3 pt-1 attachment hidden">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Attachment</span>
+                        <div class="flex w-full py-1">
+                            <div class="py-1 px-1">
+                                <a class="btn btn-success btn-sm leave_attachment" target="_blank">View</a>
+                            </div>
+                            <div class="py-1 px-1">
+                                <a class="btn btn-warning btn-sm leave_attachment" download>Download</a>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Remarks</span>
+                        <div class="flex w-full py-1">
+                            <input type="text" class="text-input remarks" name="remarks">
+                        </div>
+                    </label>
+                </div>  
+                <div class="flex w-full">
+                    <div class="py-1 px-1">
+                        <input type="submit" name="approve_with_remarks" class="btn btn-success btn-sm approve" value="Approve">
+                    </div>
+                    <div class="py-1 px-1">
+                        <input type="submit" name="reject_with_remarks" class="btn btn-warning btn-sm reject" value="Reject">
+                    </div>
+                    <div class="py-1 ml-auto">
+                        <button class="btn btn-sm"  type="button" onclick="document.getElementById('leave_modal').close()">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</dialog>
+<!-- Miss Punch Application Modal -->
+<dialog id="miss_punch_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <div class="p2">
+            <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Miss Punch Application Form</h1>
+            <form action="" method="POST" class="flex flex-wrap">
+                {% csrf_token %}
+                <!-- Employee Code -->
+                <input type="hidden" name="id" class="application_id"/>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Code</span>
+                        <input type="text" readonly class="text-input emp_code">
+                    </label>
+                </div>
+                <!-- Employee Name -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Name</span>
+                        <input type="text" class="text-input emp_name" readonly>
+                    </label>
+                </div>
+                <!-- Unit -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Unit</span>
+                        <input type="text" class="text-input unit" readonly>
+                    </label>
+                </div>
+                <!-- Department -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Department</span>
+                        <input type="text" class="text-input department" readonly>
+                    </label>
+                </div>
+                <!-- Reporting Manager -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Reporting Manager</span>
+                        <input type="text" class="text-input reporting_manager" readonly>
+                    </label>
+                </div>
+                <!-- Application Type -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Application Type</span>
+                        <input type="text" class="text-input application_type" readonly>
+                    </label>
+                </div>
+                <!-- Miss Punch From -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Miss Punch From</span>
+                        <input type="date" class="text-input leave_from" readonly>
+                    </label>
+                </div>
+                <!-- Miss Punch Till -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Miss Punch Till</span>
+                        <input type="date" class="text-input leave_till" readonly>
+                    </label>
+                </div>
+                <!-- Full Day/Half Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+                        <input type="text" class="text-input day_part" readonly>
+                    </label>
+                </div>
+                <!-- Miss Punch In Time -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Miss Punch In</span>
+                        <input type="time" class="text-input miss_punch_in" readonly>
+                    </label>
+                </div>
+                <!-- Miss Punch In Time -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Miss Punch Out</span>
+                        <input type="time" class="text-input miss_punch_out" readonly>
+                    </label>
+                </div>
+                <!-- Reason for miss punch -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Reason For Miss Punch</span>
+                        <input type="text" class="text-input reason_for_leave" readonly>
+                    </label>
+                </div>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Remarks</span>
+                        <div class="flex w-full py-1">
+                            <input type="text" class="text-input remarks"  name="remarks">
+                        </div>
+                    </label>
+                </div>
+                <div class="flex w-full">
+                    <div class="py-1 px-1">
+                        <input type="submit" name="approve_with_remarks" class="btn btn-success btn-sm destroy_approve hidden" value="Approve">
+                    </div>
+                    <div class="py-1 px-1">
+                        <input type="submit" name="reject_with_remarks" class="btn btn-warning btn-sm destroy_reject hidden" value="Reject">
+                    </div>
+                    <div class="py-1 ml-auto">
+                        <button class="btn btn-sm" type="button" onclick="document.getElementById('miss_punch_modal').close()">Close</button>
+                    </div>
+                </div>
+                
+            </form>
+
+        </div>
+    </div>
+</dialog>
+<!-- Compoff Application Modal -->
+<dialog id="compoff_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <div class="p2">
+            <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Comp-Off Application Form</h1>
+            <form action="" method="POST" class="flex flex-wrap">
+                {% csrf_token %}
+                <!-- Employee Code -->
+                <input type="hidden" name="id" class="application_id"/>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Code</span>
+                        <input type="text" readonly class="text-input emp_code">
+                    </label>
+                </div>
+                <!-- Employee Name -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Name</span>
+                        <input type="text" class="text-input emp_name" readonly>
+                    </label>
+                </div>
+                <!-- Unit -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Unit</span>
+                        <input type="text" class="text-input unit" readonly>
+                    </label>
+                </div>
+                <!-- Department -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Department</span>
+                        <input type="text" class="text-input department" readonly>
+                    </label>
+                </div>
+                <!-- Reporting Manager -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Reporting Manager</span>
+                        <input type="text" class="text-input reporting_manager" readonly>
+                    </label>
+                </div>
+                <!-- Application Type -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Application Type</span>
+                        <input type="text" class="text-input application_type" readonly>
+                    </label>
+                </div>
+                <!-- Comp-Off Date -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Compoff Day</span>
+                        <input type="date" class="text-input leave_from" readonly>
+                    </label>
+                </div>
+                <!-- Working Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Working Day</span>
+                        <input type="text" class="text-input working_day" readonly>
+                    </label>
+                </div>
+                <!-- Full Day/Half Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+                        <input type="text" class="text-input day_part" readonly>
+                    </label>
+                </div>
+                <!-- Address During Day Period -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Address During Day Period</span>
+                        <input type="text" class="text-input address_on_leave" readonly>
+                    </label>
+                </div>
+                <!-- Mobile Number -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Mobile Number</span>
+                        <input type="text" class="text-input mobile_number" readonly>
+                    </label>
+                </div>
+                <!-- Reason for Leave -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Reason For Leave</span>
+                        <input type="text" class="text-input reason_for_leave" readonly>
+                    </label>
+                </div>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Remarks</span>
+                        <div class="flex w-full py-1">
+                            <input type="text" class="text-input remarks"  name="remarks">
+                        </div>
+                    </label>
+                </div>
+                <div class="flex w-full">
+                    <div class="py-1 px-1">
+                        <input type="submit" name="approve_with_remarks" class="btn btn-success btn-sm destroy_approve hidden" value="Approve">
+                    </div>
+                    <div class="py-1 px-1">
+                        <input type="submit" name="reject_with_remarks" class="btn btn-warning btn-sm destroy_reject hidden" value="Reject">
+                    </div>
+                    <div class="py-1 ml-auto">
+                        <button class="btn btn-sm"  type="button" onclick="document.getElementById('compoff_modal').close()">Close</button>
+                    </div>
+                </div>
+                
+            </form>
+
+        </div>
+    </div>
+</dialog>
+<!-- WFH Application Modal -->
+<dialog id="wfh_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <div class="p2">
+            <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">WFH Application Form</h1>
+            <form action="" method="POST" class="flex flex-wrap">
+                {% csrf_token %}
+                <!-- Employee Code -->
+                <input type="hidden" name="id" class="application_id"/>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Code</span>
+                        <input type="text" readonly class="text-input emp_code">
+                    </label>
+                </div>
+                <!-- Employee Name -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Name</span>
+                        <input type="text" class="text-input emp_name" readonly>
+                    </label>
+                </div>
+                <!-- Unit -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Unit</span>
+                        <input type="text" class="text-input unit" readonly>
+                    </label>
+                </div>
+                <!-- Department -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Department</span>
+                        <input type="text" class="text-input department" readonly>
+                    </label>
+                </div>
+                <!-- Reporting Manager -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Reporting Manager</span>
+                        <input type="text" class="text-input reporting_manager" readonly>
+                    </label>
+                </div>
+                <!-- Application Type -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Application Type</span>
+                        <input type="text" class="text-input application_type" readonly>
+                    </label>
+                </div>
+                <!-- Comp-Off Date -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">WFH From</span>
+                        <input type="date" class="text-input leave_from" readonly>
+                    </label>
+                </div>
+                <!-- Working Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">WFH Till</span>
+                        <input type="text" class="text-input leave_till" readonly>
+                    </label>
+                </div>
+                <!-- Full Day/Half Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+                        <input type="text" class="text-input day_part" readonly>
+                    </label>
+                </div>
+                <!-- Address During Day Period -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Visit Location Type(Internal Visit Not )</span>
+                        <input type="text" class="text-input visit_location_type" readonly>
+                    </label>
+                </div>
+                <!-- Mobile Number -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Visit Location</span>
+                        <input type="text" class="text-input visit_location" readonly>
+                    </label>
+                </div>
+                <!-- Reason for Leave -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Purpose of Visit</span>
+                        <input type="text" class="text-input purpose_of_visit" readonly>
+                    </label>
+                </div>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Remarks</span>
+                        <div class="flex w-full py-1">
+                            <input type="text" class="text-input remarks" name="remarks">
+                        </div>
+                    </label>
+                </div>
+                <div class="flex w-full">
+                    <div class="py-1 px-1">
+                        <input type="submit" name="approve_with_remarks" class="btn btn-success btn-sm destroy_approve hidden" value="Approve">
+                    </div>
+                    <div class="py-1 px-1">
+                        <input type="submit" name="reject_with_remarks" class="btn btn-warning btn-sm destroy_reject hidden" value="Reject">
+                    </div>
+                    <div class="py-1 ml-auto">
+                        <button class="btn btn-sm"  type="button" onclick="document.getElementById('wfh_modal').close()">Close</button>
+                    </div>
+                </div>
+                
+            </form>
+
+        </div>
+    </div>
+</dialog>
+<!-- OD Application Modal -->
+<dialog id="od_modal" class="modal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <div class="p2">
+            <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">On Duty Application Form</h1>
+            <form action="" method="POST" class="flex flex-wrap">
+                {% csrf_token %}
+                <!-- Employee Code -->
+                <input type="hidden" name="id" class="application_id"/>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Code</span>
+                        <input type="text" readonly class="text-input emp_code">
+                    </label>
+                </div>
+                <!-- Employee Name -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Employee Name</span>
+                        <input type="text" class="text-input emp_name" readonly>
+                    </label>
+                </div>
+                <!-- Unit -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Unit</span>
+                        <input type="text" class="text-input unit" readonly>
+                    </label>
+                </div>
+                <!-- Department -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Department</span>
+                        <input type="text" class="text-input department" readonly>
+                    </label>
+                </div>
+                <!-- Reporting Manager -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Reporting Manager</span>
+                        <input type="text" class="text-input reporting_manager" readonly>
+                    </label>
+                </div>
+                <!-- Application Type -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Application Type</span>
+                        <input type="text" class="text-input application_type" readonly>
+                    </label>
+                </div>
+                <!-- Comp-Off Date -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">OD From</span>
+                        <input type="date" class="text-input leave_from" readonly>
+                    </label>
+                </div>
+                <!-- Working Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">OD Till</span>
+                        <input type="text" class="text-input leave_till" readonly>
+                    </label>
+                </div>
+                <!-- Full Day/Half Day -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+                        <input type="text" class="text-input day_part" readonly>
+                    </label>
+                </div>
+                <!-- Address During Day Period -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Visit Location Type(Internal Visit Not )</span>
+                        <input type="text" class="text-input visit_location_type" readonly>
+                    </label>
+                </div>
+                <!-- Mobile Number -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Visit Location</span>
+                        <input type="text" class="text-input visit_location" readonly>
+                    </label>
+                </div>
+                <!-- Reason for Leave -->
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Purpose of Visit</span>
+                        <input type="text" class="text-input purpose_of_visit" readonly>
+                    </label>
+                </div>
+                <div class="w-1/3 pt-1">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Remarks</span>
+                        <div class="flex w-full py-1">
+                            <input type="text" class="text-input remarks"  name="remarks">
+                        </div>
+                    </label>
+                </div>
+                <div class="flex w-full">
+                    <div class="py-1 px-1">
+                        <input type="submit" name="approve_with_remarks" class="btn btn-success btn-sm destroy_approve hidden" value="Approve">
+                    </div>
+                    <div class="py-1 px-1">
+                        <input type="submit" name="reject_with_remarks" class="btn btn-warning btn-sm destroy_reject hidden" value="Reject">
+                    </div>
+                    <div class="py-1 ml-auto">
+                        <button class="btn btn-sm"  type="button" onclick="document.getElementById('od_modal').close()">Close</button>
+                    </div>
+                </div>
+                
+            </form>
+
+        </div>
+    </div>
+</dialog>
+<script>
+    $(document).ready(function(){
+        $(".view").on("click",function(){
+        id=$(this).data("id")
+        
+        $.ajax({
+            url: "../get/leave/details",
+            type: "GET",
+            data: {"id":id},
+            success: function(response) {
+                console.log(response)
+                $(".application_id").val(response[0]["id"])
+                $(".emp_code").val(response[0]["emp_paycode"])
+                $(".emp_name").val(response[0]["emp_name"])
+                $(".unit").val(response[0]["unit"])
+                $(".department").val(response[0]["dep"])
+                $(".reporting_manager").val(response[0]["reporting_manager"])
+                $(".application_type").val(response[0]["application_type"])
+                $(".leave_type").val(response[0]["leave_type"])
+                $(".leave_from").val(response[0]["leave_from"])
+                $(".leave_till").val(response[0]["leave_till"])
+                $(".working_day").val(response[0]["working_day"])
+                $(".day_part").val(response[0]["day_part"])
+                $(".day_count").val(response[0]["day_count"])
+                $(".miss_punch_in").val(response[0]["mis_in_time"])
+                $(".miss_punch_out").val(response[0]["mis_out_time"])
+                $(".reason_for_leave").val(response[0]["reason_for_leave"])
+                $(".address_on_leave").val(response[0]["address_on_leave"])
+                $(".mobile_number").val(response[0]["mobile_number"])
+                $(".visit_location_type").val(response[0]["visit_location_type"])
+                $(".visit_location").val(response[0]["visit_location"])
+                $(".purpose_of_visit").val(response[0]["purpose_of_visit"])
+                $(".status").val(response[0]["status"])
+                $(".remarks").val(response[0]["approval_remarks"])
+                $(".applied_on").val(response[0]["applied_on"])
+                $(".cancelled_on").val(response[0]["cancelled_on"])
+                $(".approved_on").val(response[0]["approved_on"])
+                $(".leave_attachment").attr("href",'media/'+response[0]["attachment"])
+                if(response[0]["attachment"]!=null)$('.attachment').removeClass('hidden')
+                if(response[0]["status"]=='Pending')
+                {
+                    $('.destroy_approve').removeClass('hidden')
+                    $(".destroy_reject").removeClass('hidden')
+                }
+                else
+                {
+                    $('.destroy_approve').addClass('hidden')
+                    $(".destroy_reject").addClass('hidden')   
+                }
+                if(response["0"]["application_type"]=="Miss Punch")
+                    document.getElementById("miss_punch_modal").showModal()
+                else if(response["0"]["application_type"]=="Leave")
+                    document.getElementById("leave_modal").showModal()
+                else if(response["0"]["application_type"]=="Comp-off")
+                    document.getElementById("compoff_modal").showModal()
+                else if(response["0"]["application_type"]=="OD")
+                    document.getElementById("od_modal").showModal()
+                else if(response["0"]["application_type"]=="WFH")
+                    document.getElementById("wfh_modal").showModal()
+            },
+            error: function(xhr, status, error) {
+                // Handle error response
+                console.error(xhr.responseText);
+            }
+        });
+    })
+    })
+</script>
+{% endblock form %}

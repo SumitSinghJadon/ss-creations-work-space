@@ -1,0 +1,33 @@
+{% extends 'table.html' %}
+
+<html lang="en" data-theme="{% block theme %}light{% endblock theme %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntteliSync</title>
+</head>
+<body>
+    {% block thead %}
+<tr>
+    <th class="dt-nosearchable">Sr.No</th>
+    <th>Sizecol</th>
+    <th>Sizeval</th>
+    <th>sizetype</th>
+    <th>SizeNo.</th>
+</tr>
+{% endblock thead %}
+
+{% block tbody %}
+    {% for item in data%}
+    <tr>
+        <th title="{{ item.code }}">{{ forloop.counter }}</th>
+        <td>{{ item.sizetype }}</td>
+        <td>{{ item.sizecol }}</td>
+        <td>{{ item.sizeval }}</td>
+        <td>{{ item.styleno }}</td>
+    </tr>
+    {% endfor %}
+{% endblock tbody %}
+</body>
+</html>
+

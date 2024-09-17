@@ -1,0 +1,70 @@
+<div class="fixed bottom-4 right-4 w-full max-w-xs space-y-2 alert-main-wrapper hidden">
+    <div class="bg-info rounded-lg w-full max-w-xs alert-wrapper">
+        <div class="p-2 font-bold flex items-center">
+            <i class="fa-solid fa-circle-info"></i>
+            <span class="flex-grow px-2">INFORMATION</span>
+            <span class="btn btn-circle btn-xs alert-close-btn">
+                <i class="fa-regular fa-xmark"></i>
+            </span>
+        </div>
+        <div class="bg-base-100/50 p-2">
+            Lorem ipsum dolor sit amet.
+        </div>
+    </div>
+    <div class="bg-success rounded-lg w-full max-w-xs alert-wrapper">
+        <div class="p-2 font-bold flex items-center">
+            <i class="fa-solid fa-circle-check"></i>
+            <span class="flex-grow px-2">SUCCESS</span>
+            <span class="btn btn-circle btn-xs alert-close-btn">
+                <i class="fa-regular fa-xmark"></i>
+            </span>
+        </div>
+        <div class="bg-base-100/50 p-2">
+            Lorem ipsum dolor sit amet.
+        </div>
+    </div>
+    <div class="bg-warning rounded-lg w-full max-w-xs alert-wrapper">
+        <div class="p-2 font-bold flex items-center">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span class="flex-grow px-2">WARNING</span>
+            <span class="btn btn-circle btn-xs alert-close-btn">
+                <i class="fa-regular fa-xmark"></i>
+            </span>
+        </div>
+        <div class="bg-base-100/50 p-2">
+            Lorem ipsum dolor sit amet.
+        </div>
+    </div>
+    <div class="bg-error rounded-lg w-full max-w-xs alert-wrapper">
+        <div class="p-2 font-bold text-white flex items-center">
+            <i class="fa-solid fa-square-exclamation"></i>
+            <span class="flex-grow px-2">ERROR</span>
+            <span class="btn btn-circle btn-xs alert-close-btn">
+                <i class="fa-regular fa-xmark"></i>
+            </span>
+        </div>
+        <div class="bg-base-100/50 p-2">
+            Lorem ipsum dolor sit amet.
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $(".alert-close-btn").on("click", function() {$(this).closest(".alert-wrapper").slideUp();});
+
+            // Function to slide up Alert Wrapper
+            let timeoutId = setTimeout(() => {
+                $(".alert-wrapper").slideUp();
+            }, 5000);
+
+            // Set initial timeout
+            setTimeout(() => { clearTimeout(timeoutId); }, 8000);
+
+            // Hover event for .alert-main-wrapper
+            $(".alert-main-wrapper").hover(
+                function() { clearTimeout(timeoutId); },
+                function() { timeoutId = setTimeout(() => { $(".alert-wrapper").slideUp(); }, 5000); }
+            );
+        });
+    </script>
+</div>

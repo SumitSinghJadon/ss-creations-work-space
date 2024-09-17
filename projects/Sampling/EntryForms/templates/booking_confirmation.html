@@ -1,0 +1,300 @@
+{% extends 'form.html' %}
+{% load static %}
+
+
+{% block form %}
+<div class="overflow-auto">
+    <form method="POST" class="flex flex-wrap"> {% csrf_token %}
+        <!-- Read Only Fields -->
+        <div class="flex flex-wrap w-full items-end">
+            <!-- Booking No -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Booking No.</span>
+                    <input readonly type="text" value="{{ mt_data.booking_no|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+            
+            <!-- Booking Type -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Booking Type</span>
+                    <input readonly type="text" value="{{ mt_data.get_booking_type_display|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Merchant Group -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Merchant Group</span>
+                    <input readonly type="text" value="{{ mt_data.merchant_head|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Merchant Name -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Merchant Name</span>
+                    <input readonly type="text" value="{{ mt_data.merchant_name|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Sample Type -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Sample Type</span>
+                    <input readonly type="text" value="{{ mt_data.sample_type|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Buyer Name -->
+            <div class="w-1/2 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Buyer Name</span>
+                    <input readonly type="text" value="{{ mt_data.buyer_name|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Style Name -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Style Name</span>
+                    <input readonly type="text" value="{{ mt_data.style_no|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Session & Session Year -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Session & Session Year</span>
+                    <input readonly type="text" value="{{ mt_data.season }} - {{ mt_data.season_year }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Sizes -->
+            <div class="w-1/2 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Sizes, Color [ QTY ]</span>
+                    <input readonly type="text" value="{% for sq in mt_data.samplesizequantity_set.all %}( {{ sq.size }} , {{ sq.color }}  [ {{ sq.quantity }} ] ), {% endfor %}" required class="text-input">
+                </label>
+            </div>
+            
+            <!-- Quantity -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Total Quantity</span>
+                    <input readonly type="text" value="{{ mt_data.total_qty|default_if_none:'' }}" required class="text-input">
+                </label>
+            </div>
+            
+            <!-- Booked Date -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Booked Date</span>
+                    <input readonly type="text" value="{{ mt_data.booking_date|date:'d-m-Y h:i A' }}" required class="text-input">
+                </label>
+            </div>
+        
+            <!-- Target Date -->
+            <div class="w-1/4 pt-1">
+                <label class="float-input-label floated-label">
+                    <span class="label-text">Target Date</span>
+                    <input readonly type="text" value="{{ mt_data.target_date|date:'d-m-Y h:i A' }}" required class="text-input">
+                </label>
+            </div>
+
+            <!-- File Status -->
+            <div class="px-2 pb-3">
+                <div class="join w-full">
+                    <span class="join-item btn btn-sm btn-neutral">File Received {{ mt_data.file_status }}</span>
+                    <input class="join-item file-status btn btn-sm checked:!text-black checked:!border-success checked:!bg-success" {% if mt_data.file_status == 'Y' %} checked {% endif %} type="radio" name="file_status" value='Y' aria-label="Yes" />
+                    <input class="join-item file-status btn btn-sm checked:!text-black checked:!border-error checked:!bg-error" type="radio" {% if mt_data.file_status != 'Y' %} checked {% endif %} name="file_status" value='N' aria-label="No" />
+                    <input type="datetime-local" class="join-item file-received-date input input-bordered input-sm w-full" max="{{ mt_data.target_date|date:'Y-m-d\TH:i' }}" min="{{ mt_data.booking_date|date:'Y-m-d\TH:i' }}" value="{{mt_data.file_rcv_date|date:'Y-m-d\TH:i' }}" name="file_rcv_date">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Article Details -->
+        <div class="w-full px-6 article-details {% if mt_data.file_status != 'Y' %} hidden {% endif %}">
+            <div class="divider w-full">Article Details</div>
+            <table id="size-wise-table" class="table table-bordered w-full">
+                <thead>
+                    <tr class="sticky top-0">
+                        <th rowspan="2">Sr.</th>
+                        <th class="!p-2">Given By Merchant</th>
+                        <th rowspan="2">Article Name</th>
+                        <th rowspan="2">Details</th>
+                        <th rowspan="2">Comment</th>
+                        <th rowspan="2">EXPECTED DATE <br> (If not given)</th>
+                        <th class="!p-2">Confirm By In-Charge</th>
+                        <th rowspan="2">Received Date</th>
+                    </tr>
+                    <tr class="sticky top-8">
+                        <th class="!p-0.5">
+                            <div class="w-full flex justify-around">
+                                <div class="btn btn-circle btn-warning btn-xs">NA</div>
+                                <div class="btn btn-circle btn-primary btn-xs">PA</div>
+                                <div class="btn btn-circle btn-error btn-xs"><i class="fa-solid fa-xmark"></i>
+                                </div>
+                                <div class="btn btn-circle btn-success btn-xs"><i class="fa-solid fa-check"></i>
+                                </div>
+                            </div>
+                        </th>
+                        <th class="!p-0.5">
+                            <div class="w-full flex justify-around">
+                                <div class="btn btn-circle btn-warning btn-xs">NA</div>
+                                <div class="btn btn-circle btn-primary btn-xs">PA</div>
+                                <div class="btn btn-circle btn-error btn-xs"><i class="fa-solid fa-xmark"></i>
+                                </div>
+                                <div class="btn btn-circle btn-success btn-xs"><i class="fa-solid fa-check"></i>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+    
+                <tbody class="z-0">
+                    {% for article in mt_data.samplearticledetails_set.all %}
+                    <tr>
+                        <th class="!p-0.5 text-center">{{ forloop.counter }}</th>
+                        <td class="!p-0.5">
+                            <div class="w-full flex justify-around space-x-1 pointer-events-none">
+                                <input readonly name="given_by_merchant_{{ forloop.counter }}" value="na"  type="radio" class="!radio !radio-warning at-gbm at-na" checked>
+                                <input readonly name="given_by_merchant_{{ forloop.counter }}" value="pa"  type="radio" class="!radio !radio-primary at-gbm at-pa" {% if article.given_by_merchant == 'pa' %} checked {% endif %}>
+                                <input readonly name="given_by_merchant_{{ forloop.counter }}" value="no"  type="radio" class="!radio !radio-error at-gbm at-no" {% if article.given_by_merchant == 'no' %} checked {% endif %}>
+                                <input readonly name="given_by_merchant_{{ forloop.counter }}" value="yes" type="radio" class="!radio !radio-success at-gbm at-yes" {% if article.given_by_merchant == 'yes' %} checked {% endif %}>
+                            </div>
+                        </td>
+                        <td class="!p-0.5">
+                            <span>{{ article.name }} {{ article.article }}</span>
+                            <input type="text" hidden name="article_id_{{ forloop.counter }}" value="{{ article.id }}" class="article">
+                        </td>
+                        <td class="!p-0.5">
+                            {{ article.details|default_if_none:'' }}
+                        </td>
+                        <td class="!p-0.5">
+                            {{ article.comment|default_if_none:'' }}
+                        </td>
+                        <td class="!p-0.5">
+                            {{ article.expected_date|date:'d-m-Y H:i' }}
+                        </td>
+                        <td class="!p-0.5">
+                            <div class="w-full flex justify-around space-x-1">
+                                <input name="received_by_ic_{{ forloop.counter }}" value="na"  type="radio" class="!radio !radio-warning at-gbm at-na" checked>
+                                {% if mt_data.file_status == 'yes' %}
+                                <input name="received_by_ic_{{ forloop.counter }}" value="pa"  type="radio" class="!radio !radio-primary at-gbm at-pa" {% if article.confirm_by_inchanrge == 'pa' %} checked {% endif %}>
+                                <input name="received_by_ic_{{ forloop.counter }}" value="no"  type="radio" class="!radio !radio-error at-gbm at-no" {% if article.confirm_by_inchanrge == 'no' %} checked {% endif %}>
+                                <input name="received_by_ic_{{ forloop.counter }}" value="yes" type="radio" class="!radio !radio-success at-gbm at-yes" {% if article.confirm_by_inchanrge == 'yes' %} checked {% endif %}>
+                                {% else %}
+                                <input name="received_by_ic_{{ forloop.counter }}" value="pa"  type="radio" class="!radio !radio-primary at-gbm at-pa" {% if article.given_by_merchant == 'pa' %} checked {% endif %}>
+                                <input name="received_by_ic_{{ forloop.counter }}" value="no"  type="radio" class="!radio !radio-error at-gbm at-no" {% if article.given_by_merchant == 'no' %} checked {% endif %}>
+                                <input name="received_by_ic_{{ forloop.counter }}" value="yes" type="radio" class="!radio !radio-success at-gbm at-yes" {% if article.given_by_merchant == 'yes' %} checked {% endif %}>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="!p-0.5">
+                            {% if article.given_by_merchant == 'pa' or article.given_by_merchant == 'no' %}
+                            <input type="datetime-local" value="{{ article.received_date|date:'Y-m-d\TH:i' }}" min="{{ row.booking_date|date:'Y-m-d\TH:i' }}" name="received_date_{{ forloop.counter }}" class="input input-xs input-bordered received_date">
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <input type="hidden" name="article_counter" value="{{ forloop.counter }}">
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="space-y-3 w-full py-6">
+                <!-- Article Status -->
+                <div class="w-full">
+                    <div class="join w-full border">
+                        <span class="join-item btn btn-sm btn-neutral w-[120px]">Article Status</span>
+                        <input class="join-item article-status btn btn-sm w-[75px] checked:!text-black checked:!border-success checked:!bg-success" {% if mt_data.material_status == 'confirm' %} checked {% endif %} value="confirm" type="radio" name="article_status" aria-label="Confirm" />
+                        <input class="join-item article-status btn btn-sm w-[75px] checked:!text-black checked:!border-warning checked:!bg-warning" {% if mt_data.material_status == 'hold' %} checked {% endif %} value="hold" type="radio" name="article_status" aria-label="Hold" />
+                        <input class="join-item article-status btn btn-sm w-[75px] checked:!text-black checked:!border-error checked:!bg-error" {% if mt_data.material_status == 'reject' %} checked {% endif %} value="reject" type="radio" name="article_status" aria-label="Reject" />
+                        <input class="join-item article-hold-reason input input-sm input-bordered w-full {% if mt_data.material_status != 'hold' %}hidden{% endif %}" name="article_hold_reason" type="text" value="{{ mt_data.hold_reason|default_if_none:'' }}" placeholder="Hold Reason">
+                        <input class="join-item article-reject-reason input input-sm input-bordered w-full {% if mt_data.material_status != 'reject' %}hidden{% endif %}" name="article_reject_reason" type="text" value="{{ mt_data.hold_reason|default_if_none:'' }}" placeholder="Reject Reason">
+                    </div>
+                </div>
+                <!-- Booking Status -->
+                <div class="w-full booking-status-wrapper {% if mt_data.material_status != 'confirm' %} hidden {% endif %}">
+                    <div class="join w-full border">
+                        <span class="join-item btn btn-sm btn-neutral">Booking Status</span>
+                        <input class="join-item booking-status btn btn-sm w-[75px] checked:!text-black checked:!border-success checked:!bg-success" {% if mt_data.booking_status == 'confirm' %} checked {% endif %} value="confirm" type="radio" name="booking_status" aria-label="Confirm" />
+                        <input class="join-item booking-status btn btn-sm w-[75px] checked:!text-black checked:!border-warning checked:!bg-warning" {% if mt_data.booking_status == 'hold' %} checked {% endif %} value="hold" type="radio" name="booking_status" aria-label="Hold" />
+                        <input class="join-item booking-status btn btn-sm w-[75px] checked:!text-black checked:!border-error checked:!bg-error" {% if mt_data.booking_status == 'cancelled' %} checked {% endif %} value="cancelled" type="radio" name="booking_status" aria-label="Cancelled" />
+                        <input class="join-item booking-hold-reason input input-sm input-bordered w-full {% if mt_data.booking_status != 'hold' %}hidden{% endif %}" name="booking_hold_reason" type="text" value="{{ mt_data.booking_hold_reason|default_if_none:'' }}" placeholder="Hold Reason">
+                        <input class="join-item booking-cancelled-reason input input-sm input-bordered w-full {% if mt_data.booking_status != 'cancelled' %}hidden{% endif %}" name="booking_cancelled_reason" type="text" value="{{ mt_data.booking_cancelled_reason|default_if_none:'' }}" placeholder="Cancelled Reason">
+                    </div>
+                </div>
+                <!-- Remarks -->
+                <div class="w-full pt-1">
+                    <label class="float-input-label {% if mt_data.remarks %} floated-label {% endif %}">
+                        <span class="label-text">Remarks</span>
+                        <input type="text" class="text-input" value="{{ mt_data.remarks }}" name="remarks">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <input type="submit" id="submit-btn" hidden>
+    </form>
+</div>
+{% endblock form %}
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $(".article-status").on("change", function(){
+            let status = $(this).val()
+
+            if (status == 'confirm') {
+                $(".booking-status-wrapper").show()
+                $(".article-hold-reason, .article-reject-reason").hide().removeAttr('required').val('')
+            } else if (status == 'hold') {
+                $(".booking-status-wrapper").hide()
+                $(".article-hold-reason").show().attr('required', true)
+                $('.article-reject-reason').hide().removeAttr('required').val('')
+            } else if (status == 'reject') {
+                $(".booking-status-wrapper").hide()
+                $(".article-hold-reason").hide().removeAttr('required')
+                $('.article-reject-reason').show().attr('required', true).val('')
+            } else {
+                $(".booking-status-wrapper").hide()
+                alert("Invalid Input...")
+            }
+        })
+    
+        $(".booking-status").on("change", function(){
+            let status = $(this).val()
+
+            if (status == 'confirm') {
+                $(".booking-hold-reason, .booking-cancelled-reason").hide().removeAttr('required').val('')
+            } else if (status == 'hold') {
+                $(".booking-hold-reason").show().attr('required', true)
+                $('.booking-cancelled-reason').hide().removeAttr('required').val('')
+            } else if (status == 'cancelled') {
+                $(".booking-hold-reason").hide().removeAttr('required')
+                $('.booking-cancelled-reason').show().attr('required', true).val('')
+            } else {
+                alert("Invalid Input...")
+            }
+        })
+    
+        $(".file-status").on("change", function(){
+            let status = $(this).val();
+            
+            if (status == 'Y') {
+                $(".article-details").show();
+                $(".file-received-date").attr('required', true);
+            } else {
+                $(".article-details").hide();
+                $(".file-received-date").removeAttr('required');
+            }
+        })
+
+    })
+</script>
+{% endblock script %}
+
+

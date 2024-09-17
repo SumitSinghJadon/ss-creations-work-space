@@ -1,0 +1,31 @@
+{% load static %}
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IntelliSYNC</title>
+
+<link rel="stylesheet" href="{% static 'knox/css/main.css' %}">
+<link rel="stylesheet" href="{% static 'knox/lib/font-awesome/css/all.css' %}">
+<link rel="stylesheet" href="./static/lib/flat-picker/main.css">
+
+<script src="{% static 'knox/lib/jquery/jquery.js' %}"></script>
+<script src="{% static 'knox/lib/flat-picker/main.js' %}"></script>
+<script src="{% static 'knox/lib/jquery/pluging/xlsx.full.min.js' %}"></script>
+<script src="{% static 'knox/lib/jquery/pluging/file_server.min.js' %}"></script>
+<script src="{% static 'knox/lib/other/html2pdf.js' %}"></script>
+
+<!-- PWA Links -->
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'knox/images/logo/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'knox/images/logo/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'knox/images/logo/favicon-16x16.png' %}">
+<link rel="manifest" href="{% static 'knox/site.webmanifest' %}">
+
+<script src="{% static 'knox/js/knox-table.js' %}"></script>
+<script src="{% static 'knox/js/knox-input.js' %}"></script>
+
+<style>
+    ::-webkit-scrollbar {width: 10px;}
+    ::-webkit-scrollbar-track {width: 10px;}
+    ::-webkit-scrollbar-thumb {background: linear-gradient(#6366f1, #7e22ce); border-radius: 3px;}
+    ::-webkit-scrollbar-thumb:hover {background: linear-gradient(#7e22ce, #6366f1);}
+</style>

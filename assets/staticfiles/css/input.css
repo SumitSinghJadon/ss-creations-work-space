@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .btn { @apply normal-case no-animation; }
+    .ip-btn {
+        @apply btn btn-sm h-auto py-2.5;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar-track { 
+        width: 20px;
+        height: 20px;
+    }
+    ::-webkit-scrollbar-thumb {
+        width: 10px;
+        height: 10px;
+        background-color: #bebeca;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background-color: #636399; }
+    ::-webkit-scrollbar { 
+        @apply w-2 h-2; 
+    }
+    /* // Scrollbar */
+
+    /* Simple Table */
+    .table-hard {
+        @apply !w-full table table-sm [&>*_th]:border [&>*_td]:border;
+    }
+    .table-wrapper {
+        @apply border border-gray-300 p-0 h-full w-full overflow-auto bg-base-100 rounded-xl;
+    }
+    .table-bordered {
+        @apply w-full [&>*_td]:border [&>*_td]:border-gray-300 [&>thead_th]:!text-black 
+        [&>_thead_tr]:bg-slate-200 [&>*_th]:border [&>*_th]:border-gray-300 [&>thead_th]:text-center;
+    }
+    .table input[type='text'], .table input[type='number'] {
+        @apply input rounded-none focus:outline-none focus:border-primary w-full;
+    }
+    .table select {
+        @apply select rounded-none focus:outline-none focus:border-primary w-full;
+    }
+
+    /* Data Table pagination Buttons */
+    .dataTables_paginate { @apply space-x-1; }
+    .dataTables_paginate a {
+        @apply btn btn-xs btn-outline btn-neutral;
+    }
+    .dataTables_paginate .current { @apply btn-active btn-neutral; }
+    .dataTables_paginate span { @apply space-x-1; }
+    
+    /* ----------- [ Form Design ] ----------- */
+    /* Float Input level design */
+    .floated-label .label-text{
+        @apply -top-0.5 text-xs !text-primary;
+    }
+    .float-input-label {
+        @apply label flex-col items-start justify-center relative [&>*]:duration-100;   
+    }
+    .float-input-label .label-text {
+        @apply absolute left-3 bg-base-100 px-1 font-semibold text-slate-600 cursor-text;
+    }
+    .float-input-label .text-input, 
+    .float-input-label .number-input {
+        @apply input input-sm input-bordered w-full pt-1 h-auto rounded-lg;
+    }
+    .float-input-label .select-input {
+        @apply select select-sm select-bordered w-full pt-1 h-auto;
+    }
+
+    /* Checkbox input */
+    .checkbox-input-label {
+        @apply label relative [&>*]:duration-100 mt-2 mb-2 border rounded-lg py-1 border-gray-300 cursor-pointer px-4;
+    }
+    .checkbox-input-label{
+        @apply bg-base-100 px-1 font-semibold text-slate-600;
+    }
+    .checkbox-input-label input {
+        @apply checkbox checkbox-sm;
+    }
+    /* Textarea */
+    .textarea-input {
+        @apply textarea textarea-bordered w-full pt-1 h-auto rounded-lg;
+    }
+    /* // Float Input level design */
+
+    /* Extra classes */
+    .all-center {
+        @apply flex items-center justify-center;
+    }
+
+    /* select 2 reset style */
+    
+}

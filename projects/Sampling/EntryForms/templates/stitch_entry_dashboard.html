@@ -1,0 +1,220 @@
+{% extends 'base-3.html' %}
+{% load static %}
+
+
+{% block main %}
+<div class="h-full bg-base-100 shadow-soft rounded-box overflow-hidden flex flex-col knox-table-wrapper">
+    <div class="px-3 py-2 flex justify-between items-center">
+        <div>
+            <h1 class="font-bold text-lg">Stitch History</h1>
+        </div>
+        <div class="join">
+            <a href="/entry-forms/stitching-transaction-entry/" class="btn btn-sm btn-success px-6">New Entry</a>
+
+            <input class="input input-sm input-bordered join-item knox-table-search" type="search" placeholder="Search in table" />
+
+            <select class="select select-bordered select-sm join-item kt-export">
+                <option disabled selected>Export</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+            </select>
+
+            <button class="btn btn-sm btn-primary join-item kt-export-btn">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper flex-grow overflow-auto">
+        <table class="knox-table table-sm" id="knox-table-1">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th>Sr.</th>
+                    <th>Booking no</th>
+                    <th>Transaction no</th>
+                    <th>Buyer name</th>
+                    <th>Style no</th>
+                    <th>Sample type</th>
+                    <th>Stitching type</th>
+                    <th>Stitching size</th>
+                    <th>Stitching qty</th>
+                    <th>Tailor name</th>
+                    <th>Supervisor name</th>
+                    <th>Checker name</th>
+                    <th>Stitching Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in stitch_trans_list %}
+                    <tr>
+                        <th class="!p-0 text-center">{{ forloop.counter }}</th>
+                        <td class="!py-0">{{ row.booking_no }}</td>
+                        <td class="!py-0">{{ row.transaction_no }}</td>
+                        <td class="!py-0">{{ row.buyer_name }}</td>
+                        <td class="!py-0">{{ row.style_no }}</td>
+                        <td class="!py-0">{{ row.sample_type }}</td>
+                        <td class="!py-0">{{ row.stitch_type }}</td>
+                        <td class="!py-0">{{ row.stitch_size }}</td>
+                        <td class="!py-0">{{ row.stitch_qty }}</td>
+                        <td class="!py-0">{{ row.tailor_name }}</td>
+                        <td class="!py-0">{{ row.supervisor_name }}</td>
+                        <td class="!py-0">{{ row.checker_name }}</td>
+                        <td class="!py-0">{{ row.stitch_date }}</td>
+                        <td>
+                            {% if row.audit_count == 0 %}
+                            <span class='btn btn-primary btn-sm' onclick="window.open('/entry-forms/stitching-defects/?trans_id={{ row.trans_id }}','popUpWindow','height=500,width=950,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,titlebar=no,menubar=no, status=yes');">
+                                CHECK AUDIT
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td class="p-0"></td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0">
+                        <input type="text" class="kt-col-search !imput-sm bg-base-200 w-full h-full p-2" placeholder="Search...">
+                    </td>
+                    <td class="p-0"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<div class="hidden">
+    <div class="w-full rounded-xl space-y-2 flex flex-col h-full">
+        <!-- Filter Bar -->
+        <div class="py-1 px-3 rounded-xl shadow-lg w-full flex justify-between items-center bg-base-100" data-aos="zoom-in">
+            <div data-aos="zoom-in">
+                <h1 class="font-semibold capitalize">Stitching Dashboard</h1>
+            </div>
+            <div data-aos="zoom-in" class="flex space-x-2">
+                <a href="/entry-forms/stitching-transaction-entry/" class="btn btn-sm btn-success px-6">Add</a>
+            </div>
+        </div>
+    
+        <form class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-xl" method="post" data-aos="zoom-in"> {% csrf_token %}
+            <table class="!w-full table [&>*_th]:border [&>*_td]:border data-table">
+                <thead>
+                    <tr class="sticky top-0 bg-blue-300 text-slate-800">
+                        <th rowspan="2">Sr.</th>
+                        <th rowspan="2">Booking no</th>
+                        <th rowspan="2">Transaction no</th>
+                        <th rowspan="2">Buyer name</th>
+                        <th rowspan="2">Style no</th>
+                        <th rowspan="2">Sample type</th>
+                        <th rowspan="2">Stitching type</th>
+                        <th rowspan="2">Stitching size</th>
+                        <th rowspan="2">Stitching qty</th>
+                        <th rowspan="2">Tailor name</th>
+                        <th rowspan="2">Supervisor name</th>
+                        <th rowspan="2">Checker name</th>
+                        <th rowspan="2">Stitching Date</th>
+                        <th rowspan="2">Action</th>
+                    </tr>
+                </thead>
+    
+                <tbody>
+                    {% for row in stitch_trans_list %}
+                    <tr>
+                        <th class="!p-0 text-center">{{ forloop.counter }}</th>
+                        <td class="!py-0">{{ row.booking_no }}</td>
+                        <td class="!py-0">{{ row.transaction_no }}</td>
+                        <td class="!py-0">{{ row.buyer_name }}</td>
+                        <td class="!py-0">{{ row.style_no }}</td>
+                        <td class="!py-0">{{ row.sample_type }}</td>
+                        <td class="!py-0">{{ row.stitch_type }}</td>
+                        <td class="!py-0">{{ row.stitch_size }}</td>
+                        <td class="!py-0">{{ row.stitch_qty }}</td>
+                        <td class="!py-0">{{ row.tailor_name }}</td>
+                        <td class="!py-0">{{ row.supervisor_name }}</td>
+                        <td class="!py-0">{{ row.checker_name }}</td>
+                        <td class="!py-0">{{ row.stitch_date }}</td>
+                        <td>
+                            {% if row.audit_count == 0 %}
+                            <span class='btn btn-primary btn-sm' onclick="window.open('/entry-forms/stitching-defects/?trans_id={{ row.trans_id }}','popUpWindow','height=500,width=950,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,titlebar=no,menubar=no, status=yes');">
+                                CHECK AUDIT
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <!--<input type="submit" class="hidden" id="submit-btn">-->
+        </form>
+    
+        <!-- Table footer -->
+        <div data-aos="zoom-in" class="py-1 px-3 rounded-xl shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center"></div>
+    </div>
+</div>
+
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    // $(document).ready(function () {
+    //     // Refine data-table design
+    //     $(".dataTables_length select").addClass('select select-xs select-bordered').prependTo(".dt-filter-top");
+    //     $(".dataTables_filter input").addClass('input input-xs input-bordered').attr(
+    //         'placeholder', 'search in table...'
+    //     ).prependTo(".dt-filter-top");
+    //     $(".dataTables_info, .dataTables_paginate").prependTo(".dt-filter-bottom");
+    //     $(".dataTables_length, .dataTables_filter").remove();
+
+    //     // Align tbody text if thead is in center
+    //     $('thead tr').find('th').each(function (index) {
+    //         const thClasses = $(this).attr('class').split(' ');
+    //         const relevantClasses = thClasses.filter(cls => cls === '!text-right' || cls === '!text-center');
+    //         relevantClasses.forEach(function (cls) {
+    //             $('tbody tr').each(function () {
+    //                 const $td = $(this).find('td, th').eq(index);
+    //                 if (cls) { $td.addClass(cls); }
+    //             });
+    //         });
+    //     });
+    // })
+</script>
+
+{% endblock script %}
+

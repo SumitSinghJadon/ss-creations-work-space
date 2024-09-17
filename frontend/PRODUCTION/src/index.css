@@ -1,0 +1,11 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+
+.custom-height {
+    height: 42px;
+    .MuiInputBase-root {
+      height: 100%;
+}
+}

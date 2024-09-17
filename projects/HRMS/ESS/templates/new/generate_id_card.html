@@ -1,0 +1,363 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+{% block main %}
+
+<div class="flex space-y-3 md:space-y-0 flex-wrap">
+    <div class="w-full bg-base-100 rounded-box py-2 shadow-soft flex flex-wrap">
+        <form action="" method="get" class="flex flex-wrap p-1 gap-y-3 w-full">
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input"> 
+                    <label> 
+                        <select name="department" class="knox-select">
+                            <option value="">--</option>
+                            {% for item in dep_list %}
+                            <option value="{{ item.dep_code }}">({{ item.dep_name }})</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text">Department</span>
+                    </label>
+                </div>
+            </div>
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="unit" class="knox-select">
+                            <option value="">--</option>
+                            {% for item in loc_list %}
+                                <option value="{{ item.payroll_code }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text">Department</span>
+                    </label>
+                </div>
+            </div>
+            <div class="flex space-x-4">
+                <input type="submit" value="Fetch" class="btn btn-success btn-sm"> 
+                {% if data %}
+                    <button id="print-id-card" type="button" class="btn btn-success btn-sm">Print</button>
+                {% endif %}
+            </div>
+            <div class="rounded-box bg-base-100 shadow-soft flex flex-col h-full overflow-hidden knox-table-wrapper">
+                <!-- 
+                    # table
+                    class - text-right -> use this class for number column.
+                    attribute - export-name -> set excel file export name.
+
+                    # thead
+                    class - no-sort -> Disable Sorting on column.
+                    class - no-export -> Prevent column from excel export.
+                    attribute - data-sort - Define sorting type Number or Date (default text).
+                    
+                    #tbody 
+                    class - addRow, delRow -> use these classes on buttons -> Add or delete row in table also reset serial number if .sr class found on serial number column.
+
+                    # tfoot
+                    class - kt-row-count -> Total counter of tbody - also support span and input field also -> <span class='kt-row-count'> || <input name='counter' class='kt-row-count'>
+                    class - kt-col-search -> Set this class in input field. Add search field in current column.
+                    class - kt-col-total -> Sum of column also support if column contain input or select fields.
+                    attribute - target-col -> use this attribute with class `kt-col-total`, if you want to get col total somewhere else in tfoot.
+                -->
+                <div class="table-header-wrapper">
+                    <h1 class="font-semibold">Table Name</h1>
+                    <div class="join">
+                        <button class="btn btn-primary btn-sm join-item table-filter-toggle"><i
+                                class="fa-regular fa-filter-list"></i></button>
+                        <input class="input input-sm input-primary bg-base-200 join-item knox-table-search"
+                            type="search" placeholder="Search in table" />
+                        <button class="btn btn-sm btn-primary join-item kt-export-btn"><i
+                                class="fa-solid fa-file-arrow-down"></i></button>
+                    </div>
+                </div>
+
+                <form class="hidden table-filter-wrapper">
+                    <div class="flex flex-wrap w-full p-2">
+                        <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                            <div class="knox-form-input">
+                                <label>
+                                    <select name="fa" class="knox-select">
+                                        <option value="RV 0">Radio 0</option>
+                                        <option selected value="RV 1">Radio 1</option>
+                                        <option value="RV 2">Radio 2</option>
+                                        <option value="RV 3">Radio 3</option>
+                                        <option value="RV 4">Radio 4</option>
+                                        <option value="RV 5">Radio 5</option>
+                                    </select>
+                                    <span class="label-text">Select Field</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                            <div class="knox-form-input">
+                                <label>
+                                    <select name="fb" class="knox-select">
+                                        <option value="RV 0">Radio 0</option>
+                                        <option selected value="RV 1">Radio 1</option>
+                                        <option value="RV 2">Radio 2</option>
+                                        <option value="RV 3">Radio 3</option>
+                                        <option value="RV 4">Radio 4</option>
+                                        <option value="RV 5">Radio 5</option>
+                                    </select>
+                                    <span class="label-text">Select Field</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-1/3 lg:w-1/4 p-0.5 join">
+                            <div class="knox-form-input join-item">
+                                <label>
+                                    <input type="datetime" name="fc" id="from_date" min="05-05-2024" required
+                                        class="knox-input peer">
+                                    <span class="label-text">From Date</span>
+                                </label>
+                            </div>
+                            <div class="knox-form-input join-item">
+                                <label>
+                                    <input type="datetime" name="fd" required class="knox-input peer"
+                                        gt="from_date">
+                                    <span class="label-text">Till Date</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="p-0.5">
+                            <input type="submit" class="btn btn-md btn-success px-8">
+                        </div>
+                    </div>
+                </form>
+
+                <div class="flex-grow table-wrapper overflow-auto">
+                    <table class="knox-table table-sm">
+                        <thead>
+                            <tr class="sticky top-0 z-10">
+                                <th sort-type="number">S/N</th>
+                                <th data-sort="date">Date Lorem ipsum dolor sit amet consectetur adipisicing.</th>
+                                <th data-sort="number">Age Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                    Eligendi libero officiis dicta!</th>
+                                <th>Department Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab minima
+                                    accusantium voluptate.</th>
+                                <th>Action Lorem, ipsum dolor sit amet consectetur adipisicing elit.</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <th class="sr">1</th>
+                                <td>03-05-2024</td>
+                                <td class="knox-form-input"><input value="22.5" class="knox-input" required max="20"
+                                        type="number"></td>
+                                <td>IT</td>
+                                <td>Approved</td>
+                                <td class="no-export">
+                                    <div class="join">
+                                        <button class="join-item btn btn-xs btn-success addRow">+</button>
+                                        <button class="join-item btn btn-xs btn-error delRow">-</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th class="sr">1</th>
+                                <td>03-05-2024</td>
+                                <td class="knox-form-input"><input value="22.5" class="knox-input" required max="20"
+                                        type="number"></td>
+                                <td>IT</td>
+                                <td>Approved</td>
+                                <td class="no-export">
+                                    <div class="join">
+                                        <button class="join-item btn btn-xs btn-success addRow">+</button>
+                                        <button class="join-item btn btn-xs btn-error delRow">-</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+
+                        <tfoot>
+                            <tr>
+                                <td><span class="kt-row-count"></span></td>
+                                <td><input type="search" class="kt-col-search"></td>
+                                <td><span class="kt-col-total"></span></td>
+                                <td><input type="search" class="kt-col-search"></td>
+                                <td><input type="search" class="kt-col-search"></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+{% if data %}
+<div style="display: flex;flex-wrap: wrap;" id="id-card-wrapper">
+    <style>
+        .card-wrapper {
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            border: 1px solid black;
+            width: 8.75cm;
+            height: 5.5cm;
+            font-size: 0.35cm;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    
+        .card-front .emp-card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid black;
+            padding: 0.1cm 0.25cm;
+            line-height: 1.2;
+            text-wrap: nowrap;
+        }
+        
+        .card-back .emp-card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            border-bottom: 1px solid black;
+            padding: 0.1cm 0.25cm;
+            line-height: 1.2;
+            font-size: 0.3cm;
+        }
+        .card-front .emp-card-header span{
+            font-size:0.25cm
+        }
+        .card-front .emp-card-header span:first-child{
+            font-weight: 700;
+            font-size: 0.3cm;
+        }
+    
+        .emp-card-body {
+            display: flex;
+            flex-grow: 1;
+            align-items: start;
+            justify-content: space-between;
+            padding: 0.25cm;
+        }
+    
+        .emp-photo {
+            width: 100px;
+            height: 100px;
+            border: 1px dotted black;
+        }
+    
+        .emp-details {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: space-between;
+            height: 100%;
+            width: 1cm;
+            padding-left: 0.2cm;
+            padding-bottom: 0.1cm;
+            flex-grow: 1;
+        }
+    
+        .emp-details span {
+            align-items: end;
+            display: flex;
+            width: 100%;
+            flex-grow: 1;
+            border-bottom: 1px dotted black;
+        }
+    
+        .emp-card-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.1cm 0.25cm;
+            border-top: 1px solid black;
+        }
+    
+    </style>
+    {% for item in '123456789' %}
+        {% for item in data %}
+            <div class="wrapper" style="display: flex;padding: 4px;">
+                <div class="card-wrapper card-front">
+                    <div class="emp-card-header">
+                        <span>{{ item.cmp_name }}</span>
+                        <span>{{ item.loc_add1 }}</span>
+                        <span>{{ item.cmp_ph1 }}</span>
+                    </div>
+                    <div class="emp-card-body">
+                        <div class="emp-photo">
+    
+                        </div>
+                        <div class="emp-details">
+                            <span>Name: {{ item.emp_name }}</span>
+                            <span>Emp. No.: {{ item.emp_paycode }}</span>
+                            <span>Designation: {{ item.des_name }} </span>
+                            <span>Department: {{ item.dep_name }}</span>
+                        </div>
+                    </div>
+                    <div class="emp-card-footer">
+                        <span>Holder Sig.</span>
+                        <span>Issuing Authority</span>
+                    </div>
+                </div>
+                
+                <span> &nbsp;</span>
+
+                <div class="card-wrapper card-back">
+                    <div class="emp-card-header">
+                        <span><strong>Address</strong>: {{ item.emp_padd }}</span>
+                        <span>&nbsp;</span>
+                        <Phone><strong>Phone No.</strong>: {{ item.emp_phn }}</span>
+                    </div>
+                    <div style="font-size: 10px;">
+                        <p style="margin-left: 2px;">Instructions</p>
+                        <ol style="margin: 0px; padding-left: 20px;line-height:1.3;list-style:decimal;">
+                            <li>Employees are expected to carry their cards with then while on duty.</li>
+                            <li>Loss of this card must be reported in writing to the issuing authority.</li>
+                            <li>This card is not transforable and it must be sirremdered on leaving the
+                                services of the company.</li>
+                        </ol>
+                    </div>
+                    <div class="emp-card-body">
+                        <div style="display: flex;flex-direction:column;margin-top:-8px">
+                            <img class="emp-qr" style="width:50px; height:50px; margin: 0;padding: 0;" src="data:image/png;base64,{{ qr_code }}">
+                            <p style="font-size: 10px;margin: 0;padding: 0;">{{ item.emp_paycode }}</p>
+                        </div>
+                        <div style="display: flex; flex-direction: column; flex-grow: 1;line-height: 1; align-items: center; justify-content: center;">
+                            <span>If found please return to:</span>
+                            <span style="font-size: 0.3cm; font-weight: 600;">{{ item.cmp_name }}</span>
+                            <span style="font-size: 0.25cm;">{{ item.loc_add1 }}</span>
+                            <span style="font-size: 0.25cm;">Ph.: {{ item.cmp_ph1 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        {% endfor %}
+
+        {% if forloop.counter|divisibleby:5 %}
+            <div style="page-break-after: always;"></div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    $(document).ready(function() {
+        $("#print-id-card").on("click", function(){
+            var content = document.getElementById("id-card-wrapper").innerHTML;
+            var printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Print</title>');
+            printWindow.document.write('<style>@page { margin: 0; }</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(content);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        })
+    });
+</script>
+{% endblock script %}

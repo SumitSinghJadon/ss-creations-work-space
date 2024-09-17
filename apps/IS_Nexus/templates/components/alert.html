@@ -1,0 +1,105 @@
+<div class="max-w-xs w-full absolute top-14 right-4 z-50 overflow-y-auto overflow-x-hidden max-h-[calc(100%_-_7rem)]" id="js-alert-wrapper">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert-box">
+        <div class="shadow-lg rounded-lg overflow-hidden bg-{{message.tags}}">
+            <div class="flex justify-between items-center px-2 py-1">
+                <span> 
+                    {% if message.tags == 'error' %}
+                    <i class="fa-sharp fa-regular fa-circle-xmark"></i> Error
+                    {% elif message.tags == 'success' %}
+                    <i class="fa-regular fa-circle-check"></i> Success
+                    {% elif message.tags == 'warning' %}
+                    <i class="fa-regular fa-triangle-exclamation"></i> Warning
+                    {% elif message.tags == 'info' %}
+                    <i class="fa-regular fa-circle-info"></i> Info
+                    {% endif %}
+                </span>
+                <button class="btn btn-sm alert-close-btn btn-circle" title="close">
+                    <span><i class="fa-regular fa-xmark"></i></span>
+                </button>
+            </div>
+            <div class="p-2 bg-base-100/50">
+                {{message}}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        $(".alert-close-btn").on("click", function(){
+            $(this).closest(".alert-box").remove()
+        })
+        
+        // var countdownTimer;
+        // var countdownDuration = 5; // in seconds
+
+        // function startCountdown() {
+        //     var seconds = 5;
+        //     countdownTimer = setInterval(function() {
+        //         if (seconds <= 0) {
+        //             clearInterval(countdownTimer);
+        //             // Perform automatic click after 10 seconds
+        //             $('.alert-close-btn').click();
+        //         } else {
+        //             // Update the countdown display
+        //             $('.alert-close-btn').attr('title', 'close in ' + seconds + ' seconds');
+        //             seconds--;
+        //         }
+        //     }, 1000);
+        // }
+
+        // Start the countdown when the page loads
+        // startCountdown();
+
+        // // Pause countdown on hover
+        // $('.alert-box').hover(
+        //     function() {
+        //         clearInterval(countdownTimer);
+        //     },
+        //     function() {
+        //         startCountdown();
+        //     }
+        // );
+    });
+
+
+    function show_alert(tag, message) {
+        const tagToClassMap = {
+            'error': 'fa-sharp fa-regular fa-circle-xmark',
+            'success': 'fa-regular fa-circle-check',
+            'warning': 'fa-regular fa-triangle-exclamation',
+            'info': 'fa-regular fa-circle-info'
+        };
+
+        const alertClass = tagToClassMap[tag];
+        const alertTag = `<i class="${alertClass}"></i> ${tag.charAt(0).toUpperCase() + tag.slice(1)}`;
+
+        const alertBox = `
+            <div class="p-1 alert-box">
+                <div class="shadow-lg rounded-lg overflow-hidden bg-${tag}">
+                    <div class="flex justify-between p-2">
+                        <span class="alert-tag font-medium">${alertTag}</span>
+                        <button class="btn btn-xs alert-close-btn" onclick='$(this).closest(".alert-box").remove()'>Close</button>
+                    </div>
+                    <div class="p-2 bg-base-100/50">${message}</div>
+                </div>
+            </div>`;
+
+        $("#js-alert-wrapper").append(alertBox);
+    }
+
+
+    // $(document).ready(function () {
+    //     const alertWrapper = $("#js-alert-wrapper");
+
+    //     alertWrapper.on("click", ".alert-close-btn", function () {
+    //         $(this).closest(".alert-box").toggle("slide", { direction: "right" }).remove();
+    //         $(this).closest(".ui-effects-placeholder").remove();
+    //         clearInterval(countdownTimer);
+    //     });
+    // });
+</script>

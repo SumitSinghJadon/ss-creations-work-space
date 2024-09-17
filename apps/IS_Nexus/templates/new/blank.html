@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{% block theme %}light{% endblock theme %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntteliSync</title>
+    {% include './components/head.html' %}
+</head>
+<body>
+    {% block main %} {% endblock main %}
+
+    {% block script %} {% endblock script %}
+    {% include './components/alert.html' %}
+</body>
+</html>

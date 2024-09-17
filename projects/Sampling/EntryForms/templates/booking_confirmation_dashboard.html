@@ -1,0 +1,100 @@
+{% extends 'table.html' %}
+{% load static %}
+
+{% block table-btn %}Booking Confirmation &nbsp; {% endblock table-btn %}
+
+
+{% block tfRight %}
+<div class="flex space-x-2">
+    <form action="" method="GET" class="flex space-x-2">
+        <select name="status" id="" class="select select-sm select-bordered">
+            <option value="">-- Booking Status --</option>
+            <option value="pending" selected>Pending</option>
+            <option value="confirm" {% if request.GET.status == 'confirm' %} selected {% endif %} >Confirm</option>
+            <option value="cancelled" {% if request.GET.status == 'cancelled' %} selected {% endif %}>Cancelled</option>
+            <option value="hold" {% if request.GET.status == 'hold' %} selected {% endif %}>Hold</option>
+        </select>
+        <div class="flex items-center space-x-1">
+            <input type="date" value="{{ request.GET.from_date }}" name="from_date" class="input input-sm input-bordered">
+            <i class="fa-regular fa-arrow-right-arrow-left"></i>
+            <input type="date" value="{{ request.GET.till_date }}" name="till_date" class="input input-sm input-bordered">
+        </div>
+        <input type="submit" class="btn btn-primary btn-sm px-6" value="search">
+        <input type="hidden" value="search-filter" class="hidden" name="flag">
+    </form>
+    <!-- <button id="form-save-btn" class="btn btn-sm btn-success px-6">Save</button> -->
+</div>
+{% endblock tfRight %}
+
+
+{% block thead %}
+<tr class="sticky top-0 bg-base-200 text-slate-800">
+    <th>Sr.</th>
+    <th>Image</th>
+    <th>Booking No</th>
+    <th>Booking Type</th>
+    <th>Merchant Group</th>
+    <th>Merchant Name</th>
+    <th>Sample Type</th>
+    <th>Buyer Name</th>
+    <th>Style Name</th>
+    <th>Session + Session Year</th>
+    <th>Booked Date</th>
+    <th>Quantity</th>
+    <th>Target Date</th>
+    <th>Article Status</th>
+    <th>Booking Confirmation</th>
+    <th class="dt-nosort">File Received</th>
+    <th>Program Received Time</th>
+    <th>Article Hold Reason</th>
+    <th>Article Cancelled Reason</th>
+    <th>Booking Hold Reason</th>
+    <th>Booking Cancelled Reason</th>
+    <th>Remarks</th>
+    <th>#</th>
+</tr>
+{% endblock thead %}
+
+
+{% block tbody %}
+{% for row in mt_data %}
+<tr {% if today|date:'Y-m-d' >= row.target_date|date:'Y-m-d' %} style="pointer-events: none;" {% endif %}>
+    <th class="text-center">
+        {{ forloop.counter }}
+        <input type="hidden" value="{{ forloop.counter0 }}" name="counter">
+        <input type="hidden" name="booking_id[{{forloop.counter0}}]" value="{{ row.id }}">
+    </th>
+    <td><a href="{{ row.image1.url }}" target="_blank"><img width="40px" src="{{ row.image1.url }}" alt=""></a></td>
+    <td><a class="link-hover" href="add/?bid={{ row.id }}">{{ row.booking_no }}</a></td>
+    <td>{{ row.get_booking_type_display }}</td>
+    <td>{{ row.merchant_head }}</td>
+    <td>{{ row.merchant_name }}</td>
+    <td class="whitespace-nowrap">{{ row.sample_type }}</td>
+    <td class="min-w-[140px]">{{ row.buyer_name }}</td>
+    <td>{{ row.style_no }}</td>
+    <td class="!py-0 whitespace-nowrap">{{ row.season }} - {{ row.season_year }}</td>
+    <td class="!py-0 whitespace-nowrap">{{ row.booking_date|date:'d-m-Y H:i' }}</td>
+    <td>{{ row.total_qty }}</td>
+    <td class="!py-0 whitespace-nowrap {% if today|date:'Y.m.d H:i:s' > row.target_date|date:'Y.m.d H:i:s' %} bg-error text-white {% endif %}" >
+        {{ row.target_date|date:'d-m-Y H:i' }}
+    </td>
+    <td class="!py-0 capitalize">{{ row.material_status }}</td>
+    <td class="!py-0 capitalize">{{ row.booking_status }}</td>
+    <td class="!py-0 text-center">
+        {% if row.file_status == 'Y' %}
+        <i class="fa-solid fa-square-check !text-success"></i>
+        {% else %}
+        <i class="fa-solid fa-square-xmark !text-error"></i>
+        {% endif %}
+    </td>
+    <td>{{ row.file_rcv_date|date:'Y-m-d H:i' }}</td>
+    <td class="!py-0 w-48">{{ row.hold_reason|default_if_none:'' }}</td>
+    <td class="!py-0 w-48">{{ row.cancelled_reason|default_if_none:'' }}</td>
+    <td class="!py-0 w-48">{{ row.booking_hold_reason|default_if_none:'' }}</td>
+    <td class="!py-0 w-48">{{ row.booking_cancelled_reason|default_if_none:'' }}</td>
+    <td class="!py-0 min-w-[140px]">{{row.remarks}}</td>
+    <td>Cancel</td>
+</tr>
+{% endfor %}
+{% endblock tbody %}
+

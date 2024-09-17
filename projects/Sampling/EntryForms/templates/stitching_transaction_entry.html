@@ -1,0 +1,705 @@
+{% extends 'form.html' %}
+
+{% load static %}
+{% block form %}
+    
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    <input type="submit" class="hidden" id="submit-btn">
+    <input type="hidden" id="bid" value="{{ request.GET.bid }}">
+    <div class="flex flex-wrap items-start sticky left-0">
+        <!-- booking no -->
+        <div class="w-1/4 pt-0 ">
+            <label class="float-input-label {% if data.booking_no %}floated-label{% endif %}">
+                <span class="label-text">BOOKING NO</span>
+                <select name="booking_no" id="booking-no" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in booking_no %}
+                    <option {% if item.booking_id|stringformat:"i" == request.GET.bid %} selected {% endif %} value="{{ item.booking_id }}">{{ item.booking_no }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <!-- sample booking type -->
+        <div class="w-1/4 pt-0 ">
+            <label class="float-input-label">
+                <span class="label-text">Sample Booking Type</span>
+                <input type="text" value="{{ samp_mt_data.booking_type_name }}" readonly  class="text-input   bg-slate-200" >
+            </label>
+        </div>
+        
+        <!-- sample type -->
+        <div class="w-1/4 pt-0"> 
+            <label class="float-input-label">
+                <span class="label-text">SAMPLE TYPE</span>
+                <input type="text" value="{{ samp_mt_data.sample_type }}"  readonly  class="text-input   bg-slate-200" >
+            </label>
+        </div>
+        
+        <!-- merchant group name -->
+        <div class="w-1/4 pt-0 "> 
+            <label class="float-input-label">  <!--for padding in - range !p-1-->
+                <span class="label-text">MERCHANT GROUP NAME</span>
+                <input type="text" value="{{ samp_mt_data.merchant_head_name }}"  readonly  class="text-input   bg-slate-200" >
+            </label>
+        </div>
+        
+        <!-- merchant name -->
+        <div class="w-1/4 pt-0 "> 
+            <label class="float-input-label {% if data.merchant_name %} floated-label {% endif %}">
+                <span class="label-text">MERCHANT NAME</span>
+                <input type="text" value="{{ samp_mt_data.merchant_name }}"  readonly  class="text-input   bg-slate-200" >
+            </label>
+        </div>
+
+        <!-- buyer -->
+        <div class="w-1/4 pt-0"> 
+            <label class="float-input-label {% if data.buyer %} floated-label {% endif %}">
+                <span class="label-text">BUYER</span>
+                <input type="text" value="{{ samp_mt_data.buyer_name }}"   readonly  class="text-input">
+            </label>
+        </div>
+
+        <!-- style no -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.style_no %}floated-label{% endif %}">
+                <span class="label-text">STYLE NO</span>
+                <input type="text" value="{{ samp_mt_data.style_no }}"  readonly  class="text-input" >
+            </label>
+        </div>
+
+        <!-- season -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.season %}floated-label{% endif %}">
+                <span class="label-text">SEASON</span>
+                <input type="text" value="{{ samp_mt_data.season }}"   readonly  class="text-input">
+            </label>
+        </div>
+
+        <!-- season year -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.year %}floated-label{% endif %}">
+                <span class="label-text">YEAR</span>
+                <input type="text" value="{{ samp_mt_data.season_year }}"  readonly  class="text-input">
+            </label>
+        </div>
+
+        <!-- booked date -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.booked_date %} floated-label {% endif %}">
+                <span class="label-text">BOOKED DATE</span>
+                <input type="date" required class="text-input" readonly value="{{ samp_mt_data.booking_date|date:'Y-m-d' }}">
+            </label>
+        </div>
+
+        <!-- target date -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.target_date %} floated-label {% endif %}">
+                <span class="label-text">TARGET DATE</span>
+                <input type="date" required class="text-input" readonly value="{{ samp_mt_data.target_date|date:'Y-m-d' }}" >
+            </label>
+        </div>
+
+        <!-- Qty -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.qty %}floated-label{% endif %}">
+                <span class="label-text">QTY</span>
+                <input type="number" name="qty" maxlength="40" required readonly value="{{ samp_mt_data.samp_qty }}" class="text-input">
+            </label>
+        </div>
+
+        <!-- size -->
+        <div class="w-full pt-0">
+            <label class="float-input-label {% if data.size %}floated-label{% endif %}">
+                <span class="label-text">SIZE</span>
+                <input type="text" name="size" maxlength="40" required readonly value="{{ samp_mt_data.sizes }}" class="text-input">
+            </label>
+        </div>
+
+
+        {% if request.GET.bid %}
+        <div class="font-bold w-full pt-2 pl-5 divider">STITCHING TRANSACTION</div>
+
+        <!-- Transaction No -->
+        <div class="w-1/3 pt-5">
+            <label class="float-input-label {% if data.transaction_no %}floated-label{% endif %}">
+                <span class="label-text">TRANSACTION NO</span>
+                <select name="transaction_no" id="transaction_no" class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in cutting_trans_list %}
+                    <option {% if item.id|stringformat:"i" == request.GET.cut_trans_id %} selected {% endif %} value="{{ item.id }}">{{ item.transaction_no }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <!-- cutting type -->
+        <div class="w-1/3 pt-5"> 
+            <label class="float-input-label {% if data.stitch_type %} floated-label {% endif %}">
+                <span class="label-text">STITCHING TYPE</span>
+                <select name="stitch_type" required class="select-input">
+                    <option value=""> --- </option>
+                    <option value="1"> Fresh </option>
+                    <option value="2"> Alter </option>
+                    <option value="3"> ReCut </option>
+                </select>
+            </label>
+        </div>
+
+        <!-- sample status -->
+        <div class="w-1/3 pt-5">
+            <label class="float-input-label {% if data.stitch_status %} floated-label {% endif %}">
+                <span class="label-text">Stitching Status</span>
+                <select name="stitch_status" id="stitch_status" required class="select-input">
+                    <option value=""> --- </option>
+                    <option value="O">Ok</option>
+                    <option value="C">Cancel</option>
+                    <option value="H">Hold</option>
+                    <option value="R">Reject    </option>
+                </select>
+            </label>
+        </div>
+
+        <div class="w-1/3 flex items-end">
+            <div class="pb-2 w-full">
+                <!--<label class="btn px-10 btn-sm py-3 h-auto w-full btn-success" for="my_modal_6" onCLick="show_model();" class="btn">Stitch Size</label>-->
+                <label class="btn px-10 btn-sm py-3 h-auto w-full btn-success" for="my_modal_7" onCLick="get_size_wise_data();" class="btn">Stitch Size</label>
+            </div>
+
+            <!-- cut qty -->
+            <div class="w-full pt-0">
+                <label class="float-input-label {% if data.stitch_qty %}floated-label{% endif %}">
+                    <span class="label-text">STITCH QTY</span>
+                    <input type="text" name="stitch_qty_val" id="stitch_qty_total" readonly required maxlength="40" value="" class="text-input">
+                </label>
+            </div>
+        </div>
+
+        
+        <!-- size breakup -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.size %}floated-label{% endif %}">
+                <span class="label-text">SIZE BREAKUP</span>
+                <input type="text" name="size_breakup" id='stitch_size_breakup' readonly required maxlength="40" value="" class="text-input">
+            </label>
+        </div>
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.sample_dept %}floated-label{% endif %}">
+                <span class="label-text">Sampling Department</span>
+                <select name="sample_dept" id="sample_dept" class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in sample_dept_list %}
+                    <option {% if item.dep_code|stringformat:"i" == request.GET.sample_dept %} selected {% endif %} value="{{ item.dep_code }}">{{ item.dep_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Tailor name -->
+        <div class="w-1/3 pt-0"> 
+            <label class="float-input-label {% if data.cutter_name %} floated-label {% endif %}">
+                <span class="label-text">TAILOR NAME</span>
+                <select name="tailor_name" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in tailor_name_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <!-- Tailor name -->
+        <div class="w-1/3 pt-0"> 
+            <label class="float-input-label {% if data.cutter_name %} floated-label {% endif %}">
+                <span class="label-text">SUPERVISOR NAME</span>
+                <select name="supervisor_name" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in sup_name_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- CHECKER name -->
+        <div class="w-1/3 pt-0"> 
+            <label class="float-input-label {% if data.cutter_name %} floated-label {% endif %}">
+                <span class="label-text">CHECKER NAME</span>
+                <select name="checker_name" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in checker_name_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- assign date -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.assign_date %} floated-label {% endif %}">
+                <span class="label-text">ASSIGN DATE</span>
+                <input type="datetime-local" name="assign_date" id="assign_date" min="{{ samp_mt_data.booking_date|date:'Y-m-d\TH:i' }}" max="{{ samp_mt_data.target_date|date:'Y-m-d\TH:i' }}" required class="text-input">
+            </label>
+        </div>
+
+        <!-- handover to supervisor -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.handover_to_finish %} floated-label {% endif %}">
+                <span class="label-text">HANDOVER TO QA</span>
+                <input type="datetime-local" required name="handover_to_finish" id="handover_to_finish" onchange="get_taken_time();" min="{{ samp_mt_data.booking_date|date:'Y-m-d\TH:i' }}" max="{{ samp_mt_data.target_date|date:'Y-m-d\TH:i' }}" class="text-input">
+            </label>
+        </div>
+
+        <!-- expected_time -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.expected_time %} floated-label {% endif %}">
+                <span class="label-text">SAM</span>
+                <input type="number" step="0.01" Onclick="get_taken_time();" min="0.01" max="99.99" maxlength="5" pattern="/^-?\d+\.?\d*$/" onKeyPress="if(this.value.length==5) return false;" required name="expected_time" class="text-input">
+            </label>
+        </div>
+        <!-- total time taken -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.taken_time %}floated-label{% endif %}">
+                <span class="label-text">TOTAL TIME TAKEN</span>
+                <input type="number" name="taken_time" readonly id="taken_time" required pattern="/^-?\d+\.?\d*$/" maxlength="3" onKeyPress="if(this.value.length==3) return false;" value="{{ data.taken_time}}"
+                    class="text-input">
+            </label>
+        </div>
+        <!-- remarks -->
+        <div class="w-full pt-0">
+            <label class="float-input-label {% if data.remarks %}floated-label{% endif %}">
+                <span class="label-text">REMARKS</span>
+                <input type="text" name="remarks" id="remarks" maxlength="40" value="{{ data.remarks}}" class="text-input">
+            </label>
+        </div>
+        
+        
+    </div>
+    {% endif %}
+</form>
+
+
+
+<input type="checkbox" style="display:none;" id="my_modal_7" class="modal-toggle" />
+<div class="modal w-full" role="dialog" >
+    <input type="hidden" name="flag" value="save_stitch_qty">
+    <div class="modal-box  w-11/12 max" style="max-width: 100% !important;">
+        <h3 class="font-bold text-lg">Stitching</h3>
+        
+        <div >
+            <div class ='model_loader flex items-center justify-center'>
+                <span class="loading loading-ring loading-lg"></span>
+            </div>
+            <div id="size_div"></div>
+        </div>
+
+
+        <div class="modal-action">
+            <label for="my_modal_7" class="btn">Close</label>
+            <span id="add_size_wise_btn" class="btn btn-primary"> Save Records</span>
+        </div>
+  </div>
+</div>
+
+<!-- Put this part before </body> tag -->
+<!--
+<input type="checkbox" style="display:none;" id="my_modal_6" class="modal-toggle" />
+<form class="modal w-full" role="dialog" id="form_size">
+    <input type="hidden" name="flag" value="save_stitch_qty">
+    <div class="modal-box  w-11/12 max" style="max-width: 100% !important;">
+        <h3 class="font-bold text-lg">Stitching</h3>
+
+        <table id="size-wise-cut-qty-table" class="table table-bordered">
+            <thead>
+                <tr class="sticky top-0">
+                    <th rowspan="2">Size</th>
+                    <th class="!p-2">Color</th>
+                    <th rowspan="2">Sample Qty</th>
+                    <th rowspan="2">Total Cut Qty</th>
+                    <th rowspan="2">Total Stitch Qty</th>
+                    <th rowspan="2">Balance Qty</th>
+                    <th rowspan="2">Stitching Qty</th>
+                    <th rowspan="2">Reason</th>
+                </tr>
+            </thead>
+            <tbody class="z-0">
+                {% for row in sq_data %}
+                <tr>
+                    <th class="!p-0 text-center">{{ row.size  }}</th>
+                    <td class="!py-0">{{ row.color }}
+                        <input type="hidden" name="booking_id" value="{{ row.booking_id_id }}" class=" booking_cls !input-sm">
+                        <input type="hidden" name="size" value="{{ row.size }}" class=" size_cls !input-sm">
+                        <input type="hidden" name="color" value="{{ row.color }}" class=" color_cls !input-sm">
+                        <input type="hidden" name="balance_stitch_qty" value="{{ row.balance_stitch_qty }}" class=" color_cls !input-sm">
+                    </td>
+                    <td class="!p-0">{{ row.size_qty }}</td>
+                    <td class="!p-0">{{ row.total_cut_qty }}</td>
+                    <td class="!p-0">{{ row.total_stitch_qty }}</td>
+                    <td class="!p-0">{{ row.balance_stitch_qty }}</td>
+                    <td class="!p-0">
+                        <input type="number" min="1" max ="{{ row.balance_stitch_qty }}" name="stitch_qty" class="stitch_qty_cls !input-sm">
+                    </td>
+                    <td class="!p-0"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="modal-action">
+            <label for="my_modal_6" class="btn">Close</label>
+            <span id="add_size_wise_btn" class="btn btn-primary"> Save Records</span>
+        </div>
+  </div>
+</form>
+-->
+
+
+
+{% endblock form %}
+{% block script %}
+<script>
+
+const merchant_id = '{{ mt_data.merchant_name }}'; 
+
+function get_taken_time() { 
+    // alert('asasasasa');
+    var initialTime = document.getElementById("assign_date").value;
+    var initialTimeFormat = moment(initialTime);
+    var endTime = document.getElementById("handover_to_finish").value;
+    var endTimeFormat = moment(endTime);
+    var totalHours = endTimeFormat.diff(initialTimeFormat,"minutes");
+    document.getElementById("taken_time").value = totalHours; 
+    console.log(totalHours);
+}
+
+function get_size_wise_data() {
+        $(".model_loader").show();
+        bid = $("#bid").val();
+        // alert(bid);
+        $.ajax({
+            type: "GET",
+            url: "/entry-forms/trans-size/", 
+            data: {'trans_type': 'stitch' ,'bid': bid ,'name': 'me', 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+            before: function() {
+                $('#size_div').append("Loading");
+            },
+            success : function(data) { 
+                // alert(data);
+                $('#size_div').html(data);
+                $(".model_loader").hide();
+            }
+        });
+    }
+
+$(document).ready(function(){
+        $("#stitch_status").on("change", function(){
+            var s_val = $(this).val()
+            if (s_val == 'H' || s_val == 'C' || s_val == 'R' ) {
+                $("#remarks").attr("required", true)
+            } else {
+                $("#remarks").removeAttr("required")
+            }
+        })
+    })
+
+
+$(document).ready(function () {
+    // ----------- Add or Remove Row from Size wise Quantity table -----------
+    var scq_counter = 1
+
+    $(document).on("click", ".add-row", function () {
+        var lastRow = $(this).closest("table").find("tbody").find("tr").last();
+        var newRow = lastRow.clone();
+        // Clear selected options in the cloned row
+        newRow.find('select, input').val('');
+        // Append the new row
+        lastRow.after(newRow);
+        // Increment Sr. number
+        scq_counter = scq_counter + 1
+        $("#scq_counter").val(scq_counter)
+        $(".sw-qty").keyup();
+    });
+
+    $(document).on("click", ".del-row", function () {
+        var row = $(this).closest("table").find("tbody").find("tr").last();
+        if (scq_counter > 1) {
+            row.remove();
+            // Reset Sr. numbers
+            $("#size-wise-table tbody tr").each(function (index) {
+                $(this).find('th').text(index + 1);
+            });
+            scq_counter = scq_counter - 1
+            $("#scq_counter").val(scq_counter)
+            $(".sw-qty").keyup()
+        }
+    });
+
+
+    // ----------- Refresh Page with Booking Number -----------
+    $("#booking-no").on("change", function(){
+        let bid = $(this).val();
+        if (bid != '00') {
+            window.location.replace("?bid="+bid);
+        } else (
+            window.location.replace('?')
+        )
+    })
+
+
+    // ---------- Send Ajax Request ----------
+
+    // Get merchant name
+    $("#merchant_head").on("change", function(){
+        let merchant_head = $(this).val();
+        $.ajax({
+            method: 'GET',
+            data : {
+                'flag' : 'get_merchant_by_merchant_head',
+                'merchant_head' : merchant_head,
+            },
+            success: function(data) {
+                $("#merchant").html(new Option('--------', '', false, false))
+                // $('#merchant').append(new Option('--------', '', false, false));
+
+                $(data).each(function(i, row){
+                    var newOption = new Option(row.name, row.id, false, false);
+                    $('#merchant').append(newOption).val(merchant_id)
+                    $('#merchant').trigger('change');
+                })
+            },
+            error : function() {
+                show_alert("error", "Unable to fetch data")
+            }
+        })
+    })
+
+    // Fetch style based on buyer
+    $("#buyer").on("change", function(){
+        $.ajax({
+            method: "GET",
+            data : {
+                "flag" : "get_style_by_buyer",
+                "bid" : $(this).val(),
+            },
+            success: function(data) {
+                $("#style_no1").html('')
+                $('#style_no1').append(new Option('--------', '', false, false));
+                $(data).each(function(i, row){
+                    var newOption = new Option(row.styleno, row.styleno, false, false);
+                    $('#style_no1').append(newOption).val(merchant_id)
+                    $('#style_no1').trigger('change');
+                })
+            },
+            error: function(error) {
+                console.error(error)
+                alert("Something went wrong.")
+            }
+        })
+    })
+
+    // Fetch season year based on season
+    $("#season").on("change", function(){
+        $.ajax({
+            method: "GET",
+            data : {
+                "flag" : "get_season_year_by_season",
+                "sid" : $(this).val(),
+            },
+            success: function(data) {
+                $("#season_year").html('')
+                $('#season_year').append(new Option('--------', '', false, false));
+                $(data).each(function(i, row){
+                    var newOption = new Option(row.name, row.id, false, false);
+                    $('#season_year').append(newOption).val(merchant_id)
+                    $('#season_year').trigger('change');
+                })
+            },
+            error: function(error) {
+                console.error(error)
+                alert("Something went wrong.")
+            }
+        })
+    })
+      
+    // get_sample_type_by_sample_group
+    function get_sample_type() {
+        $.ajax({
+            method : "GET",
+            data : {
+                "flag" : "get_sample_type_by_sample_group",
+                "sgt_id" : $("#sample_group_type").val()
+            },
+            success : function(data) { 
+                $("#sample_type").html('')
+                $('#sample_type').append(new Option('--------', '', false, false));
+                $(data).each(function(i, row){
+                    var newOption = new Option(row.name, row.id, false, false);
+                    $('#sample_type').append(newOption).val(merchant_id)
+                    $('#sample_type').trigger('change');
+                })
+            },
+            error : function(error) {
+                console.log(error)
+                alert("Something went wrong.")
+            }
+        })
+    }
+
+
+    // ---------- Toggle Style Dropdown and set data in text-input ----------
+    $("#sample_group_type").on("change", function(){
+        let sv = $(this).find('option:selected').text();
+        if (sv == 'Production') {
+            $("#style-wrapper-select").removeClass("hidden");
+            $("#style-wrapper-text").addClass("hidden");
+        } else {
+            $("#style-wrapper-select").addClass("hidden");
+            $("#style-wrapper-text").removeClass("hidden");
+            $("#style_no2").val('')
+        }
+    })
+
+    $("#style_no1").on("change", function(){
+        $("#style_no2").val($(this).val());
+    })
+
+
+    // ----------- Replace dumy sample image with selected images -----------
+    $('#garment_img_1').change(function(){
+        var input = this;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#w_garment_img_1').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
+
+    $('#garment_img_2').change(function(){
+        var input = this;
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                $('#w_garment_img_2').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    });
+
+
+    // ---------- Calculate and display total quantity in Size wise quantity table ----------
+    var total_qty = 0
+
+    $(document).on("keyup", ".sw-qty", function(){
+        let total_now = $("#total_qty") || 0
+
+        var total_qty = $(".sw-qty").map(function() {
+            return parseInt($(this).val()) || 0;
+        }).get().reduce(function(acc, val) {
+            return acc + val;
+        }, 0);
+
+        $("#total_qty").val(total_qty)
+    })
+
+    // Set required fields in Article table based on Given By Mercahnt
+    $(".at-gbm").on("change", function() {
+        let at_val = $(this).val();
+        let row = $(this).closest("tr");
+
+        if (at_val == 'na' || at_val == 'yes') {
+            row.find(".details").removeAttr('required');
+            row.find(".comment").removeAttr('required');
+            row.find(".expected_date").removeAttr('required');
+
+        } else if (at_val == 'pa' || at_val == 'no') {
+            row.find(".details").removeAttr('required');
+            row.find(".comment").attr('required', true);
+            row.find(".expected_date").attr('required', true);
+
+        }
+    });
+
+});
+
+// Set data for update 
+$(document).ready(function(){
+    $("#booking_date").val(getCurrentDateTime());
+    $(".float-input-label").addClass("floated-label");
+    // Sample Booking MT Data 
+    const booking_type  = '{{ mt_data.booking_type }}';
+    const merchant_head = '{{ mt_data.merchant_head.id }}';
+    const merchant_name = '{{ mt_data.merchant_name.id }}';
+    const buyer         = '{{ mt_data.buyer_code  }}';
+    const sample_group_type = '{{ mt_data.sample_group_type.id  }}';
+    const sample_type       = '{{ mt_data.sample_type  }}';
+    const style_no      = '{{ mt_data.style_no  }}';
+    const season        = '{{ mt_data.season  }}';
+    const season_year   = '{{ mt_data.season_year  }}';
+    const booking_date  = '{{ mt_data.booking_date  }}';
+    const target_date   = '{{ mt_data.target_date  }}';
+
+    $("#merchant_head").val(merchant_head).change();
+    $("#buyer").val(buyer).change();
+    $("#sample_group_type").val(sample_group_type).change();
+    // $("#")
+
+})
+
+
+$(document).ready(function(){
+
+$("#add_size_wise_btn").click(function(){
+    let fok = true;
+    $(".stitch_qty_cls").removeClass("!border-error !border")
+    $('.balance_stitch_qty').each(function(){
+        console.log("Helo")
+        let tr = $(this).closest('tr')
+        let balance_qty = parseInt($(this).val())
+        let current_qty = $(tr).find(".stitch_qty_cls").val() || 0
+        current_qty = parseInt(current_qty)
+        console.log(balance_qty,current_qty)
+        if (current_qty > balance_qty) {
+            // alert("Bye")
+            $(tr).find(".stitch_qty_cls").addClass("!border-error !border")
+            fok = false;
+        }
+    })
+    if(fok == true) {
+        $.get('/entry-forms/save-record/',$("#form_size").serializeArray(),function(data){
+            console.log(data)
+            get_size_wise_data();
+            $("#stitch_qty_total").val(data['total_qty']).change();
+            $("#stitch_size_breakup").val(data['size_breakup']);
+            $("#form_size").hide();
+        });
+    }
+});    
+
+});
+
+/*
+$(document).ready(function(){
+    $("#add_size_wise_btn").click(function(){
+        $.get('/entry-forms/save-record/',$("#form_size").serializeArray(),function(data){
+            console.log(data)
+            // alert(data['total_qty'])
+            $("#stitch_qty_total").val(data['total_qty']);
+             $("#stitch_size_breakup").val(data['size_breakup']);
+             $("#form_size").hide();
+        });
+    });    
+});
+*/
+
+function show_model() {
+    $("#form_size").show();
+}
+
+
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+
+{% endblock script %}
+
+
+

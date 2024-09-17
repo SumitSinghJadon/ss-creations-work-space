@@ -1,0 +1,14 @@
+{% extends 'base-3.html' %}
+
+{% block main %}
+<div class="m-4 grid gap-4 sm:grid-flow-col">
+{% for item in meeting_data %}
+    <a href="./?id={{ item.pk }}" class="min-h-[100px] rounded bg-emerald-400 shadow-xl">
+        <div class="p-2">
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-orange-100">{{ item.room_name }}</h5>
+            <p class="font-normal text-orange-700">{{ item.location }}</p>
+        </div>
+    </a>
+{% endfor %}
+</div>
+{% endblock main %}

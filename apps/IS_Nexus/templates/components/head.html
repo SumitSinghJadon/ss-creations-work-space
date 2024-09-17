@@ -1,0 +1,49 @@
+{% load static %}
+{% with version=1.0 %}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="{% static 'js/jquery.js' %}"></script>
+
+<!-- Knox UI -->
+<script src="{% static 'knox/js/knox-table.js' %}"></script>
+<script src="{% static 'knox/js/knox-input.js' %}"></script>
+<script src="{% static 'knox/lib/flat-picker/main.js' %}"></script>
+<script src="{% static 'knox/lib/jquery/pluging/xlsx.full.min.js' %}"></script>
+<script src="{% static 'knox/lib/jquery/pluging/file_server.min.js' %}"></script>
+<script src="{% static 'knox/lib/other/html2pdf.js' %}"></script>
+<link rel="stylesheet" href="./static/lib/flat-picker/main.css">
+<link rel="stylesheet" href="{% static 'knox/css/main.css' %}">
+<!-- Knox UI -->
+
+<link rel="stylesheet" href="{% static 'lib/font-awesome/css/all.css' %}">
+<link rel="stylesheet" href="{% static 'lib/apexcharts/css/main.min.css' %}">
+<link rel="stylesheet" href="{%static 'lib/data-table/css/main.min.css' %}">
+<link rel="stylesheet" href="{%static 'lib/select2/main.css' %}">
+<link rel="stylesheet" href="{% static 'lib/aos/aos.css' %}">
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<link rel="stylesheet" href="{% static 'lib/combo-tree/main.css' %}">
+<link rel="stylesheet" href="{% static 'lib/jquery/jquery-ui.css' %}">
+
+
+<script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'lib/html2pdfjs/html2pdf.js' %}"></script>
+<script src="{% static 'lib/apexcharts/js/main.min.js' %}"></script>
+<script src="{% static 'lib/data-table/js/main.min.js' %}"></script>
+<script src="{% static 'lib/combo-tree/main.js' %}"></script>
+<script src="{% static '/lib/select2/main.js' %}"></script>
+<script src="{% static '/lib/aos/aos.js' %}"></script>
+<script src="{% static 'js/main.js' %}?v={{ version }}"></script>
+<script src="{% static 'js/calendar.js' %}"></script>
+<script src="{% static 'lib/event-calendar/main.js' %}"></script>
+<script src="{% static 'lib/event-calendar/moment.min.js' %}"></script>
+<script src="{% static 'lib/ck-editor/ckeditor.js' %}"></script>
+
+<link rel="icon" href="image/png" href="{% static 'images/logo.png' %}">
+
+<!-- PWA links -->
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/logo/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/logo/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/logo/favicon-16x16.png' %}">
+<link rel="manifest" href="{% static 'site.webmanifest' %}">
+
+{% endwith %}

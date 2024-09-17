@@ -1,0 +1,129 @@
+{% extends 'blank.html' %}
+{% load static %}
+
+{% block main %}
+
+<main class="min-h-screen w-full all-center select-none p-3" style="background-image: url('{% static "images/bg.webp" %}');">
+    <div class="w-fit h-fit relative overflow-hidden rounded-3xl shadow-lg">
+        <!-- Hidden colorful container -->
+        <div class="w-full h-full absolute">
+            <div class="h-14 w-20 absolute top-8 right-36 bg-violet-400 animate-pulse"></div>
+            <div class="h-56 w-56 absolute top-52 right-20 bg-indigo-300/50"></div>
+            <div class="h-12 w-20 absolute bottom-8 right-36 bg-rose-600"></div>
+        </div>
+
+        <!-- centered visible div -->
+        <div class="max-w-4xl w-full p-2 rounded-3xl glass flex border-2 border-base-100 border-solid z-20 bg-gradient-to-r from-base-100 via-base-100/10 to-base-100/5">
+            <div class="bg-purple-500/50 w-1/2 overflow-hidden rounded-2xl all-center p-6 hidden md:flex">
+                <img src="{% static 'images/login.png' %}" alt="">
+            </div>
+            <div class="w-full md:w-1/2 all-center flex-col">
+                <div class="w-full flex justify-end space-x-1 pt-6 pb-4 md:pb-12 text-xs">
+                    <span>Not Registered?</span>
+                    <a href="" class="text-primary link-hover">Raise Request</a>
+                </div>
+                <h1 class="text-2xl font-semibold py-2">Hello Again!</h1>
+                <p class="text-sm">Welcome back you've been missed!</p>
+
+                {% if not request.GET.method %}
+                <!-- Login with Credentials -->
+                <form method="POST" class="all-center flex-col py-4 md:py-8 space-y-3 md:space-y-4 w-full max-w-xs px-6">
+                    {% csrf_token %}
+                    <!-- Username -->
+                    <input type="text" name="username" required maxlength="20" minlength="4" class="input focus:outline-none w-full" placeholder="Enter username">
+                    <!-- Password -->
+                    <div class="w-full relative">
+                        <input type="password" name="password" maxlength="20" minlength="4" required class="input focus:outline-none w-full" placeholder="Password">
+                        <span class="toggle-password absolute right-3 top-3 cursor-pointer">
+                            <i class="fa-light fa-eye-slash hidden"></i>
+                            <i class="fa-light fa-eye"></i>
+                        </span>
+                    </div>
+                    <div class="w-full text-end text-sm">
+                        <a href="" class="link-hover hover:text-primary">Recovery Password</a>
+                    </div>
+                    <div class="py-4 w-full">
+                        <button type="submit" class="btn btn-error hover:bg-red-500 w-full text-white shadow-xl">
+                            Sign In
+                        </button>
+                    </div>
+                    <div class="divider after:bg-base-100 before:bg-base-100">OR</div>
+                    <!-- Face ID redirect button -->
+                    <a href="?method=face_id" class="btn btn-sm btn-ghost">
+                        <span><i class="fa-solid fa-face-viewfinder fa-beat"></i></span>
+                        <span>Login with Face ID</span>
+                    </a>
+                </form>
+                {% else %}
+                <!-- Face Recognition -->
+                <div class="py-6 flex flex-col items-center justify-center">
+                    <div class="relative flex items-center justify-center pb-8">
+                        <div class="h-64 w-64 rounded-full absolute"></div>
+                        <video id="camera" class="-scale-x-100 mask mask-circle h-52" autoplay playsinline></video>
+                    </div>
+                    <div class="divider after:bg-base-100 before:bg-base-100">OR</div>
+                    <a href="/login/" class="btn btn-sm btn-ghost">
+                        <span><i class="fa-sharp fa-regular fa-key fa-beat-fade"></i></span>
+                        <span>Login with Credentials</span>
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center flex justify-center items-center space-x-2 py-2 logo absolute top-3 left-3">
+        <div class="text-center flex justify-center items-center space-x-2 p-4 duration-300">
+            <img src="{% static 'images/logo.jpg' %}" alt="" class="h-8">
+            <div class="ignore-small text-end">
+                <h1 class="bg-gradient-to-r from-rose-600 via-yellow-500 to-blue-500 text-transparent bg-clip-text text-xl font-bold">
+                    IntelliSYNC
+                </h1>
+                <h6 class="text-xs -mt-2 font-semibold">{{ module_name }}</h6>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+    .logo img {
+        mix-blend-mode: multiply;
+        filter: contrast(1);
+    }
+</style>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    $(document).ready(function () {
+        $(".toggle-password").on("click", function () {
+            $(this).find("i").toggle();
+            let ipt = $(this).closest("div").find("input")
+            let ipt_type = $(ipt).attr("type");
+
+            if (ipt_type === 'password') {
+                $(ipt).attr('type', 'text')
+            } else {
+                $(ipt).attr('type', 'password')
+            }
+        })
+
+        {% if request.GET.method %}
+        const video = $('#camera')[0];
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.error('Error accessing webcam:', error);
+                });
+        } else {
+            console.error('getUserMedia is not supported in this browser');
+        }
+        {% endif %}
+    })
+</script>
+{% endblock script %}

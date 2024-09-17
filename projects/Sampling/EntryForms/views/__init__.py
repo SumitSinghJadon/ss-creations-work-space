@@ -1,0 +1,45 @@
+from .sample_booking import SampleBookingView
+from .sample_booking_dashboard import SampleBookingDashboard
+from .sample_print import SamplePrintView
+
+from .booking_confirmation import BookingConfirmationView, BookingConfirmationDashboardView
+
+from .pattern_request import PatternRequestView
+from .cutting_entry import CuttingEntryView
+from .checker_status import CheckerStatusView
+from .finishing_transaction_entry import FinishingTransactionEntryView
+from .size_wise_cut_qty import SizeWiseCutQtyView
+from .checker_status import CheckerStatusView
+
+from .finishing_transaction_history import FinishingTransactionHistoryView
+from .stitching_defects import StitchingDefectsView
+from .size_wise_stitch_qty import SizeWiseStitchQtyView
+from .size_wise_finish_qty import SizeWiseFinishQtyView
+from .pattern_request_status import PatternRequestStatusView
+from .sample_article_confirmation import SampleArticleConfirmationView
+from .save_record import SaveRecordView
+from .cutting_entry_dashboard import CuttingDashboardView
+from .stitching_transaction_entry import StitchingEntryView
+from .stitch_entry_dashboard import StitchDashboardView
+
+from .finish_entry_dashboard import finishDashboardView
+from .finishing_defects import finishingDefectsView
+from .dispatch_transaction_entry import DispatchTransactionEntryView
+from .dispatch_defects import DispatchDefectsView
+from .dispatch_entry_dashboard import dispatchDashboardView
+from .transaction_size_entry import TransactionSizeEntryView
+from .send_mail import SendMailView
+from .sampling_wip import SamplingWIPView
+from .sampling_cost import SamplingCostView
+from .day_cost import DayCostView
+from .tailor_eff import TailorEffView
+from .day_eff import DayEffView
+from .sample_assign import SampleAssignView
+from .sample_status import SampleStatusView
+from .other_transaction_entry import OtherEntryView
+from .other_entry_dashboard import OtherDashboardView
+from .sampling_cost_summ import SamplingCostSummView
+from .sampling_trans import SamplingTransView
+from .other_entry import OtherTransView
+from .other_sample_booking_dashboard import OtherSampleBookingDashboard
+from .sample_trans_report import SampleTransReportView

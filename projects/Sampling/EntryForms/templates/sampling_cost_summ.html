@@ -1,0 +1,120 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+
+{% block main %}
+<div class="h-full bg-base-100 shadow-soft rounded-box overflow-hidden flex flex-col knox-table-wrapper">
+    <div class="p-3 flex justify-between items-center">
+        <h1 class="font-semibold">Sampling Cost Summary</h1>
+        
+        <form class="join" method="get">
+
+            <select name="month" class="join-item select-2">
+                <option>-- Month --</option>
+                {% for item in month_list %}
+                <option {% if month|stringformat:"i" == item.m_num %}selected{% endif %} value="{{ item.m_num }}">{{ item.m_name }}</option>
+                {% endfor %}
+            </select>
+            <select name="year" class="join-item select-2">
+                <option>-- Year --</option>
+                {% for year_no in year_list %}
+                <option {% if year|stringformat:"i" == year_no|stringformat:"i" %}selected{% endif %} value="{{ year_no }}">{{ year_no }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="join-item btn btn-sm btn-primary">Search</button>
+        </form>
+
+        
+        <div class="join">
+            <input class="input input-bordered input-sm join-item knox-table-search" type="search" placeholder="Search in table" />
+
+            <select class="select select-bordered select-sm join-item kt-export">
+                <option disabled selected>Export</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+            </select>
+
+            <button class="btn btn-sm btn-primary join-item kt-export-btn">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper flex-grow overflow-auto">
+        <table class="knox-table table-sm" export-name="Sampling Cost Summary" id="knox-table-2">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th>S/N</th>
+                    <th>Department</th>
+                    <th>Manpower FTD</th>
+                    <th>Manpower FTM</th>
+                    <th>Manpower Cost FTD</th>
+                    <th>Manpower Cost FTM</th>
+                    <th>Operator FTD</th>
+                    <th>Operator FTM</th>
+                    <th>Operator Cost FTD</th>
+                    <th>Operator Cost FTM</th>
+                    <th>Stitch PCS FTD</th>
+                    <th>Stitch PCS FTM</th>
+                    <th>Cost / PCS (Stitch) FTD</th>
+                    <th>Cost / PCS (Stitch) FTM</th>
+                    <th>Dispatch PCS FTD</th>
+                    <th>Dispatch PCS FTM</th>
+
+                    <th>Cost / PCS (Dispatch) FTD</th>
+                    <th>Cost / PCS (Dispatch) FTM</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in data_list %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td><a href="/entry-forms/cost/?dept={{row.dep_code}}&month={{month}}&year={{year}}">{{ row.dep_name }}</a></td>
+                    <td class="bg-green-300">{{ row.emp_count_ftd|default_if_none:'' }}</td>
+                    <td>{{ row.emp_count_mtd|default_if_none:'' }}</td>
+                    <td class="bg-green-300">{{ row.day_cost_ftd|default_if_none:'' }}</td>
+                    <td>{{ row.day_cost_mtd|default_if_none:'' }}</td>
+    
+                    <td class="bg-green-300">{{ row.op_count_ftd|default_if_none:'' }}</td>
+                    <td>{{ row.op_count_mtd|default_if_none:'' }}</td>
+                    <td class="bg-green-300">{{ row.op_cost_ftd|default_if_none:'' }}</td>
+                    <td>{{ row.op_cost_mtd|default_if_none:'' }}</td>
+    
+                    <td class="bg-green-300">{{ row.stitch_qty_ftd|default_if_none:'' }}</td>
+                    <td>{{ row.stitch_qty_mtd|default_if_none:'' }}</td>
+
+                    <td class="bg-green-300">{{ row.stitch_pcs_cost_ftd|floatformat:0 }}</td>
+                    <td>{{ row.stitch_pcs_cost_mtd|floatformat:0 }}</td>
+                    
+                    <td class="bg-green-300">{{ row.dispatch_qty_ftd|default_if_none:'' }}</td>
+                    <td>{{ row.dispatch_qty_mtd|default_if_none:'' }}</td>
+    
+                    <td class="bg-green-300">{{ row.dispatch_pcs_cost_ftd|floatformat:0 }}</td>
+                    <td>{{ row.dispatch_pcs_cost_mtd|floatformat:0 }}</td>
+    
+                </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <th></th>
+                    <th></th>
+                    {% for _ in '1234567891234567' %}
+                    <th class="kt-total" style="font-size: 20px;"></th>
+                    {% endfor %}
+                </tr>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td class="p-0"></td>
+                    {% for _ in '12345678912345678' %}
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    {% endfor %}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+{% endblock main %}
+

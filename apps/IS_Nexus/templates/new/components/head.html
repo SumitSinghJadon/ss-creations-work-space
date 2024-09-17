@@ -1,0 +1,35 @@
+{% load static %}
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IntelliSYNC2</title>
+
+<link rel="stylesheet" href="{% static 'css/knox-main.css' %}">
+<link rel="stylesheet" href="{% static 'lib/font-awesome/css/all.css' %}">
+<link rel="stylesheet" href="{% static 'lib/flat-picker/main.css' %}">
+
+<script src="{% static 'lib/jquery/jquery.js' %}"></script>
+<script src="{% static 'lib/flat-picker/main.js' %}"></script>
+<script src="{% static 'lib/jquery/pluging/xlsx.full.min.js' %}"></script>
+<script src="{% static 'lib/jquery/pluging/file_server.min.js' %}"></script>
+<script src="{% static 'lib/html2pdfjs/html2pdf.js' %}"></script>
+
+<!-- PWA Links -->
+<!-- <link rel="apple-touch-icon" sizes="180x180" href="{% static 'knox/images/logo/apple-touch-icon.png' %}">
+<link rel="icon" type="image/png" sizes="32x32" href="{% static 'knox/images/logo/favicon-32x32.png' %}">
+<link rel="icon" type="image/png" sizes="16x16" href="{% static 'knox/images/logo/favicon-16x16.png' %}"> -->
+<!-- <link rel="manifest" href="{% static 'knox/site.webmanifest' %}"> -->
+
+<script src="{% static 'js/knox-form.js' %}"></script>
+
+<script>$("html").attr("data-theme", localStorage.getItem("theme"));</script>
+<style>
+    * {
+        scrollbar-width: thin;
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>

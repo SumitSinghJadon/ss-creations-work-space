@@ -1,0 +1,241 @@
+{% extends 'blank.html' %}
+
+
+{% block main %}
+<style>
+    .table :where(th,td) {
+        padding: 0.15rem 1rem;
+        vertical-align: middle;
+    }
+</style>
+<div class="text-center pt-5">
+    <h2 > Dispatch Defect </h2>
+</div>
+
+{% if trans_srno_list_disp|length == 0 %}
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    <input type="hidden" name="trans_id" id="trans_id" value="{{ request.GET.trans_id }}">
+    
+    <div style="text-align: right; padding: 5px;">
+        <input type="submit" class="btn btn-sm h-auto btn-success" onclick="chk_def_count(); " id="submit-btn">
+    </div>
+
+    
+
+    <table class="!w-full table [&>*_th]:border [&>*_td]:border" >
+        <tr>
+            <th>Srno</th>
+            <th>Size</th>
+            <th>Color</th>
+            <th>Qty</th>
+            <th>Defect</th>
+            <th>Defect Count</th>
+            <th>Pass/Fail</th>
+            <th>Action</th>
+        </tr>
+        {% for trans in trans_srno_list %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ trans.size }}</td>
+            <td>{{ trans.color }}</td>
+            <td>1</td>
+            <td>
+                <input type="hidden" name="counter" value="{{forloop.counter0}}">
+                <input type="hidden" name="qty[{{forloop.counter0}}]" value="1">
+                <input type="hidden" name="size[{{forloop.counter0}}]" value="{{ trans.size }}">
+                <input type="hidden" name="color[{{forloop.counter0}}]" value="{{ trans.color }}">
+                <input type="hidden" name="qid[{{forloop.counter0}}]" value="{{ forloop.counter }}">
+                <input type="hidden" name="defect_count[{{forloop.counter0}}]" id="total_defect{{ forloop.counter }}"  readonly >
+                <input type="text" name="defect[{{forloop.counter0}}]" id="total_defect_list{{ forloop.counter }}" onkeypress="return false" class="defect_cls" style="pointer-events: none;" > <!-- value="{{ trans.def_qty|default_if_none:'' }}"  -->
+                <!--<input type="number" name="defect[]" id="total_defect{{ forloop.counter }}" value="{{ trans.def_qty }}" readonly >-->
+            </td>
+            <td>
+                <input type="text" id="total_defect_disp{{ forloop.counter }}" onkeypress="return false" style="pointer-events: none;" >
+            </td>
+            <td>
+                <select name="result[{{forloop.counter0}}]" id="result{{ forloop.counter }}" class="def_cls" required  onclick="get_def_btn('{{ forloop.counter }}');"  >
+                    <option value="">Select</option>
+                    <option value="Pass">Pass</option>
+                    <option value="Fail">Fail</option>
+                    <option value="Alter">Alter</option>
+                </select>
+            </td>
+            <td>
+                <label class="btn px-10 btn-sm py-3 h-auto btn-success" style="display: none;" id="def_btn{{ forloop.counter }}" for="my_modal_{{ forloop.counter }}" onCLick="show_model('{{ forloop.counter }}');" >DEFECTS</label>
+
+                <input type="checkbox" style="display:none;" id="my_modal_{{ forloop.counter }}" class="modal-toggle" />
+                <div class="modal w-full" role="dialog" id="form_size{{ forloop.counter }}">
+                    <input type="hidden" name="flag" value="save_dispatch_qty">
+                    <div class="modal-box  w-11/12 max" style="max-width: 100% !important;">
+                        <div id="def_div{{ forloop.counter }}">
+                            <div class="flex flex-wrap w-full">
+                                {% for defect in defect_list %}
+<!--
+                                <div class="md:p-0 md:!pr-3 w-full md:w-1/2 lg:w-1/4 h-1/4 my-1" style="padding: 0px 0px 10px 0px;"  >
+                                    <div class="bg-red-200 text-center rounded-xl cursor-pointer p-2 pb-0 shadow-lg aos-init aos-animate" data-aos="zoom-in">
+                                        <div class=" font-semibold py-1 rounded-lg space-x-2">
+                                            <span>{{ defect.name }}</span>
+                                        </div>
+                                        <div class="py-3">
+                                            <h1 id="fail_count{{ forloop.parentloop.counter }}{{ forloop.counter }}" class="text-xl font-bold"><br/></h1>
+                                        </div>
+                                        <div class="py-3">
+                                            <span class="btn btn-success btn-sm" onclick="get_count('add','{{ trans.srno }}','{{ trans.color }}','{{ trans.size }}','{{ defect.id }}','fail','{{ forloop.parentloop.counter }}','{{ forloop.counter }}')" >+</span>
+                                            <span class="btn btn-error btn-sm"   onclick="get_count('remove','{{ trans.srno }}','{{ trans.color }}','{{ trans.size }}','{{ defect.id }}','fail','{{ forloop.parentloop.counter }}','{{ forloop.counter }}')" >-</span>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            -->
+                                <div class="shadow border w-fit join join-vertical" style="background-color: #ffa8a8; padding: 0px 0px 10px 0px; margin: 1% 1% 1% 1%; ">
+                                    <h1 class="join-item text-center text-black flex flex-col">
+                                        <span style="font-size: 21px; padding: 10px 0px 0px 0px;">{{ defect.name }}</span>
+                                        <span style="font-size: 19px; padding: 6px 0px 0px 0px;">{{ defect.name }}</span>
+                                    </h1>
+                                    <div class="join-item">
+                                        <div class="join">
+                                            <span class="bg-success btn join-item !rounded-bl-none" onclick="get_count('add','{{ trans.srno }}','{{ trans.color }}','{{ trans.size }}','{{ defect.id }}','fail','{{ forloop.parentloop.counter }}','{{ forloop.counter }}')">+</span>
+                                            <input readonly class="h-full p-3 join-item" id="fail_count{{ forloop.parentloop.counter }}{{ forloop.counter }}" style="background: none; font-size: 20px;  font-weight: 600;  text-align: center;" value="">
+                                            <span class="bg-error btn join-item !rounded-br-none" onclick="get_count('remove','{{ trans.srno }}','{{ trans.color }}','{{ trans.size }}','{{ defect.id }}','fail','{{ forloop.parentloop.counter }}','{{ forloop.counter }}')">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="modal-action">
+                            <label for="my_modal_{{ forloop.counter }}" class="btn">Done</label>
+                        </div>
+                  </div>
+                </div>
+                
+            </td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="4"></td>
+            <td><span id="total_defect_all"></span></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+</form>
+
+{% else %}
+<table class="!w-full table [&>*_th]:border [&>*_td]:border" >
+    <tr>
+        <th>Srno</th>
+        <th>Size</th>
+        <th>Color</th>
+        <th>Defect</th>
+        <th>Defect Count</th>
+        <th>Pass/Fail</th>
+        <th></th>
+    </tr>
+    {% for trans in trans_srno_list_disp %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ trans.size }}</td>
+        <td>{{ trans.color }}</td>
+        <td>{{ trans.defect }}</td>
+        <td>{{ trans.defect_count }}</td>
+        <td>{{ trans.result }}</td>
+        <td></td>
+    </tr>
+    {% endfor %}
+
+</table>
+{% endif %}
+
+{% endblock main %}
+
+{% block script %}
+<script>
+    function get_def_btn(i) {
+        result = $("#result"+ i).val()
+        if(result =='Fail' || result =='Alter') {
+            $("#def_btn" + i).show();
+        } else {
+            $("#def_btn" + i).hide();
+        }
+    }
+
+    // function check_div() {
+    //     checker_status = $("#checker_status").val()
+    //     if(checker_status =='fail') {
+    //         $("#def_div").show();
+    //         $("#total_defect_div").show();
+    //     } else {
+    //         $("#def_div").hide();
+    //         $("#total_defect_div").hide();
+    //     }
+    // }
+
+    function get_count(ctype,qid,color,size,defect_id,defect_type,i,j){
+        trans_id = $('#trans_id').val();
+        $.ajax({
+            method : "GET",
+            url : '/entry-forms/save-record/',
+            data : {
+                'flag' : 'save_dispatch_defect',
+                'ctype' : ctype, 
+                'qid' : qid, 
+                'color' : color, 
+                'size' : size, 
+                'trans_id' : trans_id, 
+                'defect_id' : defect_id, 
+                'defect_type' : defect_type, 
+            },
+            success : function(data) {
+                // alert(data.total_count)
+                // alert(data.defect_type)
+                if(data.defect_type =='pass') {
+                    // $('#pass_count'+ i).html(data.total_count)
+                } else if(data.defect_type =='fail') { 
+                    $("#def_lebel").hide();
+                    $('#fail_count'+ i +''+ j).val(data.total_count)
+                    $('#total_defect'+ i).val(data.total_count_qid)
+                    $('#total_defect_list'+ i).val(data.total_count_list)
+                    $('#total_defect_disp'+ i).val(data.total_count_qid)
+                    $('#total_defect_all').html(data.total_count_all)
+                }
+            },
+            error : function(error) {
+                console.log(error)
+            } 
+        })
+
+    }
+
+    function show_model(id) {
+        $("#form_size" + id).show();
+    }
+
+    $(document).ready(function(){
+
+        
+        function chk_def_count(){
+            var s_val = $(this).val(); alert(s_val);
+            if (s_val == 'Fail' || s_val == 'Alter' ) {
+                $(this).closest("tr").find(".defect_cls").attr("required", true)
+            } else {
+                $(this).closest("tr").find(".defect_cls").removeAttr("required")
+            }
+        }
+
+        $(".def_cls").on("change", function(){
+            var s_val = $(this).val()
+            if (s_val == 'Fail' || s_val == 'Alter' ) {
+                $(this).closest("tr").find(".defect_cls").attr("required", true)
+            } else {
+                $(this).closest("tr").find(".defect_cls").removeAttr("required")
+            }
+        })
+
+    })
+
+</script>
+{% endblock script %}

@@ -1,0 +1,623 @@
+{% extends 'form-table.html' %}
+
+{% block form %}
+<form action="" id="manpower-requisition-form" method="post" class="flex flex-wrap">
+    {% csrf_token %}
+    <!-- Request Type -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Request Type</span>
+            <select name="request_type" id="request_type" class="select-input select-2" required>
+                <option value="">--</option>
+                <option value="N">New</option>
+                <option value="R">Replacement</option>
+            </select>
+        </label>
+    </div>
+    <!-- Department -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label ">
+            <span class="label-text z-40">Department</span>
+            <select name="department_for" id="department" class="select-input select-2" required>
+                <option value="">--</option>
+                {% for item in department_data %}
+                    <option value="{{ item.dep_code }}">{{ item.dep_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <!-- Sub Department -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label ">
+            <span class="label-text z-40">Sub Department</span>
+            <select name="sub_department" class="select-input">
+                <option value="">--</option>
+            </select>
+        </label>
+    </div>
+    <!--Hiring Designation -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Designation</span>
+            <select name="designation_for" id="designation" class="select-input select-2" required>
+                <option value="">--</option>
+                {% for item in designation_data %}
+                    <option value="{{ item.des_code }}">{{ item.des_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <!-- Replacement for -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40 !bg-transparent">Replacement For</span>
+            <select name="replacement_for" disabled id="replacement_for" class="select-input select-2 select-disabled">
+                <option value="">--</option>
+            </select>
+        </label>
+    </div>
+    <!-- Replacement Employee Salary -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Employee Salary</span>
+            <input type="text" name="employee_salary" disabled readonly id="employee_salary" class="text-input">
+        </label>
+    </div>
+    <!-- Report To -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Report To</span>
+            <select name="report_to" class="select-input select-2" required>
+                <option value="">--</option>
+                {% for item in all_emp_data %}
+                    <option value="{{ item.username }}">{{ item.full_name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <!-- Job Location -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label ">
+            <span class="label-text z-40">Job Location</span>
+            <select name="job_location" class="select-input" required>
+                <option value="">--</option>
+                {% for item in location_data %}
+                    <option value="{{ item.payroll_code }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <!-- In Hand Salary -->
+    <div class="w-1/4 pt-1">
+        <div class="flex">
+            <label class="float-input-label">
+                <span class="label-text z-40">Minimum Salary</span>
+                <input type="number" name="salary_from" required class="text-input">
+            </label>
+            <label class="float-input-label">
+                <span class="label-text z-40">Maximum Salary</span>
+                <input type="number" name="salary_to" required class="text-input">
+            </label>
+        </div>
+    </div>
+    
+    <!-- Qualification -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Qualification</span>
+            <select type="text" name="qualification" multiple required class="select-input select-2">
+                <option value="">--</option>
+                {% for item in qualification_data %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    <!-- Years of Experience -->
+    <div class="w-1/4 pt-1">
+        <div class="flex">
+            <label class="float-input-label">
+                <span class="label-text z-40">Exp. Year From</span>
+                <input type="number" name="exp_year_from" step = "0.01" required class="text-input">
+            </label>
+            <label class="float-input-label">
+                <span class="label-text z-40">Exp. Year To</span>
+                <input type="number" name="exp_year_to" step = "0.01" required class="text-input">
+            </label>
+        </div>
+    </div>
+    <!-- Special Skill Required -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Special Skill Required</span>
+            <input type="text" name="special_skill_required" required class="text-input">
+        </label>
+    </div>
+    <!-- Years of Experience -->
+    <div class="w-1/4 pt-1">
+        <div class="flex text-input">
+            <label class="float-input-label">
+                <span class="label-text z-40">Minimum Age</span>
+                <input type="number" name="min_age" required class="text-input">
+            </label>
+            <label class="float-input-label">
+                <span class="label-text z-40">Maximum Age</span>
+                <input type="number" name="max_age" required class="text-input">
+            </label>
+        </div>
+    </div>
+    <!-- Preferred Gender -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Preferred Gender</span>
+            <select name="preferred_gender" class="select-input">
+                <option value="">--</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+        </label>
+    </div>
+    <!-- Preferred Resident Location -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Preferred Resident Location</span>
+            <select class="select-input select-2" multiple name="preferred_resident_location">
+                {% for item in city_data %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+    </div>
+    
+    <!-- Job Description -->
+    <div class="w-1/4 pt-1">
+        <button class="btn btn-danger mt-1 w-full" type="button" onclick="document.getElementById('job-description').showModal()">Add Job Description</button>
+        <dialog id="job-description" class="modal">
+            <div class="modal-box w-11/12 max-w-5xl">
+                <h3 className="font-bold text-lg">Add Job Description</h3>
+                <textarea id="editor" name="job-description"></textarea>
+                <div class="modal-action">
+                    <div method="dialog"> 
+                        <button class="btn btn-sm" type="button" onclick="document.getElementById('job-description').close()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </dialog>
+    </div>
+    <!-- Justification -->
+    <div class="w-full pt-1">
+        <label class="float-input-label ">
+            <span class="label-text">Justifiction</span>
+            <textarea name="justification" class="textarea text-input" onfocus="$(this).closest('.float-input-label').addClass('floated-label')"></textarea>
+        </label>
+    </div>
+    <div class="flex w-full justify-end pt-0.5 px-1">
+        <input type="Submit" value="Save" class="btn btn-success btn-sm px-8 mt-3">
+    </div>
+</form>
+
+<script>
+    $(document).ready(function(){
+        ClassicEditor.create( document.querySelector( '#editor' ) ).catch( error => {
+            console.error( error );
+        } );
+        $('#request_type').change(function() {
+            var selectedValue = $(this).val();
+            if (selectedValue === 'R') {
+                $('#replacement_for').attr("disabled",false)
+                $('#replacement_for').closest('.label-text').removeClass("!bg-transparent");
+            } else {
+                $('#replacement_for').attr("disabled",true)
+                $('#replacement_for').closest('.label-text').addClass("!bg-transparent");
+            }
+        }).trigger('change');
+        
+        $("#department").change(function(){
+            var department = $(this).val()
+            $.ajax({
+                url: '{% url "manpower_requisition_form_page" %}',
+                type: 'GET', 
+                data: {
+                    "department": department
+                },
+                success: function(response) {
+                    response.forEach(function(employee) {
+                        var optionText = employee.emp_name + ' (' + employee.emp_paycode + ')';
+                        var optionValue = employee.emp_paycode;
+                        $('#replacement_for').append($('<option>', {
+                            value: optionValue,
+                            text: optionText
+                        }));
+                    });
+                },
+                error: function(xhr, status, error) {
+                    // Handle errors
+                    console.error(error);
+                }
+            })
+        })
+
+        $('#replacement_for').change(function(){
+            var emp_code=$(this).val()
+            $.ajax({
+                url: '{% url "manpower_requisition_form_page" %}',
+                type: 'GET', 
+                data: {
+                    "emp_code": emp_code
+                },
+                success: function(response) {
+                    $("#employee_salary").val(response["gross_salary"])
+                    $("#employee_salary").closest('.float-input-label').addClass('floated-label');
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                }
+            })  
+        })
+        
+        $('input[name="salary_to"]').change(function() {
+            var salary_from =parseInt($('input[name="salary_from"]').val());
+            var salary_to =  parseInt($(this).val());
+            if (!isNaN(salary_to) && salary_to <= salary_from) {
+                show_alert('warning',"Maximum salary  must be greater than than minimum salary");
+                $(this).val('');
+            }
+        })
+
+        $('input[name="exp_year_to"]').change(function() {
+            var exp_year_from = parseInt($('input[name="exp_year_from"]').val());
+            var exp_year_to = parseInt($(this).val());
+            if (!isNaN(exp_year_to) && exp_year_to <= exp_year_from) {
+                show_alert('warning',"Maximum experience year must be greater than minimum experience year.");
+                $(this).val('');
+            }
+        })
+        
+        $('input[name="max_age"]').change(function() {
+            var maxAge = parseInt($(this).val());
+            var minAge = parseInt($('input[name="min_age"]').val());
+            if (!isNaN(minAge) && maxAge <= minAge) {
+                show_alert('warning',"Maximum age must be greater than minimum age.");
+                $(this).val('');
+            }
+        })
+        document.getElementById('manpower-requisition-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var jobDescription = document.getElementsByName('job-description')[0].value;
+            
+            if(jobDescription==='')
+            {
+                show_alert('warning','Job Description is also required.')
+            }
+            else
+            {
+                showLoadingOverlay()
+                const formData = new FormData(this);
+                const formAction = this.getAttribute('action');
+                fetch(formAction, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    show_alert('success','Data has been successfully saved!')
+                    hideLoadingOverlay()
+                    setTimeout(function(){window.location.reload()},200)
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        });
+    })
+</script>
+
+{% endblock form %}
+{% block endMain %}
+<dialog id="track" class="modal">
+    <div class="modal-box">
+        <ul class="steps steps-vertical">
+            
+        </ul>      
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn btn-sm">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog> 
+<dialog id="desc-modal" class="modal">
+    <div class="modal-box">
+        <div id="here">
+            
+        </div>      
+        <div class="modal-action">
+            <form method="dialog">
+                <button class="btn btn-sm">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog> 
+<dialog id="view" class="modal">
+    <div class="modal-box">
+        <table class="table table-hard capitalize">
+            
+        </table> 
+        <div class="modal-action">
+            {% if request.user.is_super_staff or request.user.reporting_manager == request.user %}
+                <button class="btn btn-sm btn-success" id="approve-mpr">Approve</button>
+                <button class="btn btn-sm text-white bg-red-500 hover:bg-red-300" id="reject-mpr">Reject</button>
+            {% endif %}
+            <form method="dialog">
+                <button class="btn btn-sm" id="modal-close">Close</button>
+            </form>
+        </div>
+    </div>
+</dialog> 
+{% endblock endMain %}
+{% block thead %}
+<tr class="capitalize">
+    <td></td>
+    <td>Employee Name</td>
+    <td>request type</td>
+    <td>department for</td>
+    <td>sub department</td>
+    <td>designation for</td>
+    <td>replacement employee</td>
+    <td>employee salary</td>
+    <td>justification</td>
+    <td>report to</td>
+    <td>Job Description</td>
+    <td>job location</td>
+    <td>status</td>
+    <td>salary Range</td>
+    <td>suggested salary range</td>
+    <td>qualification</td>
+    <td>Experience year between</td>
+    <td>Age Between</td>
+    <td>special skill required</td>
+    <td>preferred gender</td>
+    <td>preferred resident location</td>
+    <td>remarks</td>
+    <td>Track</td>
+</tr>
+{% endblock thead %}
+{% block tbody %}
+    {% for item in requisition_data %}
+        <tr>
+            <td>
+                {% if item.user.reporting_manager == request.user or request.user.is_super_staff %}
+                    <button class="btn btn-xs btn-success btn-outline view" data-id="{{ item.id }}"  type="button">View</button>
+                {% endif %}
+            </td>
+            <td>{{ item.user.full_name|default_if_none:"" }}</td>
+            <td>{{ item.get_request_type_display|default_if_none:'' }}</td>
+            <td>{{ item.department_for|default_if_none:'' }}</td>
+            <td>{{ item.sub_department|default_if_none:'' }}</td>
+            <td>{{ item.designation_for|default_if_none:'' }}</td>
+            <td>{{ item.replacement_employee.full_name|default_if_none:'' }}</td>
+            <td>{{ item.employee_salary|default_if_none:'' }}</td>
+            <td>{{ item.justification|default_if_none:'' }}</td>
+            <td>{{ item.report_to.full_name|default_if_none:'' }}</td>
+            <td><button class="btn btn-xs btn-success btn-outline get-description" data-desc="{{ item.job_description }}">View</button></td>
+            <td>{{ item.job_location|default_if_none:'' }}</td>
+            <td class="{% if item.status == 'P' %} text-warning font-bold {% elif item.status == 'AM' or item.status == 'AHOD' %} text-success font-bold {% elif item.status == 'RM' or item.status == 'RHOD' %} text-red-600 font-bold {% endif %}">{{ item.get_status_display|default_if_none:'' }}</td>
+            <td>{{ item.salary_range|default_if_none:'' }}</td>
+            <td>{{ item.suggested_salary_range|default_if_none:'' }}</td>
+            <td>
+                {% for tmp in  item.manpower_requisition_qualification.all %}
+                    {{ tmp.qualification.name }} 
+                    {% if not forloop.last %}
+                        ,
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ item.exp_year_range|default_if_none:'' }}</td>
+            <td>{{ item.age_range|default_if_none:'' }}</td>
+            <td>{{ item.special_skill_required|default_if_none:'' }}</td>
+            <td>{{ item.get_preferred_gender_display|default_if_none:'' }}</td>
+            <td>
+                {% for tmp in  item.manpower_requisition_preffered_resident_location.all %}
+                    {{ tmp.preferred_resident_location.name }} 
+                    {% if not forloop.last %}
+                        ,
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ item.remarks|default_if_none:"" }}</td>
+            <td><button class="btn btn-xs btn-success btn-outline track" data-id="{{ item.id }}">Track</button></td>
+        </tr>
+    {% endfor %}
+{% endblock tbody %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('.data-table').on('click','.track',function(){
+            id=$(this).data('id')
+            $.ajax({
+             url: "{% url 'manpower_status_tracker_page' %}",
+                type: 'GET',
+                data: {
+                    "id": id
+                },
+                success: function(response) {
+                    console.log(response)
+                    $('#track .modal-box .steps').empty();
+
+                    $.each(response, function(index, item) {
+                        console.log(item.status +(item.paycode +' | '+ item.user )+ ' - ' + item.created_at)
+                        var li = $('<li class="step step-primary">').text(item.status + ' - ' + item.created_at);
+                        
+                        // Append <li> element to modal body
+                        $('#track .modal-box .steps').append(li);
+                    });
+                    var modal = document.getElementById('track').showModal();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            }); 
+        })
+        $('.data-table').on('click','.get-description',function(){
+            description=$(this).data('desc')
+            $('#desc-modal .modal-box #here').html(description);
+            var viewDialog = document.getElementById('desc-modal');
+            viewDialog.showModal();
+        })
+        $('.data-table').on('click', '.view', function(){
+            // Get data from the clicked row
+            application_id=$(this).data('id')
+            $("#approve-mpr, #reject-mpr").removeAttr('disabled');
+            var rowData = $(this).closest('tr').find('td').map(function(){
+                return $(this).text();
+            }).get();
+
+            // Get table header data
+            var tableHeaders = [];
+            $(this).closest('table').find('thead tr td').each(function(){
+                tableHeaders.push($(this).text());
+            });
+
+            // Create table HTML
+            var tableHtml = '';
+            var status='Pending';
+            if (tableHeaders.length === rowData.length) {
+
+                for (var i = 0; i < tableHeaders.length; i++) {
+                    var header = tableHeaders[i];
+                    var value = rowData[i];
+                    
+                    if (header !== '' && header !== 'Track' && header !== 'Job Description') {
+                        if(header == 'suggested salary range')
+                        {
+                            if (value=='')
+                            {
+                                tableHtml += '<tr><th>' + header + '</th><td><div class="flex"><label class="float-input-label floated-label border-solid"><span class="label-text z-40">Salary From</span><input type="number" id="salary_from" class="text-input"></label><label class="float-input-label floated-label border-solid"><span class="label-text z-40">Salary To</span><input type="number" id="salary_to" class="text-input"></label></div></td></tr>';
+                                
+                            }
+                            else
+                            {
+                                tableHtml += '<tr><th>' + header + '</th><td>' + value + '</td></tr>'; 
+                            }
+                        }
+                        else if(header == 'remarks')
+                        {
+                            if (value=='')
+                            {
+                                tableHtml += '<tr><th>' + header + '</th><td><div class="flex"><label class="float-input-label floated-label border-solid"><span class="label-text z-40">Remarks</span><input type="text" id="remarks" class="text-input"></label></tr>';
+                            }
+                            else
+                            {
+                                tableHtml += '<tr><th>' + header + '</th><td>' + value + '</td></tr>';
+                            }
+                        }
+                        else
+                        {
+                            tableHtml += '<tr><th>' + header + '</th><td>' + value + '</td></tr>';
+                            if(header=='status')
+                            {
+                                status = value
+                            }
+                        }
+                    }
+                }
+            } else {
+                console.log('Error: Length of tableHeaders and rowData arrays must be the same.');
+            }
+
+            // Set table HTML in modal body
+            $('#view .modal-box table').html(tableHtml);
+            console.log(status)
+            if (status === 'Pending' || status === 'Approved by HOD')
+            {
+                $('#approve-mpr').attr('data-id', application_id);
+                $('#reject-mpr').attr('data-id', application_id);
+            }
+            else if(status === 'Approved by Management' || status === 'Rejected by Management' || status==='Rejected by HOD')
+            {
+                $("#approve-mpr, #reject-mpr").attr('disabled', true);
+                $("#salary_from").closest('.flex').remove();
+                $("#salary_to").closest('.flex').remove();
+                $("#remarks").closest('.flex').remove();
+            }
+            // Show modal
+            var viewDialog = document.getElementById('view');
+            viewDialog.showModal();
+        });
+
+        // show_alert("error", "Hello")
+        $("#approve-mpr").on("click",function(){
+            application_id=$(this).data('id')
+            salary_from=$("#salary_from").val()
+            salary_to=$("#salary_to").val()
+            remarks=$('#remarks').val()
+            salary_range=''
+            
+            if(salary_from !='' && salary_to!=''){ salary_range=salary_from+' - '+salary_to } 
+            
+            $("#modal-close").click()
+            showLoadingOverlay()
+            $.ajax({
+                url: "{% url 'manpower_requisition_form_page' %}",
+                type: 'post',
+                data: {
+                    "application_id": application_id,
+                    "suggested_salary_range":salary_range,
+                    "remarks":remarks,
+                    "csrfmiddlewaretoken": "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    console.log(response)
+                    
+                    if(response["success"])
+                    { 
+                        hideLoadingOverlay()
+                        show_alert('success',response["message"])
+                    }
+                    else
+                    {
+                        hideLoadingOverlay()
+                        show_alert('error',response["message"])
+                    }
+                    setTimeout(function(){window.location.reload()},400)
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        })
+
+        $("#reject-mpr").on("click",function(){
+            application_id=$(this).data('id')
+            $("#modal-close").click()
+            showLoadingOverlay()
+            $.ajax({
+                url: "{% url 'manpower_requisition_form_page' %}",
+                type: 'post',
+                data: {
+                    "reject_application_id": application_id,
+                    "csrfmiddlewaretoken": "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    console.log(response)
+                    $("#modal-close").click()
+                    if(response["success"])
+                    { 
+                        hideLoadingOverlay()
+                        show_alert('success',response["message"])
+                    }
+                    else
+                    {
+                        hideLoadingOverlay()
+                        show_alert('error',response["message"])
+                    }
+                    setTimeout(function(){window.location.reload()},400)
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                }
+            });
+        })
+    })
+</script>
+{% endblock script %}

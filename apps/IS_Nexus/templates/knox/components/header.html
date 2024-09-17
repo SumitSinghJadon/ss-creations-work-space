@@ -1,0 +1,73 @@
+{%  load static %}
+
+<header class="w-full z-30 sticky top-0 py-1">
+    <div id="site-header" class="flex px-2 justify-between items-center rounded-box backdrop-blur-lg">
+        <div class="center-y space-x-3">
+            <button class="bg-gradient-primary p-2 bg-clip-text text-transparent text-lg hover:bg-gradient-to-br" id="sidebar-toggle-btn">
+                <span id="sidebar-hidden-btn" class="hidden"><i class="fa-bold fa-bars"></i></span>
+                <span id="sidebar-active-btn"><i class="fa-solid fa-bars-staggered"></i></span>
+            </button>
+            <h4 class="title font-semibold text-lg">{{ module_name }}</h4>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 flex-grow">
+            <label class="relative w-full max-w-xs">
+                <span class="z-40 absolute left-2 top-2.5 text-primary text-sm">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </span>
+                <input type="search" class="text-input-md !pl-7 !py-4"
+                    placeholder="Search important links..">
+            </label>
+
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                    <div class="w-10 rounded-full">
+                        <img alt="Tailwind CSS Navbar component" src="{% static 'images/dummy-user.png' %}" />
+                    </div>
+                </div>
+                <ul tabindex="0"
+                    class="mt-1 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-lg w-52">
+                    <li>
+                        <a><i class="fa-regular fa-user"></i>Profile</a>
+                    </li>
+                    <li>
+                        <a><i class="fa-regular fa-gear"></i>Settings</a>
+                    </li>
+                    <li>
+                        <a href="/logout/"><i class="fa-regular fa-right-from-bracket -rotate-180"></i>Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div>
+                <button class="h-10 w-10 rounded-full btn btn-sm noti-toggle-btn">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            $(window).on("scroll", function () {
+                if (window.scrollY > 5) {
+                    $("#site-header").addClass("!bg-base-100/50")
+                } else {
+                    $("#site-header").removeClass("!bg-base-100/50")
+                }
+            })
+            
+            let isMenuOpen = true;
+            $("#sidebar-toggle-btn").on("click", function() {
+                if (isMenuOpen) {
+                    $("#sideMenuBar").animate({ left: "-256px" }, 300);
+                    $("#sideMenuBarWrapper").animate({ width : "0"}, 300)
+                } else {
+                    $("#sideMenuBar").animate({ left: "0" }, 300);
+                    $("#sideMenuBarWrapper").animate({ width : "100%"}, 300)
+                }
+                isMenuOpen = !isMenuOpen;
+            });
+        })
+    </script>
+</header>

@@ -1,0 +1,130 @@
+{% extends 'form.html' %}
+
+
+{% block form_name %} Finishing P&L {% endblock form_name %}
+
+{% block filterRight %}
+<form class="flex space-x-2 w-full" method="get">
+    <input type="text" hidden name="flag" value="add_btn_other">
+    <input type="date" name="dayno" id="dayno"  value="{{ request.GET.dayno }}" class="input input-sm input-bordered min-w-[140px]">
+    <select name="unit_code" id="unit_code" class="select select-sm select-bordered !w-[140px]" title="Filter by Buyer" style="width: 20% !important;">
+        <option value="">Select Unit</option>
+        {% for unit_val in unit_list %}
+        <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+        {% endfor %}
+    </select>
+    <span id="get_data" class="btn btn-primary btn-sm">Search</span>
+
+</form>
+{% endblock filterRight %}
+
+
+{% block form %} 
+<style>
+    table.dataTable tbody th, table.dataTable tbody td {
+        padding: 0px 10px;
+    }
+</style>
+
+<div style="overflow: scroll;">
+    <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border">
+        <thead>
+            <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                <th>Emp count</th>
+                <th>OT Hours</th>
+                <th>OT Amount</th>
+                <th>Today Cost</th>
+                <th>Today Pcs</th>
+                <th>Today Revenue</th>
+                <th>P&L</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dept in data_list_total %}
+            <tr style="font-weight: 600;font-size: 20px;color: #6464ff;">
+                <td>{{ dept.emp_count }}</td>
+                <td>{{ dept.ot_time }}</td>
+                <td>{{ dept.today_ot_cost }}</td>
+                <td>{{ dept.today_cost }}</td>
+                <td>{{ data_list_revenue.0.total_pcs }}</td>
+                <td>{{ data_list_revenue.0.total_revenue }}</td>
+                <td>{{ pnl }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+        <thead>
+            <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                <th>#</th>
+                <th>Location</th>
+                <th>RefNo</th>
+                <th>StyleNo</th>
+                <th>Color</th>
+                <th>Size</th>
+                <th>Qty</th>
+                <th>Cost</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dept in data_list %}
+            <tr id="tr{{ forloop.counter }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ dept.Trans_loc }}</td>
+                <td>{{ dept.Costref }}</td>
+                <td>{{ dept.Styleno }}</td>
+                <td>{{ dept.Color }}</td>
+                <td>{{ dept.Size }}</td>
+                <td>{{ dept.Qty }}</td>
+                <td>{{ dept.Cost }}</td>
+                <td>{{ dept.Revenue }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock form %}
+
+
+{% block script %}
+<script>
+/*
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            new_url = `?unit_code=${val}`
+            window.location.replace(new_url);
+        })
+    })
+*/
+    $(document).ready(function(){
+        $("#form-save-btn").hide();
+        $("#get_data").on("click", function(){
+            dayno = $("#dayno").val()
+            unit_code = $("#unit_code").val()
+            new_url = `?unit_code=${unit_code}&dayno=${dayno}`
+            window.location.replace(new_url);
+        })
+    })
+
+    $(document).ready(function(){
+        // $("#unit_code").on("change", function(){
+        //     val = $(this).val()
+        //     new_url = `?unit_code=${val}`
+        //     window.location.replace(new_url);
+        // })
+
+/*
+        $("#form-save-btn").click(function(){
+            $("input[type='submit']").click();
+        })
+*/
+
+    })
+
+
+</script>
+
+{% endblock script %}

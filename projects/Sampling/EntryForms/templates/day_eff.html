@@ -1,0 +1,51 @@
+{% extends 'blank.html' %}
+
+
+{% block main %}
+<style>
+    .table :where(th,td) {
+        padding: 0.15rem 1rem;
+        vertical-align: middle;
+    }
+</style>
+<div class="text-center pt-5">
+    <h2 > Tailor Eff % On Date / {{ dayno }} </h2>
+</div>
+
+
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    <table class="!w-full table [&>*_th]:border [&>*_td]:border capitalize" >
+        <tr class="sticky top-0">
+            <th>Srno</th>
+            <th>Pay Code</th>
+            <th>Name</th>
+            <th>available min</th>
+            <th>used min</th>
+            <th>stitch qty</th>
+            <th>Eff%</th>
+        </tr>
+        {% for row in data_list %}
+        {% if row.available_min %}
+        <tr class="{% if row.used_min %}bg-green-200{% endif %}">
+            <td>{{ forloop.counter }}</td>
+            <td>{{ row.emp_paycode}}</td>
+            <td>{{ row.emp_name}}</td>
+            <td>{{ row.available_min }}</td>
+            <td>{{ row.used_min}}</td>
+            <td>{{ row.stitch_qty }}</td>
+            <td>{{ row.eff }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+</form>
+
+{% endblock main %}
+
+{% block script %}
+<script>
+    function show_model(id) {
+        $("#form_size" + id).show();
+    }
+</script>
+{% endblock script %}

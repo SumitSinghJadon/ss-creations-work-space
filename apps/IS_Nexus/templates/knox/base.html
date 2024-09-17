@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>  
+    {% include 'knox/components/head.html' %}
+</head> 
+
+<body>
+    <div id="all-content-wrapper" class="relative flex" style="background: #f8f9fa;">
+        <!-- Side Menu Bar -->
+        {% include 'knox/components/sidebar.html' %}
+        
+        <!-- Notification Bar -->
+        {% include 'knox/components/notification.html' %}
+        
+        <div class="flex-grow relative px-2 h-screen w-screen overflow-auto">
+            <!-- Top Module Header -->
+            {% comment %} {% include 'knox/components/nav.html' %} {% endcomment %}
+            
+            <!-- Main header -->
+            {% include 'knox/components/header.html' %}
+            
+            <!-- Main Content -->
+            <main class="py-3 h-[calc(100%_-_58px)] duration-300 space-y-5 z-30">
+                {% block main %} {% endblock main %}
+            </main> 
+        </div>
+    </div>
+
+    <!-- Alert -->
+    {% include 'knox/components/alert.html' %}
+</body>
+
+</html>

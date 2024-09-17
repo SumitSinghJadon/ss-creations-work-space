@@ -1,0 +1,49 @@
+{% extends 'form.html' %}
+{% load static %}
+
+{% block form %}
+
+<div class="w-full p-1 pt-3 overflow-auto">
+    <div class="table-wrapper overflow-y-auto">
+        <table id="size-wise-cut-qty-table" class="table table-bordered">
+            <thead>
+                <tr class="sticky top-0">
+                    <th rowspan="2">Trans No</th>
+                    <th class="!p-2">Size</th>
+                    <th rowspan="2">Sample Qty</th>
+                    <th rowspan="2">Total Stitch Qty</th>
+                    <th rowspan="2">Total Finish Qty</th>
+                    <th rowspan="2">Balance To Finish Qty</th>
+                    <th rowspan="2">Finish Qty</th>
+                </tr>
+            </thead>
+            <tbody class="z-0">
+                {% for i in '123456789' %}
+                <tr>
+                    <th class="!p-0 text-center">{{ i }}</th>
+                    <td class="!py-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock form %}

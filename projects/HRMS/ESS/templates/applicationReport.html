@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{% block theme %}light{% endblock theme %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntteliSync</title>
+    {% load static %}
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="{%static 'lib/select2/main.css' %}">
+    <link rel="stylesheet" href="{%static 'lib/data-table/css/main.min.css' %}">
+    <link rel="stylesheet" href="{%static 'lib/DataTables/Buttons-3.0.1/css/buttons.dataTables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    <script src="{% static 'js/jquery.js' %}"></script>
+    <script src="{% static 'lib/DataTables/datatables.min.js' %}"></script>
+    <script src="{% static 'lib/DataTables/Buttons-3.0.1/js/buttons.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/DataTables/Buttons-3.0.1/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static '/lib/select2/main.js' %}"></script>
+
+
+    <link rel="icon" href="image/png" href="{% static 'images/logo.png' %}">
+
+</head>
+
+<body>
+    <form action="" method="get" class="flex w-full items-center">
+        <!-- Employee Name -->
+        <label class="label">
+                <span class="label-text">
+                <i class="fa-regular fa-user"></i> &nbsp;
+            </span>
+                <select name="eid" class="select-input select-2">
+                    <option value="">-- Employee -- </option>
+                    {% for items in user_list %}
+                        <option value="{{ items.id }}" {% if items.id|stringformat:"i" == request.GET.eid %} selected {% endif %}>{{ items.full_name }} [ {{ items.username }} ]</option>
+                                        {% endfor %}
+                </select>
+            </label>
+        
+        <!-- Status -->
+            <label class="label items-center">
+            <select name="status" class="select select-sm select-bordered">
+                    <option value="">-- STATUS --</option>
+                    <option {% if "Pending" == request.GET.status %} selected {% endif %}>Pending</option>
+                        <option {% if "Approved" == request.GET.status %} selected {% endif %}>Approved</option>
+                <option {% if "Rejected" == request.GET.status %} selected {% endif %}>Rejected</option>
+                </select>
+            </label>
+        
+        <!-- From Date | Till Date -->
+        <label class="label space-x-2">
+            <input type="date" name="from_date" value="{{ request.GET.from_date}}" class="input input-sm input-bordered">
+                <span><i class="fa-light fa-arrow-right-arrow-left"></i></span>
+                <input type="date" name="till_date" value="{{ request.GET.till_date}}" class="input input-sm input-bordered">
+            </label>
+    
+        <input type="submit" class="btn btn-sm btn-primary" id="submit-btn" value="Search">
+    </form>
+        
+    <div class="table-wrapper w-full h-full overflow-auto">
+        <table class="table-hard data-table" id="application-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-black">
+                    <th>S No.</th>
+                    <th>Name</th>
+                    <th>Unit</th>
+                    <th>Application Type</th>
+                    <th>Applied On</th>
+                    <th>No. of Days</th>
+                    <th>Half / Full Day</th>
+                    <th>From Date</th>
+                    <th>Till Date</th>
+                    <th>Miss-Punch Time</th>
+                    <th>Status</th>
+                    <td>Approved/Rejected On</td>
+                    <td>Approved/Rejected By</td>
+                    <th>Leave Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in application_list %}
+                    {% if item.user.reporting_manager == request.user or request.user.is_super_staff or request.user.is_superuser %}
+    
+                    {% if item.user.location.id in location_permission_list or not item.user.location %}
+                    <tr class="whitespace-nowrap" data-id="{{ item.id|default_if_none:'' }}" data-paycode="{{ item.user.username|default_if_none:'' }}" data-status="{{ item.status }}" data-name="{{ item.user.full_name|default_if_none:'' }}" data-boss="{{ item.user.reporting_manager.full_name|default_if_none:'' }}" data-type="{{ item.application_type|default_if_none:'' }}" data-leave_type="{{ item.leave_type|default_if_none:'' }}" data-from="{{ item.from_date|date:'Y-m-d\\TH:i'|default_if_none:'' }}" data-till="{{ item.till_date|date:'Y-m-d\\TH:i'|default_if_none:'' }}" data-daycount="{{ item.day_count|default_if_none:'' }}" data-daypart="{{ item.day_part|default_if_none:'' }}" data-time="{{ item.time|default_if_none:'' }}" data-address="{{ item.address|default_if_none:'' }}" data-phone="{{ item.mobile_number|default_if_none:'' }}" data-reason="{{ item.reason|default_if_none:'' }}" data-remarks="{{ item.remarks|default_if_none:'' }}" data-visit_location_type="{{ item.visit_location_type|default_if_none:'' }}" data-applied_on="{{ item.applied_on|date:'Y-m-d\\TH:i'|default_if_none:'' }}" data-cancelled_on="{{ item.cancelled_on|date:'Y-m-d\\TH:i'|default_if_none:'' }}" data-attachment="{{ item.attachment|default_if_none:'' }}" >
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.user.full_name }} ( {{ item.user.username }} )</td>
+                        <td>{{ item.user.location }}</td>
+                        <td>{{ item.application_type }}</td>
+                        <td>{{ item.applied_on|date:'d-m-Y H:i A' }}</td>
+                        <td>{{ item.day_count|default_if_none:'' }}</td>
+                        <td>{{ item.get_day_part_display|default_if_none:'' }}</td>
+                        {% if item.application_type == "OD" %}
+                            <td>{{ item.from_date|date:"d-m-Y h:i A" }}</td>
+                            <td>{{ item.till_date|date:"d-m-Y h:i A" }}</td>
+                        {% else %}
+                            <td>{{ item.from_date|date:"d-m-Y" }}</td>
+                            <td>{{ item.till_date|date:"d-m-Y" }}</td>
+                        {% endif %}
+                        <td>{{ item.time|default_if_none:'' }}</td>
+                        <td class="{% if item.status == 'Pending' %} bg-warning {% elif item.status == 'Approved' %} bg-success {% else %}bg-error {% endif %}">{{ item.status }}</td>
+                        <td>{{ item.approved_on|date:'d-m-Y H:i' }}</td>
+                        <td>{{ item.updated_by.full_name|default_if_none:'' }}</td>
+                        <td>{{ item.leave_type|default_if_none:'' }}</td>                    
+                    </tr>
+                    {% endif %}
+                    
+                    {% endif %}
+    
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script>
+        $(document).ready(function(){
+            var table = $('#application-table').DataTable();
+            if (table !== 'undefined') {
+                table.destroy();
+            }
+
+            $('#application-table').DataTable({
+                dom: 'Bfrtip',
+                paging : false,
+                info : false,
+                "searching": false,
+                buttons: [
+                    {
+                    extend: 'pdfHtml5',
+                        orientation: 'landscape',//landscape give you more space
+                        pageSize: 'A4',
+                        customize: function(doc) {
+                            // Set margins
+                            doc.pageMargins = [0, 0, 0, 0]; // left, top, right, bottom
+                        }
+                    }
+                    ,
+                    'excel',
+                    'copy'
+                ]
+            });
+            
+            $('.select-2').select2()
+        })
+        
+
+
+    </script>
+</body>
+
+<style>
+    ::-webkit-scrollbar-track { width: 6px;}
+
+    ::-webkit-scrollbar-thumb {
+        width: 6px;
+        background-color: #bebeca;
+        border-radius: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #636399;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+</style>
+
+</html>

@@ -1,0 +1,225 @@
+{% extends 'form-table.html' %}
+
+{% block form %}
+<form action="" method="POST" enctype="multipart/form-data" class="flex flex-wrap">
+    {% csrf_token %}
+    <!-- Employee Code -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Employee Code</span>
+            <input type="text" name="emp_code" value="{{ data.emp_paycode }}"  readonly required class="text-input">
+        </label>
+    </div>
+    <!-- Employee Name -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Employee Name</span>
+            <input type="text" name="emp_name" value="{{ data.emp_name }}"  readonly required class="text-input">
+        </label>
+    </div>
+    <!-- Unit -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Location</span>
+            <select name="unit" class="select-input">
+                <option value="{{ data.loc_code }}" selected>{{ data.loc_name }}</option>
+            </select>
+        </label>
+    </div>
+    <!-- Department -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Department</span>
+            <input type="text" name="department" value="{{ data.dep_name }}"  readonly required class="text-input">
+        </label>
+    </div>
+    <!-- Reporting Manager -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Reporting Manager</span>
+            <input type="hidden" name="reporting_manager" value="{{ data.reporting_manager.emp_paycode }}">
+            <input type="text" value="{{ data.reporting_manager.emp_name }}"  readonly required class="text-input">
+        </label>
+    </div>
+    <!-- Application Type -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text z-40">Application Type</span>
+            <input type="text" name="application_type" class="text-input" value="Leave" readonly required>
+        </label>
+    </div>
+    <!-- Leave From -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text">Leave From</span>
+            <input type="date" name="leave_from" required min="{{ min_date|date:'Y-m-d' }}" value="{{ leave_date }}" class="text-input">
+        </label>
+    </div>
+    <!-- Leave Till -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text min-w-[120px]">Leave Till</span>
+            <input type="date" name="leave_till" required min="{{ min_date|date:'Y-m-d' }}" value="{{ leave_date }}" class="text-input">
+        </label>
+    </div>
+    <!-- Full Day/Half Day -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+            <select data-col-index="2" name="day_part" class="select-input select-2" required>
+                <option value="">--</option>
+                <option value="FD">Full Day</option>
+                <option value="HD">Half Day</option>
+                <option value="SD">Short Leave</option>
+            </select>
+        </label>
+    </div>
+    <!-- Address During Day Period -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Address During Day Period</span>
+            <input type="text" name="address_on_leave" required class="text-input">
+        </label>
+    </div>
+    <!-- Mobile Number -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Mobile Number</span>
+            <input type="number" name="mobile_number"  autocomplete="nope" required class="text-input onlyNumberField" data-max-length="10">
+        </label>
+    </div>
+    <!-- Leave Type -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Leave Type</span>
+            <select data-col-index="2" name="leave_type" class="select-input select-2" required>
+                <option value="">--</option>
+                <option value="SL">SL</option>
+                <option value="CL">CL</option>
+                <option value="EL">EL</option>
+            </select>
+        </label>
+    </div>
+    <!-- Reason For Leave -->
+    <div class="w-1/2 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40">Reason For Leave</span>
+            <input type="text" name="reason_for_leave" required class="text-input">
+        </label>
+    </div>
+    <!-- Attachment -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label">
+            <span class="label-text z-40 min-w-[120px]">Attachment</span>
+            <input type="file" name="attachment" class="text-input file-input file-input-bordered file-input-ghost w-full">
+        </label>
+    </div>
+    <div class="w-1/4 pt-0.5 px-1">
+        <input type="Submit" value="Save" class="btn btn-success btn-sm px-8 mt-3">
+    </div>
+</form>
+{% endblock form %}
+{% block tfilter %}
+<div class="p-2">
+    <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Leave Application History</h1>
+    <form action="" method="GET" class="flex flex-wrap">
+        <!-- Year -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Year</span>
+                <select name="year" class="select-input select-2">
+                    <option value="">--</option>
+                    {% for item in year_list %}
+                        <option {% if item.name == current_year %} selected {% endif %}>{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Month -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Month</span>
+                <select name="month" class="select-input select-2">
+                    <option value="">--</option>
+                    {% for item in month_list %}
+                        <option {% if item.value == current_month %} selected {% endif %} value="{{ item.value }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Application Status -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label {% if application_status %}floated-label{% endif %}">
+                <span class="label-text z-40">Application Status</span>
+                <select data-col-index="2" name="application_status" class="select-input select-2">
+                    <option value="">--</option>
+                    <option {% if application_status == 'Pending' %} selected {% endif %}>Pending</option>
+                    <option {% if application_status == 'Approved' %} selected {% endif %}>Approved</option>
+                    <option {% if application_status == 'Rejected' %} selected {% endif %}>Rejected</option>
+                </select>
+            </label>
+        </div>
+        <div class="w-1/4 pt-0.5 px-1">
+            <input type="Submit" value="Search" class="btn btn-success btn-sm px-8 mt-3">
+        </div>
+    </form>
+</div>
+
+<!-- Modal for viewing attachment -->
+<dialog id="my_modal_view_attachment" class="modal">
+  <div class="modal-box w-11/12 max-w-5xl">
+    <img id="view_attachment_img" class="w-auto h-auto max-w-full max-h-full"/>
+    <div class="modal-action">
+      <form method="dialog">
+            <a id="view_attachment_download" class="btn btn-sm btn-success" href="" download><i class="fa-regular fa-download"></i></a>
+            <button class="btn btn-sm">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+{% endblock tfilter %}
+{% block thead %}
+    <td>Application Type</td>
+    <td>Leave Type</td>
+    <td>From</td>
+    <td>Till</td>
+    <td>Day Part</td>
+<td>Day Count</td>
+    <td>Application Status</td>
+    <td>Reason</td>
+    <td>Applied On</td>
+    <td>Approved On</td>
+    <td>Attachment</td>
+    <td>Remarks</td>
+    <td>Reporting Manager</td>
+{% endblock thead %}
+{% block tbody %}
+    {% for item in leave_data %}
+        <tr>
+            <td>{{ item.application_type }}</td>
+            <td>{{ item.leave_type }}</td>
+            <td class="whitespace-nowrap">{{ item.leave_from|date:"d-m-Y" }}</td>
+            <td class="whitespace-nowrap">{{ item.leave_till|date:"d-m-Y" }}</td>
+            <td>{{ item.day_part }}</td>
+            <td>{{ item.day_count }}</td>
+            <td>{{ item.status }}</td>
+            <td>{{ item.reason_for_leave }}</td>
+            <td>{{ item.applied_on|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.approved_on|date:"d-m-Y h:i A" }}</td>
+            <td>{% if item.attachment %} <button class="btn btn-xs btn-outline view-attachment" data-img_path="/media/{{ item.attachment }}">View</button>{% endif %}</td>
+            <td>{{ item.approval_remarks|default_if_none:'' }}</td>
+            <td>{{ item.reporting_manager.emp_name }}</td>
+        </tr>
+    {% endfor %}
+<script>
+    $(document).ready(function(){
+        $('.view-attachment').on('click',function(){
+            data=$(this).data('img_path')
+            $('#view_attachment_img').attr('src',data)
+            $('#view_attachment_download').attr('href',data)
+            document.getElementById('my_modal_view_attachment').showModal()
+        })
+    })
+</script>
+{% endblock tbody %}

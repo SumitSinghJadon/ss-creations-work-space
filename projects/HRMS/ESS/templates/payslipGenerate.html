@@ -1,0 +1,313 @@
+{% extends 'form.html' %}
+{% load knox_filter %}
+{% block filterRight %}
+    <form action="" method="get" class="flex w-full space-x-2">
+        <select name="year" id="year" class="select select-sm select-bordered" required>
+            <option value="" selected disabled>Year</option>
+            {% for year in year_list %}
+            <option {% if year.name == request.GET.year %} selected {% endif %}>{{ year.name }}</option>
+            {% endfor %}
+        </select>
+        <select name="month" id="month" class="select select-sm select-bordered min-w-[100px]" required>
+            <option value="" selected disabled>Month</option>
+            {% for month in month_list %}
+            <option value="{{ month.value }}" {% if month.value == request.GET.month %} selected {% endif %}>{{ month.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Search" class="btn btn-success btn-sm"> 
+        {% if data %}
+                <button type="button" class="btn btn-success btn-sm" id="download-pdf-btn">Download PDF</button>
+        {% endif %}
+        </form>
+    {% endblock filterRight %}
+
+{% block form %}
+{% if data %}
+    {% for item in data %}
+        <style>
+            main {
+                padding: 0.3in;
+            }
+
+            * {
+                box-sizing: border-box;
+                padding: 0px;
+                margin: 0px;
+                font-size: 14px;
+                font-family: Arial, Helvetica, sans-serif;  
+            }
+
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                text-align: left;
+                border: 2px solid #000;
+            }
+
+            table th, table td {
+                padding: 4px;
+            }
+
+            .border {
+                border: 2px solid #000;
+            }
+            
+            .border-r {
+                border-right: 2px solid #000;
+            }
+            
+            .border-l {
+                border-left: 2px solid #000;
+            }
+
+            .border-b {
+                border-bottom: 2px solid #000;
+            }
+            
+            .border-t {
+                border-top: 2px solid #000;
+            }
+            
+            .border-y {
+                border-top: 2px solid #000;
+                border-bottom: 2px solid #000;
+            }
+            
+            .border-r-0 {
+                border-right: none;
+            }
+            
+            .border-l-0 {
+                border-left: none;
+            }
+
+            .border-b-0 {
+                border-bottom: none;
+            }
+            
+            .border-t-0 {
+                border-top: none;
+            }
+
+            .border-child th, .border-child td {
+                border: 2px solid black;;
+            }
+
+            .text-right {
+                text-align: right;
+            }
+            .text-left {
+                text-align: left;
+            }
+
+            .text-center {
+                text-align: center;
+            }
+            .align-end{
+                display: flex;
+                align-items: end;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+        <table id="payslip">
+            <thead>
+                <tr>
+                    <th colspan="10" class="text-center border-b">{{ item.cmp_name }}</th>
+                </tr>
+                <tr>
+                    <th colspan="10" class="text-center border-b">
+                        {{ item.loc_add1 }}
+                    </th>
+                </tr>
+                <tr>
+                    <th>Code No.</th>
+                    <td colspan="2">{{ item.emp_paycode }}</td>
+                    <td rowspan="6" colspan="4" style="text-align: center;">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <u><h4>Form X</h4></u>
+                            <span style="padding: 6px 0px;">(Rule 26)</span>
+                            <h4 class="border" style="padding: 10px 6px; width: fit-content;">
+                                Salary Slip :{{ month }}-{{ request.GET.year }}
+                            </h4>
+                        </div>
+                    </td>
+                    <th>Bank Name</th>
+                    <td colspan="2">{{ item.bank_name }}</td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <td colspan="2">{{ item.emp_name }}</td>
+                    <th>Bank Ac No.</th>
+                    <td colspan="2">{{ item.bankac_no }}</td>
+                </tr>
+                <tr>
+                    <th>F/H Name</th>
+                    <td colspan="2">{{ item.emp_fname }}</td>
+                    <th>UAN No.</th>
+                    <td colspan="2">{{ item.old_pfno }}</td>
+                </tr>
+                <tr>
+                    <th>Designation</th>
+                    <td colspan="2">{{ item.des_name }}</td>
+                    <th>PF No.</th>
+                    <td colspan="2">{% if item.pf_no %}{{ pf_prefix }}/{{ item.pf_no }}{% endif %}</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td colspan="2">{{ item.dep_name }}</td>
+                    <th>ESI No.</th>
+                    <td colspan="2">{{ item.esi_no }}</td>
+                </tr>
+                <tr>
+                    <th>DoJ</th>
+                    <td colspan="2">{{ item.emp_doj|date:'d-m-Y' }}</td>
+                    <th>OT Rate</th>
+                    <td colspan="2"></td>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <th class="border-y border-r" colspan="2">Attn. Details</th>
+                    <th class="border-y border-r">Leave Bal.</th>
+                    <th class="border-y border-r" colspan="2">Salary/WageRate</th>
+                    <th class="border-y border-r">Earnings</th>
+                    <th class="border-y border-r">Arrears</th>
+                    <th class="border-y" colspan="2">Deductions</th>
+                    <th class="border-y border-l text-center" rowspan="3">Net Salary</th>
+                </tr>
+                <tr>
+                    <th class="border-r">Present</th>
+                    <td class="border-r text-right">{{ item.wd|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right"></td>
+                    <th>Basic</th>
+                    <td class="border-r text-right">{{ item.earnr1|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earn1|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earr1|convert_to_two_decimals }}</td>
+                    <th>PF</th>
+                    <td class="text-right">{{ item.ded1|convert_to_two_decimals }}</td>
+                </tr>
+                <tr>
+                    <th class="border-r">WO</th>
+                    <td class="border-r text-right">{{ item.wo|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right"></td>
+                    <th>HRA</th>
+                    <td class="border-r text-right">{{ item.earnr2|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earn2|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earr2|convert_to_two_decimals }}</td>
+                    <th>ESI</th>
+                    <td class="text-right">{{ item.ded2|convert_to_two_decimals }}</td>
+                </tr>
+                <tr>
+                    <th class="border-r">HD</th>
+                    <td class="border-r text-right">{{ item.hd|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right"></td>
+                    <th>Spw. Allow</th>
+                    <td class="border-r text-right">{{ item.earnr3|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earn3|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earr3|convert_to_two_decimals }}</td>
+                    <th>Advance</th>
+                    <td class="text-right">{{ item.ded4|convert_to_two_decimals }}</td>
+                    <th class="border-l border-b text-center" style="font-size: 21px;" rowspan="3">{{ item.netsal }}</th>
+                </tr>
+                <tr>
+                    <th class="border-r">EL</th>
+                    <td class="border-r text-right">{{ item.EL|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.BEL|convert_to_two_decimals }}</td>
+                    <th>Other Allow</th>
+                    <td class="border-r text-right">{{ item.earnr4|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earn4|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earr4|convert_to_two_decimals }}</td>
+                    <th>Others</th>
+                    <td class="text-right">{{ item.ded4|convert_to_two_decimals }}</td>
+                </tr>
+                <tr>
+                    <th class="border-r">CL</th>
+                    <td class="border-r text-right">{{ item.CL|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.BCL|convert_to_two_decimals }}</td>
+                    <th>Mobile Allow</th>
+                    <td class="border-r text-right">{{ item.earnr5|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earn5|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.earr5|convert_to_two_decimals }}</td>
+                    <th>TDS</th>
+                    <td class="text-right">{{ item.ded6|convert_to_two_decimals }}</td>
+                </tr>
+                <tr>
+                    <th class="border-r">SL</th>
+                    <td class="border-r text-right">{{ item.SL|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right">{{ item.BSL|convert_to_two_decimals }}</td>
+                    <th></th>
+                    <td class="border-r text-right"></td>
+                    <td class="border-r text-right"></td>
+                    <td class="border-r text-right"></td>
+                    <th></th>
+                    <td></td>
+                    <th class="border-l " rowspan="3"></th>
+                </tr>
+                <tr>
+                    <th class="border-r">Other Leave</th>
+                    <td class="border-r text-right"></td>
+                    <td class="border-r text-right"></td>
+                    <th>EL Paid Day</th>
+                    <td class="border-r text-right"></td>
+                    <td class="border-r text-right"></td>
+                    <td class="border-r text-right"></td>
+                    <th></th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th class="border-r">Absents</th>
+                    <td class="border-r text-right">{{ item.ab|convert_to_two_decimals }}</td>
+                    <td class="border-r text-right"></td>
+                    <th></th>
+                    <td class="border-r text-right"></td>
+                    <td class="border-r text-right"></td>
+                    <td class="border-r text-right"></td>
+                    <th></th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="border-t">Payable Days</td>
+                    <th class="border-r text-right border-t">{{ item.pd|convert_to_two_decimals }}</th>
+                    <td class="border-t">Total</td>
+                    <th class="border-r text-right border-t">{{ item.totrate|convert_to_two_decimals }}</th>
+                    <th class="border-r text-right border-t">{{ item.totearn|convert_to_two_decimals }}</th>
+                    <th class="border-r text-right border-t">{{ item.totarr|convert_to_two_decimals }}</th>
+                    <td class="border-t">Total</td>
+                    <th class="text-right border-t">{{ item.totded|convert_to_two_decimals }}</th>
+                    <th class="border-l text-center">Employee Signature</th>
+                </tr>
+                <tr>
+                    <td colspan="10" class="border-y">
+                        {{ item.netsal|number_to_text }} Rupees Only
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="10" style="font-size: 12px; text-align: right; padding-top: 5px;">
+                        This is Computer generated Pay Slip.It does not require Signature.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+    <script>
+        $(document).ready(function() {
+        // Call downloadPDF function when button clicked
+        $("#download-pdf-btn").on("click", function(){
+            year = $("#year").val()
+            month= $("#month").val()
+            const element = document.getElementById("payslip");
+            html2pdf(element,
+            {
+                margin:       [1, .2, 1, .2],
+                filename:     'salary_slip_'+year+"_"+month+'.pdf',
+                image:        { type: 'jpeg', quality: 1 },
+                html2canvas:  { scale: 2 ,letterRendering: true,dpi:192 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            }).save()
+        })
+        });
+    </script>
+{% endif %}
+{% endblock form %}

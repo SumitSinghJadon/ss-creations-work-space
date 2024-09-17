@@ -1,0 +1,352 @@
+{% extends 'new/base.html' %}
+
+{% block main %}
+<div class="knox-table-wrapper">
+    <div class="table-header-wrapper">
+        <h1 class="font-semibold">Send to QMS</h1>
+        <div class="join">
+            <button class="btn btn-success btn-sm join-item" onclick="$('#filter-submit-btn').click()">Search</button>
+            <button class="btn btn-primary btn-sm join-item table-filter-toggle"><i class="fa-regular fa-filter-list"></i></button>
+            <input class="input input-sm input-primary bg-base-200 join-item knox-table-search" type="search" placeholder="Search in table" />
+            <button class="btn btn-sm btn-primary join-item kt-export-btn"><i class="fa-solid fa-file-arrow-down"></i></button>
+            <button class="btn btn-success btn-sm join-item">Send To QMS</button>
+        </div>
+    </div>
+
+    <form class="table-filter-wrapper h-fit">
+        <div class="flex flex-wrap w-full h-full p-1">
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="buyer_filter" class="knox-select">
+                            <option value=""></option>
+                            {% for item in buyer_list %}
+                            <option {% if request.GET.buyer_filter == item.buyer %}selected{% endif %} value="{{ item.buyer }}">{{ item.party_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text">Buyer</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="style_filter" class="knox-select">
+                            <option value=""></option>
+                            {% for item in style_list %}
+                            <option {% if request.GET.style_filter == item.0 %}selected{% endif %} value="{{ item.0 }}">{{ item.0 }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text">Select Field</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="style_filter" class="knox-select">
+                            <option value=""></option>
+                            {% for item in ref_list %}
+                            <option {% if request.GET.ref_filter == item.0 %}selected{% endif %}  value="{{ item.0 }}">{{ item.0 }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text">Select Field</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5 join">
+                <div class="knox-form-input join-item">
+                    <label>
+                        <input type="datetime" name="fc" id="from_date" min="05-05-2024" required class="knox-input peer">
+                        <span class="label-text">From Date</span>
+                    </label>
+                </div>
+                <div class="knox-form-input join-item">
+                    <label>
+                        <input type="datetime" name="fd" required class="knox-input peer" gt="from_date">
+                        <span class="label-text">Till Date</span>
+                    </label>
+                </div>
+            </div>
+
+            <input type="submit" id="filter-submit-btn" value="Search" class="hidden">
+        </div>
+    </form>
+
+    <div class="table-wrapper">
+        <table class="knox-table table-xs" export-name="Send To QMS">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th id="check" class="no-export">#</th>  
+                    <th>S/N</th>
+                    <th>Our Ref.</th>
+                    <th>Buyer Name</th>
+                    <th>Buyer order No</th>
+                    <th>Style No.</th>
+                    <th>Delivery Date</th>
+                    <th>Total QTY.</th>
+                    <th>Colour</th>
+                    <th>Style category</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td><input type="checkbox" name="selected_items" value='{{ item.ourref }}'></td> 
+                    <th>{{ forloop.counter }}</th>
+                    <td>
+                        <a class="link-hover" href="/rtqm/order_dt_view?ourref={{ item.ourref }}&style_no={{ item.styleno }}&color={{ item.color }}&buyer={{ item.buyer }}" target="_blank">
+                        {{item.ourref }}
+                        </a>
+                    </td>
+                    <td>{{ item.party_name }}</td>
+                    <td>{{ item.buyord }}</td>
+                    <td>{{ item.styleno }}</td>
+                    <td>{{ item.delvdate|date:"d-m-Y" }}</td>
+                    <td class="text-end">{{ item.totalqty|default_if_none:"0" }}</td>
+                    <td>{{ item.color|default_if_none:"" }}</td>
+                    <td>{{ item.style_category }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td></td>
+                    <td class="kt-row-count"></td>
+                    <td><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td><div class="kt-col-total" target-col="7"></div></td>
+                    <td><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock main %}
+
+
+
+
+
+
+<div class="h-full overflow-auto shadow-soft rounded-box knox-table-wrapper">
+    <div class="px-3 py-1.5 flex justify-between items-center flex-wrap">
+        <h1 class="font-semibold text-center w-full md:w-auto">
+            Send To QMS
+            <span class="knox-row-count"></span>
+        </h1>
+        <div class="join">
+            <button class="btn btn-primary btn-sm join-item knox-table-filter-btn"><i class="fa-regular fa-filter-list"></i></button>
+            <input class="input input-sm input-primary join-item knox-table-search" type="search" placeholder="Search in table" />
+            <select class="select select-sm join-item kt-export select-primary">
+                <option selected value="excel">Excel</option>
+            </select>
+            <button class="btn btn-sm btn-primary join-item kt-export-btn"><i class="fa-solid fa-file-arrow-down"></i></button>
+            <button class="btn btn-success btn-sm join-item">Send To QMS</button>
+        </div>
+    </div>
+
+    <!-- Form Filter -->
+    <form class="knox-filter-wrapper">
+        <div class="flex flex-wrap w-full p-2">
+            <div class="w-full md:w-1/3 lg:w-1/4 knox-select">
+                <select name="buyer_filter" id="id_buyer_filter">
+                    <option value="">------</option>
+                    {% for item in buyer_list %}
+                    <option {% if request.GET.buyer_filter == item.buyer %}selected{% endif %} value="{{ item.buyer }}">{{ item.party_name }}</option>
+                    {% endfor %}
+                </select>
+                <label for="id_buyer_filter">Buyer</label>
+            </div>
+            
+            <div class="w-full md:w-1/3 lg:w-1/4 knox-select">
+                <select name="style_filter" id="id_style_filter">
+                    <option value="">------</option>
+                    {% for item in style_list %}
+                    <option {% if request.GET.style_filter == item.0 %}selected{% endif %} value="{{ item.0 }}">{{ item.0 }}</option>
+                    {% endfor %}
+                </select>
+                <label for="id_buyer_filter">Style No.</label>
+            </div>
+
+            <div class="w-full md:w-1/3 lg:w-1/4 knox-select">
+                <select name="ref_filter" id="id_ref_filter">
+                    <option value="">------</option>
+                    {% for item in ref_list %}
+                    <option {% if request.GET.ref_filter == item.0 %}selected{% endif %}  value="{{ item.0 }}">{{ item.0 }}</option>
+                    {% endfor %}
+                </select>
+                <label for="id_ref_filter">Our Ref No.</label>
+            </div>
+            
+            <div><input type="submit" value="Search" class="btn btn-md btn-primary"></div>
+        </div>
+    </form>
+    
+    <!-- Table Form -->
+    <form method="post" class="table-wrapper">
+        <table class="knox-table">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th id="check">#</th>  
+                    <th>S/N</th>
+                    <th>Our Ref.</th>
+                    <th>Buyer Name</th>
+                    <th>Buyer order No</th>
+                    <th>Style No.</th>
+                    <th>Delivery Date</th>
+                    <th>Total QTY.</th>
+                    <th>Colour</th>
+                    <th>Style category</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td><input type="checkbox" name="selected_items" value='{{ item.ourref }}'></td> 
+                    <th>{{ forloop.counter }}</th>
+                    <td><a href="/rtqm/order_dt_view?ourref={{ item.ourref }}&style_no={{ item.styleno }}&color={{ item.color }}&buyer={{ item.buyer }}" target="_blank">{{item.ourref }}</a></td>
+                    <td>{{ item.party_name }}</td>
+                    <td>{{ item.buyord }}</td>
+                    <td>{{ item.styleno }}</td>
+                    <td>{{ item.delvdate|date:"d-m-Y" }}</td>
+                    <td class="text-end">{{ item.totalqty|default_if_none:"0" }}</td>
+                    <td>{{ item.color|default_if_none:"" }}</td>
+                    <td>{{ item.style_category }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td class="p-0"></td>
+                    <td class="p-0"></td>
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td class="p-0"><div class="kt-total" target-col="7"></div></td>
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+</div>
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $("#id_buyer_filter").on("change", function(){
+            $.ajax({
+                method : "GET",
+                data : {
+                    "flag": "get_style_by_buyer",
+                    "buyer" : $(this).val(),
+                },
+                success : function(data){
+                    option_html = '';
+                    $(data).each(function(){
+                        option_html += $("<option>").attr("value", data['styleno']).text(data['styleno'])
+                    })
+                    $("#id_style_filter").html(option_html)
+                    refreshKnoxFields();
+                }
+            })
+        })
+    })
+</script>
+{% endblock script %}
+
+
+{% comment %}
+{% extends 'table.html' %}
+{% load knox_filter %}
+
+{% block table-btn %}QMS &nbsp;{% endblock table-btn %}
+
+{% block table-page-name %}
+<div class="flex w-full">
+    <form action="" method="GET" class="flex space-x-2 w-full">
+        <div class="w-1/3">
+            <select name="buyer_filter" class="select select-sm select-bordered select-2">
+                <option value="">--- Buyer ---</option>
+                {% for item in buyer_list %}
+                <option {% if request.GET.buyer_filter == item.buyer %}selected{% endif %} value="{{ item.buyer }}">{{ item.party_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="w-1/3">
+            <select name="style_filter" class="select select-sm select-bordered select-2">
+                <option value="">--- Style ---</option>
+                {% for item in style_list %}
+                <option {% if request.GET.style_filter == item.0 %}selected{% endif %} value="{{ item.0 }}">{{ item.0 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="w-1/3">
+            <select name="ref_filter" class="select select-sm select-bordered select-2">
+                <option value="">--- Ref. No. ---</option>
+                {% for item in ref_list %}
+                <option {% if request.GET.ref_filter == item.0 %}selected{% endif %}  value="{{ item.0 }}">{{ item.0 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    
+        <input type="submit" value="search" class="btn btn-primary btn-sm">
+    </form>
+    <button type="button" class="btn btn-success btn-sm" onclick="$('#submit-btn').click()">Send To QMS</button>
+</div>
+{% endblock table-page-name %}
+
+{% block beforeTable %} <form method="post" class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-xl"> {% csrf_token %} {% endblock beforeTable %}
+{% block afterTable %} <input type="submit" hidden id="submit-btn"> </form> {% endblock afterTable %}
+
+
+{% block thead %}
+<tr class="bg-slate-300 text-black dt-col-search sticky top-0">
+    <th id="check">#</th>        
+    <th class="dt-nosearchable">S/N</th>
+    <th id="blank-form">Our Ref.</th>
+    <th>Buyer Name</th>
+    <th>Buyer order No</th>
+    <th>Style No.</th>
+    <th>Delivery Date</th>
+    <th>Total QTY.</th>
+    <th>Colour</th>
+    <th>Style category</th>
+    <th>Style Name</th>
+</tr>
+{% endblock thead %}
+
+
+{% block tbody %}
+{% for item in data %}
+<tr>
+    <td><input type="checkbox" name="selected_items" value='{{ item.ourref }}'></td> 
+    <th title="{{ item.code }}">{{ forloop.counter }}</th>
+    <td><a href="../order_dt_view?ourref={{ item.ourref }}&style_no={{ item.styleno }}&color={{ item.color }}&buyer={{ item.buyer }}" target="_blank">{{item.ourref }}</a></td>
+    <td>{{ item.party_name }}</td>
+    <td>{{ item.buyord }}</td>
+    <td>{{ item.styleno }}</td>
+    <td>{{ item.delvdate|date:"d-M-Y" }}</td>
+    <td>{{ item.totalqty|default_if_none:"0" }}</td>
+    <td>{{ item.color|default_if_none:"" }}</td>
+    <td>{{ item.style_category }}</td>
+    <td>{{ item.Stylename }}</td>
+</tr>
+{% endfor %}
+{% endblock tbody %}
+{% endcomment %}

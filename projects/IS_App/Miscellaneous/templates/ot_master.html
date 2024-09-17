@@ -1,0 +1,123 @@
+{% extends 'form.html' %}
+
+{% block form %} 
+
+<div style="overflow: scroll;">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}"> {% csrf_token %}
+        <input type="text" hidden name="flag" value="add_btn_other">
+
+
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Unit Code</th>
+                    <th>Department</th>
+                    <th>Ot Month</th>
+                    <th>Ot Daily</th>
+                </tr>
+                <tr class="sticky top-0 bg-slate-200 text-slate-800">
+                    <th>#</th>
+                    <th>
+						<select name="unit_code" id="unit_code" style="width: 125px; border: 1px solid black;" >
+							<option value="">Select Unit</option>
+							{% for unit_val in unit_list %}
+							<option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+							{% endfor %}
+						</select>
+                    </th>
+                    <th></th>
+                    <th></th>
+
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+
+                {% for dept in ot_master_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>
+                        <input type="number" hidden value="{{forloop.counter0}}" name="counter">
+                        <input type="number" hidden value="{{dept.dep_code}}" name="dep_code[{{forloop.counter0}}]">
+                        <input type="number" hidden value="{{dept.id}}" name="app_id[{{forloop.counter0}}]">
+                        {{ forloop.counter }}
+                    </td>
+                    <td></td>
+                    <td>{{ dept.dep_name }}</td>
+                    <td style="padding: 0 !important;"><input type="number" name="ot_month[{{forloop.counter0}}]" id="ot_month{{ forloop.counter }}" value="{{ dept.ot_month }}" class="!input-sm" list="order_list"></td>
+                    <td style="padding: 0 !important;"><input type="number" name="ot_daily[{{forloop.counter0}}]" id="ot_daily{{ forloop.counter }}" value="{{ dept.ot_daily }}" class="!input-sm" list="order_list"></td>                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <input type="submit" class="hidden" value="">
+    </form>
+</div>
+ 
+
+{% endblock form %}
+
+
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            new_url = `?unit_code=${val}`
+            window.location.replace(new_url);
+        })
+
+
+        $("#form-save-btn").click(function(){
+            $("input[type='submit']").click();
+        })
+/*
+        $("#add-new-btn").on("click", function(){
+            let unit_code = "{{ request.GET.unit_code }}"
+            let from_date= $("#from_date").val()
+            let to_date = $("#to_date").val()
+            $.ajax({
+                method : 'POST',
+                url : '',
+                data : {
+                    'flag' : 'add_btn_other',
+                    'from_date' : from_date,
+                    'to_date' : to_date,
+                    'unit_code' : unit_code,
+                    'csrfmiddlewaretoken' : "{{ csrf_token }}"
+                },
+                success : function(data) {
+                    alert(data)
+                }, 
+                error: function(e){
+                    alert("Something went wrong")
+                    console.log(e)
+                }
+            })
+        })
+
+*/
+
+    })
+
+function add_row(i){
+    //$('#myTable > tbody:last').append('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>'); 
+    //$('#example thead tr:last').clone(true).appendTo( '#example thead' );
+    //$('#tr' + i).after('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>');
+    $('#tr' + i).after($('#tr' + i).clone());
+
+}
+
+function remove_row(i){
+    //$('#myTable > tbody:last').append('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>'); 
+    $('#tr' + i).remove();
+}
+
+   
+</script>
+
+{% endblock script %}

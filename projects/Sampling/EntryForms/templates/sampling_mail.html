@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sampling Mail</title>
+    <style>
+        th, td { padding: 10px; border: 1px dashed #7878ff; }
+    </style>
+</head>
+<body>
+    {% if mail_data %}
+    <p>Dear All,<br/>
+        please find below sample booking report.
+    </p>
+    <h2>Sample Booking / {{ today_date }}</h2>
+    <table class="!w-full table [&>*_th]:border [&>*_td]:border" >
+        <tr style="background-color: #aeaeff;">
+            <th>Srno</th>
+            <th>Sample Group</th>
+            <th>Booking No</th>
+            <th>Merchant Head</th>
+            <th>Merchant Name</th>
+            <th>Booking Type</th>
+            <th>Buyer Name</th>
+            <th>Style No</th>
+            <th>Sample Type</th>
+            <th>Product Type</th>
+            <th>Season</th>
+            <th>Season Year</th>
+            <th>Total Qty</th>
+            <th>Booking Date</th>
+            <th>Target Date</th>
+        </tr>
+        {% for row in mail_data %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ row.sample_group}}</td>
+            <td>{{ row.booking_no }}</td>
+            <td>{{ row.Merchant_head }}</td>
+            <td>{{ row.Merchant_name }}</td>
+            <td>{{ row.booking_type }}</td>
+            <td>{{ row.buyer_name }}</td>
+            <td>{{ row.style_no }}</td>
+            <td>{{ row.sample_type }}</td>
+            <td>{{ row.product_type }}</td>
+            <td>{{ row.season }}</td>
+            <td>{{ row.season_year }}</td>
+            <td>{{ row.total_qty }}</td>
+            <td>{{ row.booking_date }}</td>
+            <td>{{ row.target_date }}</td>
+        </tr>
+        {% endfor %}
+        <tfoot>
+            <tr style="background-color: #e1dada; font-weight: 600; font-size: 21px;">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{ sum_col_1 }}</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+    {% else %}
+    <p>Regrettably, there are no sample bookings available for today's date</p>
+    {% endif %}
+<br>
+    <p>
+    Thanks
+</p>
+</body>
+</html>

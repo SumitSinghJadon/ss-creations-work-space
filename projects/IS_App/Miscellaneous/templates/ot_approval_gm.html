@@ -1,0 +1,250 @@
+{% extends 'form.html' %}
+{% block filterRight %}
+
+<button type="submit" class="btn btn-xs btn-success submit_form" onclick="submit_form('approve')" >Approve</button>
+<button type="submit" class="btn btn-xs btn-error submit_form" onclick="submit_form('reject')" >Reject</button>
+{% endblock filterRight %}
+{% block form %} 
+<style>
+    table.dataTable tbody th, table.dataTable tbody td {
+        padding: 0px 10px;
+    }
+</style>
+
+<div style="overflow: scroll;">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}"> {% csrf_token %}
+        
+        <input type="submit" hidden name="flag" id="submit_btn" value="">
+
+        <input type="date" name="dayno" id="dayno" value="{{ request.GET.dayno }}">
+		<select name="unit_code" id="unit_code" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Unit</option>
+			{% for unit_val in unit_list %}
+			<option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+			{% endfor %}
+		</select>
+
+        <select name="dept" id="dept" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Department</option>
+			{% for dept_val in dept_list %}
+			<option {% if request.GET.dept == dept_val.dep_code|stringformat:"i" %}selected{% endif %} value="{{ dept_val.dep_code }}">{{ dept_val.dep_name }}</option>
+			{% endfor %}
+		</select>
+
+        <select name="desg" id="desg" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Department</option>
+			{% for desg_val in desg_list %}
+			<option {% if request.GET.desg == desg_val.des_code|stringformat:"i" %}selected{% endif %} value="{{ desg_val.des_code }}">{{ desg_val.des_name }}</option>
+			{% endfor %}
+		</select>
+
+        <select name="ot_hour" id="ot_hour" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Ot Hour</option>
+			{% for ot_hour_val in ot_hour_list %}
+			<option {% if request.GET.ot_hour == ot_hour_val|stringformat:"i" %}selected{% endif %} value="{{ ot_hour_val }}">{{ ot_hour_val }}</option>
+			{% endfor %}
+		</select>
+
+        <span id="get_data" class="btn btn-primary btn-sm">Search</span>
+       
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th><input type="checkbox" id="checkAll">
+                    
+                    </th>
+                    <th>#</th>
+                    <th>Card No</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>In</th>
+                    <th>Out</th>
+                    <th>OT Hour (FTD)</th>
+                    <th>OT Hour (MTD)</th>
+                    <th>#</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for dept in ot_emp_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>
+                        <input type="checkbox" name="app_check[{{forloop.counter0}}]" id="app_check{{ forloop.counter }}">
+                        <input type="text" hidden name="app_id[{{forloop.counter0}}]" id="app_id{{ forloop.counter }}" value="{{ dept.id }}">
+                    </td>
+                    <td>
+                        <input type="number" hidden value="{{forloop.counter0}}" name="counter">
+                        {{ forloop.counter }}
+                    </td>
+                    <td>{{ dept.emp_cardno }}</td>
+                    <td>{{ dept.emp_name }}</td>
+                    <td>{{ dept.dep_name }}</td>
+                    <td>{{ dept.des_name }}</td>
+                    <td>{{ dept.in_tm }}</td>
+                    <td>{{ dept.out_tm }}</td>
+                    <td>{{ dept.ot_hour }}</td>
+                    <td>{{ dept.total_ot_hour }}</td>
+                    <td {% if dept.ot_hour %} style="background-color: #dbffdb;"; {% elif dept.total_ot_hour >= dept.ot_month %} style="background-color:#ff7272;" {% endif %} >
+                        {% if dept.ot_hour %} <span class="from-lime-400" style="line-height: 2rem;"></span> {% elif dept.total_ot_hour >= dept.ot_month %} <span style="line-height: 2rem;">OT Limit Exceeded</span> {% else %} 
+                        {% endif %}
+                   </td>
+
+                </tr>
+                {% endfor %}
+				
+            </tbody>
+        </table>
+
+        <br/>
+        <h2>Approve List</h2>
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Card No</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>In</th>
+                    <th>Out</th>
+                    <th>OT Hour (FTD)</th>
+                    <th>OT Hour (MTD)</th>
+                    <th>#</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for dept_app in ot_emp_app_list %}
+                <tr id="tr{{ forloop.counter }}" style="background-color: #aeffae;">
+                    <td>
+                        <input type="number" hidden value="{{forloop.counter0}}" name="counter1">
+                        {{ forloop.counter }}
+                    </td>
+                    <td>{{ dept_app.emp_cardno }}</td>
+                    <td>{{ dept_app.emp_name }}</td>
+                    <td>{{ dept_app.des_name }}</td>
+                    <td>{{ dept_app.dep_name }}</td>
+                    <td>{{ dept_app.in_tm }}</td>
+                    <td>{{ dept_app.out_tm }}</td>
+                    <td>{{ dept_app.ot_hour }}</td>
+                    <td>{{ dept_app.total_ot_hour }}</td>
+                    <td {% if dept_app.ot_hour %} style="background-color: #dbffdb;"; {% elif dept_app.total_ot_hour >= dept_app.ot_month %} style="background-color:#ff7272;" {% endif %} >
+                        {% if dept_app.ot_hour %} <span class="from-lime-400" style="line-height: 2rem;"></span> {% elif dept_app.total_ot_hour >= dept_app.ot_month %} <span style="line-height: 2rem;">OT Limit Exceeded</span> {% else %} 
+                        {% endif %}
+                   </td>
+
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+
+        <br/>
+        <h2>Reject List</h2>
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Card No</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>In</th>
+                    <th>Out</th>
+                    <th>OT Hour (FTD)</th>
+                    <th>OT Hour (MTD)</th>
+                    <th>#</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for dept_rej in ot_emp_rej_list %}
+                <tr id="tr{{ forloop.counter }}" style="background-color: #ffaeae;">
+                    <td>
+                        <input type="number" hidden value="{{forloop.counter0}}" name="counter2">
+                        {{ forloop.counter }}
+                    </td>
+                    <td>{{ dept_rej.emp_cardno }}</td>
+                    <td>{{ dept_rej.emp_name }}</td>
+                    <td>{{ dept_rej.des_name }}</td>
+                    <td>{{ dept_rej.dep_name }}</td>
+                    <td>{{ dept_rej.in_tm }}</td>
+                    <td>{{ dept_rej.out_tm }}</td>
+                    <td>{{ dept_rej.ot_hour }}</td>
+                    <td>{{ dept_rej.total_ot_hour }}</td>
+                    <td {% if dept_rej.ot_hour %} style="background-color: #dbffdb;"; {% elif dept_rej.total_ot_hour >= dept_rej.ot_month %} style="background-color:#ff7272;" {% endif %} >
+                        {% if dept_rej.ot_hour %} <span class="from-lime-400" style="line-height: 2rem;"></span> {% elif dept_rej.total_ot_hour >= dept_rej.ot_month %} <span style="line-height: 2rem;">OT Limit Exceeded</span> {% else %} 
+                        {% endif %}
+                   </td>
+
+                </tr>
+                {% endfor %}
+                
+            </tbody>
+        </table>
+
+        <input type="submit" class="hidden" value="">
+    </form>
+</div>
+ 
+
+{% endblock form %}
+
+
+
+
+{% block script %}
+<script>
+
+$('#checkAll').click(function () {    
+     $('input:checkbox').prop('checked', this.checked);    
+ });
+
+/*
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            new_url = `?unit_code=${val}`
+            window.location.replace(new_url);
+        })
+    })
+*/
+    $(document).ready(function(){
+        $("#get_data").on("click", function(){
+            dayno = $("#dayno").val()
+            unit_code = $("#unit_code").val()
+            dept = $("#dept").val()
+            desg = $("#desg").val()
+            ot_hour = $("#ot_hour").val()
+            new_url = `?unit_code=${unit_code}&dept=${dept}&desg=${desg}&ot_hour=${ot_hour}&dayno=${dayno}`
+            window.location.replace(new_url);
+        })
+    })
+
+    function submit_form(value){
+        $("#submit_btn").val(value).click()
+    }
+
+    $(document).ready(function(){
+        // $("#unit_code").on("change", function(){
+        //     val = $(this).val()
+        //     new_url = `?unit_code=${val}`
+        //     window.location.replace(new_url);
+        // })
+
+
+        $("#form-save-btn").click(function(){
+            $("input[type='submit']").click();
+        })
+
+
+    })
+
+
+</script>
+
+{% endblock script %}

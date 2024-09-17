@@ -1,0 +1,81 @@
+{% extends 'form.html' %}
+
+{% load static %}
+{% block form %}
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    <div class="flex flex-wrap items-start sticky left-0">
+        <!-- checker status -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.checker_status %}floated-label{% endif %}">
+                <span class="label-text">CHECKER STATUS</span>
+                <select name="checker_status" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in checker_status_list %}
+                    <option value="{{ item.id}}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- deliver loss time -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.deliver_loss_time %} floated-label {% endif %}">
+                <span class="label-text">DELIVER LOSS TIME</span>
+                <input type="datetime-local" required class="text-input">
+            </label>
+        </div>
+        <!-- remarks -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.remarks %}floated-label{% endif %}">
+                <span class="label-text">REMARKS</span>
+                <input type="text" name="remarks" maxlength="40" value="{{ data.remarks}}" class="text-input">
+            </label>
+        </div>
+         <!-- returned date -->
+         <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.returned_date %} floated-label {% endif %}">
+                <span class="label-text">RETURNED DATE</span>
+                <input type="datetime-local" required class="text-input">
+            </label>
+        </div>
+        <!-- hold reason -->
+        <div class="w-1/2 pt-0"> 
+            <label class="float-input-label {% if data.hold_reason %} floated-label {% endif %}">
+                <span class="label-text">HOLD REASON</span>
+                <select name="hold_reason" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in hold_reason_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- delay reason -->
+        <div class="w-1/2 pt-0"> 
+            <label class="float-input-label {% if data.delay_reason %} floated-label {% endif %}">
+                <span class="label-text">DELAY REASON</span>
+                <select name="delay_reason" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in delay_reason_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        
+        <!-- qa remarks -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.qa_remarks %}floated-label{% endif %}">
+                <span class="label-text">QA REMARKS</span>
+                <input type="text" name="qa remarks" maxlength="40" value="{{ data.qa_remarks}}" class="text-input">
+            </label>
+        </div>
+    </div>
+</form>
+
+{% endblock form %}
+
+
+
+
+
+

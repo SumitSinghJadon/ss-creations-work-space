@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script></script>
+    <link rel="stylesheet" href="../static/css/main.css">
+    <script src="../static/lib/jquery/jquery.js"></script>
+    <script src="../static/js/knox-form.js"></script>
+    <script src="../static/lib/flat-picker/main.js"></script>
+    <link rel="stylesheet" href="../static/lib/font-awesome/css/all.css">
+    </link>
+    <link rel="stylesheet" href="../static/lib/flat-picker/main.css">
+    </link>
+    <!-- <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/dark.css"> -->
+
+    <script>$("html").attr("data-theme", localStorage.getItem("theme"));</script>
+    <style>
+        * {
+            scrollbar-width: thin;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper h-screen w-screen fixed flex">
+        <!-- Main Site Header -->
+        <aside class="w-[240px] h-full" id="sideMenuBar">
+            <div class="flex space-x-2 items-center justify-center p-2 pl-4 overflow-hidden">
+                <img class="w-7" src="../static/images/logo.svg" alt="IS">
+                <span class="text-transparent bg-clip-text font-bold text-2xl bg-gradient-info">IntelliSYNC</span>
+                <button onClick='toggleSidebar()'
+                    class="bg-gradient-primary md:hidden p-2 bg-clip-text text-transparent text-lg hover:bg-gradient-to-br"
+                    id="mob-sidebar-toggle-btn">
+                    <span class="btn btn-ghost btn-sm" id="sidebar-active-btn"><i
+                            class="fa-regular fa-xmark"></i></span>
+                </button>
+            </div>
+
+            <div class="overflow-auto h-full">
+                <ul class="menu w-full rounded-box space-y-1 p-1 text-nowrap" id="menuLinkWrapper">
+                    <li>
+                        <div class="flex space-x-2 shadow-soft-xl bg-base-100 px-2">
+                            <span class="bg-gradient-primary w-8 h-8 center-all rounded-lg shadow-soft">
+                                <i class="fa-duotone fa-house"></i>
+                            </span>
+                            <a class="font-semibold">Item 1</a>
+                        </div>
+                    </li>
+
+                    <li>
+                        <details>
+                            <summary class="font-semibold px-2">
+                                <div class="flex space-x-2 md:space-x-2 center-y">
+                                    <span class="bg-white w-8 h-8 center-all rounded-lg shadow-soft-lg text-slate-700">
+                                        <i class="fa-duotone fa-table-cells"></i>
+                                    </span>
+                                    <a class="font-semibold">Parent Main Menu</a>
+                                </div>
+                            </summary>
+                            <ul>
+                                <li><a>Submenu 1</a></li>
+                                <li><a>Submenu 2</a></li>
+                                <li>
+                                    <details>
+                                        <summary>Parent</summary>
+                                        <ul>
+                                            <li><a>Submenu 1</a></li>
+                                            <li><a>Submenu 2</a></li>
+                                        </ul>
+                                    </details>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <aside class="w-1 h-full flex-grow flex flex-col" id="contentWrapper">
+            <!-- Top Module header -->
+            <nav class="flex duration-300 pb-2 z-40 space-x-2 font-bold overflow-x-auto whitespace-nowrap">
+                <a class="text-xs py-2 px-8 shadow-soft rounded-b-lg rounded-t-none duration-150 hover:scale-105 bg-base-100"
+                    href="">
+                    <span class="text-gradient">Module 1</span>
+                </a>
+                <a class="text-xs py-2 px-8 shadow-soft rounded-b-lg rounded-t-none duration-150 hover:scale-105 bg-base-100"
+                    href="">
+                    <span class="text-gradient">Module 2</span>
+                </a>
+                <a class="text-xs py-2 px-8 shadow-soft rounded-b-lg rounded-t-none duration-150 hover:scale-105 bg-gradient-primary"
+                    href="">
+                    <span>Module 3</span>
+                </a>
+                <a class="text-xs py-2 px-8 shadow-soft rounded-b-lg rounded-t-none duration-150 hover:scale-105 bg-base-100"
+                    href="">
+                    <span class="text-gradient">Module 4</span>
+                </a>
+                <a class="text-xs py-2 px-8 shadow-soft rounded-b-lg rounded-t-none duration-150 hover:scale-105 bg-base-100"
+                    href="">
+                    <span class="text-gradient">Module 5</span>
+                </a>
+            </nav>
+
+            <!-- Main header -->
+            <header class="w-full p-1 z-40">
+                <div class="flex justify-between items-center p-1 shadow-soft-lg bg-base-100 rounded-box">
+                    <div class="flex items-center space-x-2">
+                        <button class="btn btn-sm btn-square btn-ghost" onClick="toggleSidebar()">
+                            <i class="fa-solid fa-bars-staggered"></i>
+                        </button>
+                        <h4 class="font-semibold text-lg">Dashboard</h4>
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <div class="dropdown dropdown-end">
+                            <div tabindex="0" role="button" class="btn btn-ghost btn-circle btn-sm avatar">
+                                <div class="w-10 rounded-full">
+                                    <!-- <img alt="Tailwind CSS Navbar component" src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" /> -->
+                                </div>
+                            </div>
+
+                            <ul tabindex="0"
+                                class="mt-1 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-lg w-52">
+                                <li>
+                                    <a><i class="fa-regular fa-user"></i>Profile</a>
+                                </li>
+                                <li>
+                                    <a><i class="fa-regular fa-gear"></i>Settings</a>
+                                </li>
+                                <li>
+                                    <a><i class="fa-regular fa-right-from-bracket -rotate-180"></i>Logout</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="dropdown dropdown-end">
+                            <div tabindex="0" role="button"
+                                class="btn btn-sm btn-square shadow-soft bg-gradient-primary">
+                                <span><i class="fa-duotone fa-swatchbook"></i></span>
+                            </div>
+                            <ul tabindex="0"
+                                class="dropdown-content z-[1] p-2 mt-1 shadow-2xl bg-base-300 rounded-box w-52 theme-collection overflow-y-auto h-96">
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Light" value="light" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Cupcake" value="cupcake" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Corporate" value="corporate" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Retro" value="retro" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Valentine" value="valentine" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Garden" value="garden" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Lofi" value="lofi" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Pastel" value="pastel" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Wireframe" value="wireframe" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Autumn" value="autumn" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Acid" value="acid" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Lemonade" value="lemonade" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Winter" value="winter" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Nord" value="nord" /></li>
+                                <li>---------</li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Dark" value="dark" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Synthwave" value="synthwave" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Halloween" value="halloween" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Forest" value="forest" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Aqua" value="aqua" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Black" value="black" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Luxury" value="luxury" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Dracula" value="dracula" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Business" value="business" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Night" value="night" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Coffee" value="coffee" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Dim" value="dim" /></li>
+                                <li><input type="radio" name="theme-dropdown"
+                                        class="theme-controller btn btn-sm btn-block btn-ghost justify-start"
+                                        aria-label="Sunset" value="sunset" /></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <button class="btn btn-sm btn-circle shadow-soft noti-toggle-btn">
+                                <i class="fa-regular fa-bell"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    function toggleSidebar() {
+                        let sidebar = $("#sideMenuBar");
+
+                        if (sidebar.width() > 1) {
+                            $("#menuLinkWrapper").addClass("[&>*_a]:whitespace-nowrap");
+                            sidebar.animate({ width: '0' }, 400, 'linear', function () { $(this).css('overflow', 'hidden'); });
+                            localStorage.setItem("sidebar", 'close');
+                        } else {
+                            sidebar.animate({ width: '240px' }, 400, 'linear', function () { $(this).css('overflow', ''); });
+                            $("#menuLinkWrapper").addClass("[&>*_a]:whitespace-nowrap");
+                            localStorage.setItem("sidebar", 'open');
+                        }
+                    }
+
+                    $(document).ready(function () {
+                        $(".theme-collection input").on("change", function () {
+                            let currentTheme = $(this).val();
+                            localStorage.setItem("theme", currentTheme);
+                        })
+                    })
+                </script>
+            </header>
+
+            <!-- Main Content -->
+            <main class="h-full w-full overflow-auto p-1 space-y-3">
+                <!-- Summary Cards -->
+                <div class="flex flex-wrap w-full">
+                    <div class="w-1/2 md:w-1/4 p-1">
+                        <div
+                            class="rounded-box w-full bg-base-100 px-2 py-3 shadow-soft flex items-center justify-between">
+                            <div class="flex flex-col pr-2 space-y-1">
+                                <p class="font-semibold text-sm text-muted">Card No 1</p>
+                                <div class="flex items-end font-bold space-x-1">
+                                    <h4 class="text-lg md:text-xl">$53,000</h4>
+                                    <h6 class="text-sm text-lime-500">+43%</h6>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-primary w-12 h-12 rounded-lg center-all">
+                                <i class="fa-regular fa-coins"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-1/2 md:w-1/4 p-1">
+                        <div
+                            class="rounded-box w-full bg-base-100 px-2 py-3 shadow-soft flex items-center justify-between">
+                            <div class="flex flex-col pr-2 space-y-1">
+                                <p class="font-semibold text-sm text-muted">Card 2</p>
+                                <div class="flex items-end font-bold space-x-1">
+                                    <h4 class="text-lg md:text-xl">$53,000</h4>
+                                    <h6 class="text-sm text-lime-500">+43%</h6>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-primary w-12 h-12 rounded-lg center-all">
+                                <i class="fa-regular fa-earth-asia"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-1/2 md:w-1/4 p-1">
+                        <div
+                            class="rounded-box w-full bg-base-100 px-2 py-3 shadow-soft flex items-center justify-between">
+                            <div class="flex flex-col pr-2 space-y-1">
+                                <p class="font-semibold text-sm text-muted">Cart no 3</p>
+                                <div class="flex items-end font-bold space-x-1">
+                                    <h4 class="text-lg md:text-xl">$53,000</h4>
+                                    <h6 class="text-sm text-lime-500">+43%</h6>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-primary w-12 h-12 rounded-lg center-all">
+                                <i class="fa-regular fa-earth-asia"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-1/2 md:w-1/4 p-1">
+                        <div
+                            class="rounded-box w-full bg-base-100 px-2 py-3 shadow-soft flex items-center justify-between">
+                            <div class="flex flex-col pr-2 space-y-1">
+                                <p class="font-semibold text-sm text-muted">Card No 4</p>
+                                <div class="flex items-end font-bold space-x-1">
+                                    <h4 class="text-lg md:text-xl">$53,000</h4>
+                                    <h6 class="text-sm text-lime-500">+43%</h6>
+                                </div>
+                            </div>
+                            <div class="bg-gradient-primary w-12 h-12 rounded-lg center-all">
+                                <i class="fa-regular fa-earth-asia"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and notifications -->
+                <div class="flex space-y-3 md:space-y-0 space-x-0 md:space-x-3 flex-wrap md:flex-nowrap">
+                    <div class="w-full md:w-3/5 h-60 bg-base-100 rounded-box p-3 shadow-soft bg-gradient-primary">Other
+                        2</div>
+                    <div class="flex-grow h-60 bg-base-100 rounded-box p-2 shadow-soft flex flex-col">
+                        <div class="bg-base-200 flex justify-between px-3 py-2 rounded-box">
+                            <div class="flex space-x-3">
+                                <span class="text-primary"><i class="fa-regular fa-bells"></i></span>
+                                <span class="font-bold">Notifications</span>
+                            </div>
+                            <div>
+                                <span class="btn btn-circle btn-xs text-xs btn-warning">97</span>
+                            </div>
+                        </div>
+
+                        <div class="h-full flex-grow p2 overflow-y-auto">
+                            <ul class="list-disc pl-6">
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis!</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis! Lorem,
+                                    ipsum.</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis!</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis! Lorem,
+                                    ipsum.</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis!</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis! Lorem,
+                                    ipsum.</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis!</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis! Lorem,
+                                    ipsum.</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis!</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis! Lorem,
+                                    ipsum.</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis!</li>
+                                <li>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Culpa, veritatis! Lorem,
+                                    ipsum.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form -->
+                <div class="flex flex-wrap">
+                    <div class="w-full bg-base-100 rounded-box py-2 pt-0 shadow-soft flex flex-wrap">
+                        <div class="py-1.5 px-3 flex justify-between items-center w-full border-b">
+                            <h1 class="font-semibold">Raise A Complain</h1>
+                            <div class="flex space-x-2">
+                                <button class="btn btn-success btn-sm px-8" onclick="$('#submit-btn').click()">Save</button>
+                            </div>
+                        </div>
+
+                        <form method="GET" class="flex flex-wrap p-1 pt-1.5 w-full">
+                            <input type="submit" id="submit-btn" hidden>
+                            <!-- ========== Input With Label ============= -->
+                            <div class="divider w-full">With Labels</div>
+                            <!-- 
+                                Label Inputs don't support placeholder attribute.
+                                Padding will not work if element has class `knox-form-input`.
+                                Don't use label inputs in table.
+                            -->
+
+                            <!-- # Select Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <select name="a" class="knox-select">
+                                            <option value="RV 0">Radio 0</option>
+                                            <option selected value="RV 1">Radio 1</option>
+                                            <option value="RV 2">Radio 2</option>
+                                            <option value="RV 3">Radio 3</option>
+                                            <option value="RV 4">Radio 4</option>
+                                            <option value="RV 5">Radio 5</option>
+                                        </select>
+                                        <span class="label-text">Select Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Multi Select Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <select name="a" required multiple class="knox-select">
+                                            <option value="" disabled>--------</option>
+                                            <option value="RV 0">Radio 0</option>
+                                            <option value="RV 1">Radio 1</option>
+                                            <option value="RV 2">Radio 2</option>
+                                            <option value="RV 3">Radio 3</option>
+                                            <option value="RV 4">Radio 4</option>
+                                            <option value="RV 5">Radio 5</option>
+                                        </select>
+                                        <span class="label-text">Multi Select Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- # Number Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <!-- 
+                                    step -> to convert number field to float field
+                                -->
+                                <div class="knox-form-input">
+                                    <label>
+                                        <input type="number" max="20" min="0" maxlength="2" step="0.01"
+                                            class="knox-input">
+                                        <span class="label-text">Number/Float Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- # Text Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <input type="text" required class="knox-input">
+                                        <span class="label-text">Required Text Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- # Simple Date Time Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <input type="datetime" required class="knox-input">
+                                        <span class="label-text">Date Time Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- # Depended Date Fields -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5 join">
+                                <!-- 
+                                    Till Date depends on From Date.
+                                    From Date has a ID use this id in Till Date as `gt` attribute.
+                                    gt means greater than.
+                                -->
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" id="from_date" min="05-05-2024" required
+                                            class="knox-input peer">
+                                        <span class="label-text">From Date</span>
+                                    </label>
+                                </div>
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" required class="knox-input peer" gt="from_date">
+                                        <span class="label-text">Till Date</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- # Limited Date Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5 join">
+                                <!-- 
+                                    use `sunday=false` to disable all sundays (default value = true).
+                                    enable and disable attribute accept data a json list means don't use single quotes.
+                                -->
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" sunday=false
+                                            enable='["01-05-2024", "06-05-2024", "26-05-2024", "15-05-2024"]' required
+                                            class="knox-input">
+                                        <span class="label-text">Enabled Date</span>
+                                    </label>
+                                </div>
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" sunday=false
+                                            disable='["03-05-2024", "13-05-2024", "21-05-2024"]' required
+                                            class="knox-input peer">
+                                        <span class="label-text">Disabled Date</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- File Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <!-- 
+                                    accept: string separated with comma
+                                    max-size will validate file size in `KB`
+                                -->
+                                <div class="knox-form-input">
+                                    <label>
+                                        <input type="file" max-size="1024" accept=".png, .jpg, .jpeg"
+                                            class="knox-input">
+                                        <span class="label-text">File Input</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Image Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <!-- 
+                                    Add img tag in table with class `kf-img-preview` to convert a normal file input into a image field.
+                                    Its provide a selected image small preview, also user can see large preview by clicking on it.
+                                    It will not work if span.label-text not found. (Without `label-text` You have to create custom design.)
+                                -->
+                                <div class="knox-form-input">
+                                    <label>
+                                        <img src="" alt="Blank" class="kf-img-preview">
+                                        <input type="file" max-size="1024" accept=".png, .jpg, .jpeg"
+                                            class="knox-input">
+                                        <span class="label-text">File Input</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- ========== Input Without Label ============= -->
+                            <!-- 
+                                Recommended Use case -> In Table and for filters
+                            -->
+
+                            <div class="divider w-full">Without Labels</div>
+
+                            <!-- # Select Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <select name="a" class="knox-select">
+                                        <option value="RV 0">Radio 0</option>
+                                        <option selected value="RV 1">Radio 1</option>
+                                        <option value="RV 2">Radio 2</option>
+                                        <option value="RV 3">Radio 3</option>
+                                        <option value="RV 4">Radio 4</option>
+                                        <option value="RV 5">Radio 5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- # Multiple Select Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <select name="b" multiple class="knox-select">
+                                        <option value="RV 0">Radio 0</option>
+                                        <option selected value="RV 1">Radio 1</option>
+                                        <option value="RV 2">Radio 2</option>
+                                        <option value="RV 3">Radio 3</option>
+                                        <option value="RV 4">Radio 4</option>
+                                        <option value="RV 5">Radio 5</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- # Number Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <input placeholder="Enter a number" type="number" max="20" min="0" maxlength="2"
+                                        step="0.01" class="knox-input">
+                                </div>
+                            </div>
+
+                            <!-- # Text Field -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <input placeholder="Type here..." type="text" required class="knox-input">
+                                </div>
+                            </div>
+
+                            <!-- # Datetime field -->
+                            <div class="p-0.5 w-1/4">
+                                <div class="knox-form-input">
+                                    <input type="datetime" placeholder="From Date" class="knox-input">
+                                </div>
+                            </div>
+
+                            <!-- # Depended Date Fields -->
+                            <div class="join p-0.5 w-1/4">
+                                <div class="knox-form-input">
+                                    <input type="date" placeholder="From Date" class="knox-input join-item" sunday=false
+                                        disable='["03-05-2024", "01-05-2024", "02-05-2024"]' id="from_date">
+                                </div>
+                                <div class="knox-form-input">
+                                    <input type="date" placeholder="Till Date" class="knox-input join-item" sunday=false
+                                        enable='["01-05-2024", "06-05-2024", "07-05-2024"]' gt="from_date">
+                                </div>
+                            </div>
+
+                            <!-- # File Input -->
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <input type="file" max-size="1024" accept=".png, .jpg, .jpeg" class="knox-input">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Table with all function -->
+                <div class="rounded-box bg-base-100 shadow-soft flex flex-col h-full overflow-hidden knox-table-wrapper">
+                    <!-- 
+                        # table
+                        class - text-right -> use this class for number column.
+                        attribute - export-name -> set excel file export name.
+
+                        # thead
+                        class - no-sort -> Disable Sorting on column.
+                        class - no-export -> Prevent column from excel export.
+                        attribute - data-sort - Define sorting type Number or Date (default text).
+                        
+                        #tbody 
+                        class - addRow, delRow -> use these classes on buttons -> Add or delete row in table also reset serial number if .sr class found on serial number column.
+
+                        # tfoot
+                        class - kt-row-count -> Total counter of tbody - also support span and input field also -> <span class='kt-row-count'> || <input name='counter' class='kt-row-count'>
+                        class - kt-col-search -> Set this class in input field. Add search field in current column.
+                        class - kt-col-total -> Sum of column also support if column contain input or select fields.
+                        attribute - target-col -> use this attribute with class `kt-col-total`, if you want to get col total somewhere else in tfoot.
+                    -->
+                    <div class="table-header-wrapper">
+                        <h1 class="font-semibold">Table Name</h1>
+                        <div class="join">
+                            <button class="btn btn-primary btn-sm join-item table-filter-toggle"><i
+                                    class="fa-regular fa-filter-list"></i></button>
+                            <input class="input input-sm input-primary bg-base-200 join-item knox-table-search"
+                                type="search" placeholder="Search in table" />
+                            <button class="btn btn-sm btn-primary join-item kt-export-btn"><i
+                                    class="fa-solid fa-file-arrow-down"></i></button>
+                        </div>
+                    </div>
+
+                    <form class="hidden table-filter-wrapper">
+                        <div class="flex flex-wrap w-full p-2">
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <select name="fa" class="knox-select">
+                                            <option value="RV 0">Radio 0</option>
+                                            <option selected value="RV 1">Radio 1</option>
+                                            <option value="RV 2">Radio 2</option>
+                                            <option value="RV 3">Radio 3</option>
+                                            <option value="RV 4">Radio 4</option>
+                                            <option value="RV 5">Radio 5</option>
+                                        </select>
+                                        <span class="label-text">Select Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <select name="fb" class="knox-select">
+                                            <option value="RV 0">Radio 0</option>
+                                            <option selected value="RV 1">Radio 1</option>
+                                            <option value="RV 2">Radio 2</option>
+                                            <option value="RV 3">Radio 3</option>
+                                            <option value="RV 4">Radio 4</option>
+                                            <option value="RV 5">Radio 5</option>
+                                        </select>
+                                        <span class="label-text">Select Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5 join">
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" name="fc" id="from_date" min="05-05-2024" required
+                                            class="knox-input peer">
+                                        <span class="label-text">From Date</span>
+                                    </label>
+                                </div>
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" name="fd" required class="knox-input peer"
+                                            gt="from_date">
+                                        <span class="label-text">Till Date</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="p-0.5">
+                                <input type="submit" class="btn btn-md btn-success px-8">
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="flex-grow table-wrapper overflow-auto">
+                        <table class="knox-table table-sm">
+                            <thead>
+                                <tr class="sticky top-0 z-10">
+                                    <th sort-type="number">S/N</th>
+                                    <th data-sort="date">Date Lorem ipsum dolor sit amet consectetur adipisicing.</th>
+                                    <th data-sort="number">Age Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                        Eligendi libero officiis dicta!</th>
+                                    <th>Department Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab minima
+                                        accusantium voluptate.</th>
+                                    <th>Action Lorem, ipsum dolor sit amet consectetur adipisicing elit.</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <th class="sr">1</th>
+                                    <td>03-05-2024</td>
+                                    <td class="knox-form-input"><input value="22.5" class="knox-input" required max="20"
+                                            type="number"></td>
+                                    <td>IT</td>
+                                    <td>Approved</td>
+                                    <td class="no-export">
+                                        <div class="join">
+                                            <button class="join-item btn btn-xs btn-success addRow">+</button>
+                                            <button class="join-item btn btn-xs btn-error delRow">-</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="sr">1</th>
+                                    <td>03-05-2024</td>
+                                    <td class="knox-form-input"><input value="22.5" class="knox-input" required max="20"
+                                            type="number"></td>
+                                    <td>IT</td>
+                                    <td>Approved</td>
+                                    <td class="no-export">
+                                        <div class="join">
+                                            <button class="join-item btn btn-xs btn-success addRow">+</button>
+                                            <button class="join-item btn btn-xs btn-error delRow">-</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td><span class="kt-row-count"></span></td>
+                                    <td><input type="search" class="kt-col-search"></td>
+                                    <td><span class="kt-col-total"></span></td>
+                                    <td><input type="search" class="kt-col-search"></td>
+                                    <td><input type="search" class="kt-col-search"></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Table with all function -->
+                <div class="rounded-box bg-base-100 shadow-soft flex flex-col h-full overflow-hidden knox-table-wrapper">
+                    <!-- 
+                        # table
+                        class - text-right -> use this class for number column.
+                        attribute - export-name -> set excel file export name.
+
+                        # thead
+                        class - no-sort -> Disable Sorting on column.
+                        class - no-export -> Prevent column from excel export.
+                        attribute - data-sort - Define sorting type Number or Date (default text).
+                        
+                        #tbody 
+                        class - addRow, delRow -> use these classes on buttons -> Add or delete row in table also reset serial number if .sr class found on serial number column.
+
+                        # tfoot
+                        class - kt-row-count -> Total counter of tbody - also support span and input field also -> <span class='kt-row-count'> || <input name='counter' class='kt-row-count'>
+                        class - kt-col-search -> Set this class in input field. Add search field in current column.
+                        class - kt-col-total -> Sum of column also support if column contain input or select fields.
+                        attribute - target-col -> use this attribute with class `kt-col-total`, if you want to get col total somewhere else in tfoot.
+                    -->
+                    <div class="table-header-wrapper">
+                        <h1 class="font-semibold">Table Name</h1>
+                        <div class="join">
+                            <button class="btn btn-primary btn-sm join-item table-filter-toggle"><i
+                                    class="fa-regular fa-filter-list"></i></button>
+                            <input class="input input-sm input-primary bg-base-200 join-item knox-table-search"
+                                type="search" placeholder="Search in table" />
+                            <button class="btn btn-sm btn-primary join-item kt-export-btn"><i
+                                    class="fa-solid fa-file-arrow-down"></i></button>
+                        </div>
+                    </div>
+
+                    <form class="hidden table-filter-wrapper">
+                        <div class="flex flex-wrap w-full p-2">
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <select name="fa" class="knox-select">
+                                            <option value="RV 0">Radio 0</option>
+                                            <option selected value="RV 1">Radio 1</option>
+                                            <option value="RV 2">Radio 2</option>
+                                            <option value="RV 3">Radio 3</option>
+                                            <option value="RV 4">Radio 4</option>
+                                            <option value="RV 5">Radio 5</option>
+                                        </select>
+                                        <span class="label-text">Select Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                                <div class="knox-form-input">
+                                    <label>
+                                        <select name="fb" class="knox-select">
+                                            <option value="RV 0">Radio 0</option>
+                                            <option selected value="RV 1">Radio 1</option>
+                                            <option value="RV 2">Radio 2</option>
+                                            <option value="RV 3">Radio 3</option>
+                                            <option value="RV 4">Radio 4</option>
+                                            <option value="RV 5">Radio 5</option>
+                                        </select>
+                                        <span class="label-text">Select Field</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5 join">
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" name="fc" id="from_date" min="05-05-2024" required
+                                            class="knox-input peer">
+                                        <span class="label-text">From Date</span>
+                                    </label>
+                                </div>
+                                <div class="knox-form-input join-item">
+                                    <label>
+                                        <input type="datetime" name="fd" required class="knox-input peer"
+                                            gt="from_date">
+                                        <span class="label-text">Till Date</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="p-0.5">
+                                <input type="submit" class="btn btn-md btn-success px-8">
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="flex-grow table-wrapper overflow-auto">
+                        <table class="knox-table table-sm">
+                            <thead>
+                                <tr class="sticky top-0 z-10">
+                                    <th sort-type="number">S/N</th>
+                                    <th data-sort="date">Date Lorem ipsum dolor sit amet consectetur adipisicing.</th>
+                                    <th data-sort="number">Age Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                        Eligendi libero officiis dicta!</th>
+                                    <th>Department Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab minima
+                                        accusantium voluptate.</th>
+                                    <th>Action Lorem, ipsum dolor sit amet consectetur adipisicing elit.</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <th class="sr">1</th>
+                                    <td>03-05-2024</td>
+                                    <td class="knox-form-input"><input value="22.5" class="knox-input" required max="20"
+                                            type="number"></td>
+                                    <td>IT</td>
+                                    <td>Approved</td>
+                                    <td class="no-export">
+                                        <div class="join">
+                                            <button class="join-item btn btn-xs btn-success addRow">+</button>
+                                            <button class="join-item btn btn-xs btn-error delRow">-</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th class="sr">1</th>
+                                    <td>03-05-2024</td>
+                                    <td class="knox-form-input"><input value="22.5" class="knox-input" required max="20"
+                                            type="number"></td>
+                                    <td>IT</td>
+                                    <td>Approved</td>
+                                    <td class="no-export">
+                                        <div class="join">
+                                            <button class="join-item btn btn-xs btn-success addRow">+</button>
+                                            <button class="join-item btn btn-xs btn-error delRow">-</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td><span class="kt-row-count"></span></td>
+                                    <td><input type="search" class="kt-col-search"></td>
+                                    <td><span class="kt-col-total"></span></td>
+                                    <td><input type="search" class="kt-col-search"></td>
+                                    <td><input type="search" class="kt-col-search"></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </aside>
+
+        <!-- Alert -->
+        <div class="absolute bottom-2 right-2 z-40 hidden">
+            <div class="p-1 alert-wrapper" data-type="error" data-content="Lorem ipsum dolor sit amet consectetur, adipisicing elit.">
+                <div class="rounded-box shadow-soft p-2 bg-error text-error-content flex space-x-2">
+                    <p></p>
+                    <button class="btn btn-xs"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <script>
+                $(document).ready(function () {
+                    var shown_alert = []
+                    $(".alert-wrapper").each(function () {
+                        const alert = $(this);
+                        const alert_type = alert.data("type");
+                        const alert_content = alert.data("content");
+                        // Remove Duplicate Alerts
+                        var duplicateAlerts = $(`.alert-wrapper[data-type='${alert_type}'][data-content='${alert_content}']`).not($(this)).remove();
+                        // Set alert content
+                        alert.find("p").text(alert_content);
+                        // Auto hide alert
+                        alert.data("timeoutId", setTimeout(function () {
+                            alert.fadeOut();
+                        }, 4000));
+                        // Manual Hide alert
+                        alert.find("button").click(function () {
+                            alert.fadeOut();
+                            clearTimeout(timeoutId);
+                        })
+                        // Pause Timeout on hover
+                        alert.hover(
+                            function () {
+                                clearTimeout($(this).data('timeoutId'));
+                            },
+                            function () {
+                                var $alert = $(this);
+                                $alert.data('timeoutId', setTimeout(function () {
+                                    $alert.fadeOut();
+                                }, 4000));
+                            }
+                        )
+                    });
+                });
+            </script>
+        </div>
+
+    </div>
+    <script>
+        $(document).ready(function () {
+            $(".addRow").click();
+            $(".addRow").click();
+            $(".addRow").click();
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,149 @@
+{% extends 'form.html' %}
+
+{% load static %}
+{% block form %}
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    <div class="flex flex-wrap items-start sticky left-0">
+        <!-- booking no -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.booking_no %}floated-label{% endif %}">
+                <span class="label-text">BOOKING NO</span>
+                <select name="booking_no" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in booking_no %}
+                    <option value="{{ item.id}}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- sample booking type -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.sample_booking_type %} floated-label {% endif %}">
+                <span class="label-text">Sample Booking Type</span>
+                <select name="sample_booking_type" class="select-input">
+                    <option value=""> --- </option>
+                    <option value="O">Fresh</option>
+                    <option value="C">Alter</option>
+                    <option value="H">Resubmission</option>
+                </select>
+            </label>
+        </div>
+        <!-- sample type -->
+        <div class="w-1/2 pt-0"> 
+            <label class="float-input-label {% if data.sample_type %} floated-label {% endif %}">
+                <span class="label-text">SAMPLE TYPE</span>
+                <select name="sample_type" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in sample_type_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- merchant name -->
+        <div class="w-1/2 pt-0 "> 
+            <label class="float-input-label {% if data.merchant_name %} floated-label {% endif %}">
+                <span class="label-text">MERCHANT NAME</span>
+                <select name="merchant_name" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in merchant_name_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- merchant group name -->
+        <div class="w-1/2 pt-0 "> 
+            <label class="float-input-label {% if data.merchant_group_name %} floated-label {% endif %}">  <!--for padding in - range !p-1-->
+                <span class="label-text">MERCHANT GROUP NAME</span>
+                <select name="merchant_group_name" required  class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in merchant_group_name_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- buyer -->
+        <div class="w-1/2 pt-0"> 
+            <label class="float-input-label {% if data.buyer %} floated-label {% endif %}">
+                <span class="label-text">BUYER</span>
+                <select name="buyer" required class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in buyer_list %}
+                    <option value="{{ item.id }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- style no -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.style_no %}floated-label{% endif %}">
+                <span class="label-text">STYLE NO</span>
+                <input type="text" name="style-no" maxlength="40" required value="{{ data.style_no}}" class="text-input">
+            </label>
+        </div>
+
+        <!-- season -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.season %}floated-label{% endif %}">
+                <span class="label-text">SEASON</span>
+                <input type="text" name="season" maxlength="40" required value="{{ data.size}}" class="text-input">
+            </label>
+        </div>
+
+        <!-- season year -->
+        <div class="w-1/4 pt-0">
+            <label class="float-input-label {% if data.year %}floated-label{% endif %}">
+                <span class="label-text">YEAR</span>
+                <input type="date" name="year" maxlength="40" required value="{{ data.year}}" class="text-input">
+            </label>
+        </div>
+                
+        <!-- target date -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.target_date %} floated-label {% endif %}">
+                <span class="label-text">TARGET DATE</span>
+                <input type="date" required class="text-input">
+            </label>
+        </div>
+        
+        <!-- booked date -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.booked_date %} floated-label {% endif %}">
+                <span class="label-text">BOOKED DATE</span>
+                <input type="date" required class="text-input">
+            </label>
+        </div>
+        <!-- Qty -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.qty %}floated-label{% endif %}">
+                <span class="label-text">QTY</span>
+                <input type="number" name="qty" maxlength="40" required value="{{ data.qty}}" class="text-input">
+            </label>
+        </div>
+        <!-- size -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.size %}floated-label{% endif %}">
+                <span class="label-text">SIZE</span>
+                <input type="text" name="size" maxlength="40" required value="{{ data.size}}" class="text-input">
+            </label>
+        </div>
+
+        <!-- Transaction No -->
+        <div class="w-1/2 pt-0">
+            <label class="float-input-label {% if data.transaction_no %}floated-label{% endif %}">
+                <span class="label-text">TRANSACTION NO</span>
+                <input type="text" name="season" maxlength="40" required value="{{ data.transaction_no}}" class="text-input">
+            </label>
+        </div>
+    </div>
+</form>
+
+{% endblock form %}
+
+
+
+
+
+

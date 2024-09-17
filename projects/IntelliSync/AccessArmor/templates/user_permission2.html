@@ -1,0 +1,129 @@
+{% extends 'base-3.html' %}
+
+{% block main %}
+<main>
+    <div class="bg-base-200 px-2 py-1 rounded-lg flex justify-between items-center">
+        <div>
+            <h1 class="font-semibold">User Permission</h1>
+        </div>
+        <div class="flex items-center space-x-2">
+            <form action="" class="flex items-center space-x-2">
+                <label class="label !p-0 w-56">
+                    <select name="uid" class="select-2">
+                        <option>-- Employee Name --</option>
+                        {% for item in employee_list %}
+                        <option {% if request.GET.uid == item.emp_pay_code %}selected{% endif %} value="{{ item.emp_pay_code }}">
+                            {{ item.emp_name }} ( {{ item.emp_pay_code }} )
+                        </option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="label !p-0 w-56">
+                    <select name="mid" class="select-2">
+                        <option>-- Module Name --</option>
+                        {% for item in module_list %}
+                        <option {% if request.GET.mid == item.id|stringformat:"i" %}selected{% endif %} value="{{ item.id }}">{{ item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <button type="submit" class="btn btn-sm btn-primary">Search</button>
+            </form>
+            <button class="btn btn-sm btn-success px-10" onclick="$('#submit-btn').click()">Save</button>
+        </div>
+    </div>
+
+    <div class="pt-2 h-full w-full overflow-auto">
+        <form method="POST" class="rounded-xl"> {% csrf_token %}
+            <table class="table-hard data-table">
+                <thead>
+                    <tr class="bg-slate-300 text-black dt-col-search sticky top-0 z-30">
+                        <th>SR</th>
+                        <th>Menu</th>
+                        <th>Page</th>
+                        <th class="!py-0 dt-nosort">Permission</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    {% for item in page_list %}
+                    <tr class="z-20">
+                        <th>{{ forloop.counter }}</th>
+                        <td>{{ item.parent.name }}</td>
+                        <td><a class="hover:link-primary" href="{{ item.url }}">{{ item.name }}</a></td>
+                        <td class="!p-0 permission-td">
+                            <div class="flex flex-wrap w-full">
+                                <div class="px-1 w-fit">
+                                    <label class="checkbox-input-label w-fit space-x-2">
+                                        <input class="checkbox checkbox-sm !checkbox-success check-all" type="checkbox">
+                                        <span class="label-text">All</span>
+                                    </label>
+                                </div>
+
+                                {% for permission in item.pagepermissionmaster_set.all %}
+                                <div class="px-1 w-fit">
+                                    <label class="checkbox-input-label w-fit space-x-2">
+                                        <input class="checkbox checkbox-sm !checkbox-primary" type="checkbox" name="{{ permission.id }}" value="{{ permission.id }}"
+                                            {% if permission.id in user_permission_list %} checked {% endif %}>
+                                        <span class="label-text">
+                                            {{ permission.permission.name }}
+                                        </span>
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <input type="submit" id="submit-btn" class="hidden">
+        </form>
+    </div>
+</main>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    function refresh_checkbox() {
+        $(".permission-td").each(function(){
+            var check_all = true;
+            let checkbox_list = $(this).find(".checkbox").not(".check-all");
+            $(checkbox_list).each(function(){
+                if (!$(this).prop("checked")) {
+                    check_all = false;
+                }
+            })
+            if (check_all === true && checkbox_list.length){
+                $(this).find(".check-all").prop("checked", true)
+            } else {
+                $(this).find(".check-all").prop("checked", false)
+            }
+        })
+    }
+
+    $(document).ready(function(){
+        // Check all permission's checkbox if click on `check-all` checkbox
+        $(".check-all").on("change", function(){
+            var check_box = $(this).closest("td").find(".checkbox").not(this);
+            if ($(this).prop("checked")){
+                $(check_box).each(function(){
+                    $(this).prop("checked", true);
+                })
+            } else {
+                $(check_box).each(function(){
+                    $(this).prop("checked", false);
+                })
+            }
+        })
+
+        // Check `check-all` checkbox if all permission are given
+        refresh_checkbox()
+
+        // Toggle `check-all` checkbox if all checkbox are checked or unchecked
+        $("tr .checkbox").on("change", function(){
+            refresh_checkbox()
+        })
+    })
+</script>
+{% endblock script %}

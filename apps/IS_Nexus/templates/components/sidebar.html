@@ -1,0 +1,32 @@
+{% load static %}
+
+<aside class="h-screen w-60 overflow-y-auto side-menu-bar min-w-[240px]
+    absolute z-40 bg-base-100 shadow-lg md:shadow-none md:relative md:block">
+    <!-- Brand Logo -->
+    <div class="flex items-center">
+        <a href="/" target="_blank" class="text-center flex justify-center items-center space-x-2 p-4 duration-300">
+            <img src="{% static 'images/logo.jpg' %}" alt="" class="h-8">
+            <div class="ignore-small text-end">
+                <h1 class="bg-gradient-to-r from-rose-600 via-yellow-500 to-blue-500 text-transparent bg-clip-text text-xl font-bold">IntelliSYNC</h1>
+            </div>
+        </a>
+        <div class="btn btn-sm btn-square text-lg sidebar-toggle-btn md:hidden">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+    </div>
+
+    {% autoescape off %}
+    <ul class="menu w-full rounded-box space-y-1">
+        {{ menu_html }}
+    </ul>
+    {% endautoescape %}
+</aside>
+
+<script>
+    $(document).ready(function(){
+        $(".sidebar-toggle-btn").on("click", function() {
+            $(".side-menu-bar").toggle(300);
+            $(".header-logo").toggle(300);
+        })
+    })
+</script>

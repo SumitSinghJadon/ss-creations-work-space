@@ -1,0 +1,375 @@
+{% extends 'form.html' %}
+
+{% load static %}
+{% block form %}
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    {% if data.status == 'pending' or not data  %}
+    <input type="submit" class="hidden" id="submit-btn">
+    {% endif %}
+    <input type="hidden" name="tid" value="{{ request.GET.tid }}">
+
+    <div class="flex flex-wrap items-start sticky left-0">
+         <!-- Template No  -->
+         <div class="w-1/3 pt-0">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Template No</span>
+                <input type="text" readonly class="text-input" value="{% if data.template_no %} {{ data.template_no }} {% else %} New Template {% endif %}">
+            </label>
+        </div>
+        
+        <!-- buyer -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.buyer_code %}floated-label{% endif %}">
+                <span class="label-text z-40">BUYER</span>
+                <select name="buyer" required class="select-input select-2">
+                    <option value=""> ---------- </option>
+                    {% for item in buyer %}
+                    <option value="{{ item.party_code }}" {% if data.buyer_code == item.party_code %}selected{% endif %}>{{ item.party_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        
+        <!--days from-->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.days_from %}floated-label{% endif %}">
+                <span class="label-text">DAYS FROM</span>
+                <input type="number" name="days_from" id="days_from" maxlength="2" max="99" min="1" required value="{{ data.days_from}}" class="text-input">
+            </label>
+        </div>
+
+        <!-- days to -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.days_to %}floated-label{% endif %}">
+                <span class="label-text">DAYS TO</span>
+                <input type="number" name="days_to" id="days_to" maxlength="2" max="99" min="1" required value="{{ data.days_to}}" class="text-input">
+            </label>
+        </div>
+        <!-- template desc -->
+        <div class="w-1/3 pt-0">
+            <label class="float-input-label {% if data.template_desc %}floated-label{% endif %}">
+                <span class="label-text">TEMPLATE DESC</span>
+                <input type="text" name="template_desc" maxlength="40" required value="{{ data.template_desc}}" class="text-input">
+            </label>
+        </div>
+         <!-- template name -->
+         <div class="w-1/3 pt-0">
+            <label class="float-input-label floated-label">
+                <span class="label-text">TEMPLATE NAME</span>
+                <input type="text" name="template_name" id="template_name" maxlength="40" placeholder="Buyer - Days From - Days To" required value="{{ data.template_name}}" class="text-input">
+            </label>
+        </div>
+        
+    </div>
+
+    <table class="table table-sm w-full table-hard">
+        <thead>
+            <tr class="sticky top-0 bg-base-200 text-slate-800">
+                <th rowspan="2">SR.</th>
+                <th rowspan="2">Seq No.</th>
+                <th rowspan="2">Activity Group</th>
+                <th rowspan="2">Activity Name</th>
+                <th rowspan="2">Activity Type</th>
+                <th rowspan="2">Days Action</th>
+                <th rowspan="2">Days Req</th>
+                <th rowspan="2">Days After/Before</th>
+                <th rowspan="2">Running Days</th>
+                <th rowspan="2">Base Activity</th>
+                <th rowspan="2">Status</th>
+                <th rowspan="2">#</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for row in dt_data %}
+            <tr>
+                <th class="!p-0 text-center sr_no">{{ forloop.counter }}</th>
+                <!-- seq_no -->
+                <td class="!p-0">
+                    <input type="number" name="seq_no" min="0" class="!input !input-sm !rounded-none" value="{{ row.seq_no }}">
+                </td>
+                <!-- activity_group -->
+                <td class="!p-0">
+                    <select name="activity_group" class="!select !select-sm !rounded-none activity_group">
+                        <option value="">---------</option>
+                        {% for item in activity_group_list %}
+                        <option value="{{ item.id }}" {% if item.id == row.activity_group.id %} selected {% endif %}>{{ item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <!-- activity_name -->
+                <td class="!p-0">
+                    <select name="activity_name" data-selected="{{ row.activity_name.id }}" class="!select !select-sm !rounded-none activity_name">
+                        <option value="">---------</option>
+                        {% for item in activity_name_list %}
+                        <option value="{{ item.id }}">{{ item.name }}</option>
+                        {% endfor %} 
+                    </select>
+                </td>
+                <!-- activity_type -->
+                <td class="!p-0">
+                    <input type="text" name="activity_type" required value="{{ row.activity_type }}" class="activity_type !input !input-sm !rounded-none" readonly>
+                </td>
+                <!-- days_action -->
+                <td class="!p-0"> 
+                    <select name="days_action" class="!select !select-sm !rounded-none">
+                        <option value="">---------</option>
+                        <option {% if row.days_action == 'after' %} selected {% endif %} value="after">After</option>
+                        <option {% if row.days_action == 'before' %} selected {% endif %} value="before">Before</option>
+                    </select>
+                </td>
+                <!-- Days Req -->
+                <td class="!p-0">
+                    <input type="number" name="days_req" min="0" value="{{ row.days_req }}" class="!input !input-sm !rounded-none days_req">
+                </td>
+                <!-- Days After Before -->
+                <td class="!p-0">
+                    <input type="number" name="days_after_before" min="0" value="{{ row.days_after_before }}" class="!input !input-sm !rounded-none days_af">
+                </td>
+                <!-- running days -->
+                <td class="!p-0">
+                    <input type="text" name="running_days" value="{{row.running_days}}" class="!input !input-sm !rounded-none days_running">
+                </td>
+                <!-- base_activity -->
+                <td class="!p-0">
+                    <select name="base_activity" class="!select-sm">
+                        <option value="">-----------</option>
+                        {% for item in base_activity_list %}
+                        <option value="{{ item.id }}"{% if item.id == row.base_activity.id %} selected {% endif %}>{{ item.name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <!-- status -->
+                <td class="!p-0">
+                    <select class="!select !select-sm !rounded-none" name="status">
+                        <option value="True">Active</option>
+                        <option {% if row.status == "False" %} selected {% endif %} value="False">In-Active</option>
+                    </select>
+                </td>
+                <!-- Action Button -->
+                <td class="!p-0">
+                    <div class="join rounded-none">
+                        <button type="button" class="join-item btn btn-sm btn-success add-row-btn">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button type="button" class="join-item btn btn-sm btn-error del-row-btn">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
+{% endblock form %}
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $(document).on("click", ".add-row-btn", function(){
+            let tr = $(this).closest("tr");
+            let newTr = $("<tr>").html(tr.html()) //`<tr>${tr.html()}</tr>`;
+            newTr.find("input, select").val('')
+            tr.after(newTr);
+            
+            $(this).closest("tbody").find("tr").each(function(i){
+                sr_no = i + 1;
+                $(this).find(".sr_no").text(sr_no);
+            })
+        });
+        
+        $(document).on("click", ".del-row-btn", function(){
+            $(this).closest("tr").remove();
+
+            $(this).closest("tbody").find("tr").each(function(i){
+                sr_no = i + 1;
+                $(this).find(".sr_no").text(sr_no);
+            })
+        })
+    
+        $(document).on("change", ".activity_group", function(){
+            let ag_id = $(this).val();
+            let select_a = $(this).closest("tr").find(".activity_name")
+            let selected_val_a = $(select_a).data("selected");
+            var dataWrapper = "<option value=''>-----</option>";
+            
+            if (ag_id) {
+                $.ajax({
+                    method: "GET",
+                    data: {
+                        "flag" : "get_activity_by_group",
+                        "ag_id" : ag_id
+                    },
+                    success: function(data){
+                        data.forEach(item => {
+                            let option = `<option value="${item['id']}">${item['name']}</option>`;
+                            dataWrapper += option;
+                        });
+                        $(select_a).html(dataWrapper);
+                    },
+                    error: function(){
+                        alert("Something Went Wrong.")
+                    },
+                    complete: function(){
+                        $(select_a).val(selected_val_a);
+                    }
+                })
+            }
+        })
+    
+        $(document).on("change", ".activity_name", function(){
+            let at_id = $(this).val();
+            let current_at = $(this);
+            let flag = true;
+            
+            $(".activity_name").not(this).each(function(){
+                if ($(this).val() == at_id) {
+                    alert("This activity is already selected");
+                    $(current_at).val("");
+                    flag = false;
+                    return false;
+                }
+            });
+            
+            if (flag) {
+                let td = $(this).closest("tr").find(".activity_type");
+                let baseActivityInput = $(this).closest("tr").find(".base_activity");
+                $(td).val('');
+    
+                if (at_id) {
+                    $.ajax({
+                        method: "GET",
+                        data: {
+                            "flag" : "get_type_by_activity",
+                            "at_id" : at_id
+                        },
+                        success: function(data){
+                            console.log(data);
+                            if (data == '1'){
+                                data = 'Manual';
+                            } else if (data == '2') {
+                                data = 'Auto';
+                            }
+                            $(td).val(data);
+                        },
+                        error: function(){
+                            console.error("Something Went Wrong.");
+                        }
+                    });
+                    
+                    // $.ajax({
+                    //     method: "GET",
+                    //     data: {
+                    //         "flag": "get_base_activity",
+                    //         "at_id": at_id
+                    //     },
+                    //     success: function(baseActivity){
+                    //         $(baseActivityInput).val(baseActivity);
+                    //     },
+                    //     error: function(){
+                    //         console.error("Failed to fetch base activity.");
+                    //     }
+                    // });
+                }
+            }
+        });
+        
+        $("#days_from, #days_to").on("change", function(){
+            let df = parseInt($("#days_from").val());
+            let dt = parseInt($("#days_to").val());
+            
+            if (df >= dt) {
+                $(this).val('');
+                alert("Days From should be greater then Days To");
+            }
+        })
+
+
+        $("#template_name").on("change", function(){
+            let template_name = $(this).val();
+            if (template_name){
+                $.ajax({
+                    method: "GET",
+                    data: {
+                        "flag" : "get_activity_by_name",
+                        "an_id" : template_name
+                    },
+                    success: function(data){
+                        if (data) {
+                            $("#template_name").val('')
+                            alert("This template name is not available")
+                        }
+                    },
+                    error: function(e){
+                        console.error("Something Went Wrong.", e)
+                    }
+                })
+            }
+        })
+
+        $(".activity_group").change();
+
+        $(document).on("keyup", ".days_req, .days_af", function(){
+            let tbody = $(this).closest("tbody")
+            let running_days = 0;
+            let is_over_limit = false
+            $(tbody).find("tr").each(function(){
+                days_req = $(this).find(".days_req").val() || 0;
+                days_af = $(this).find(".days_af").val() || 0;
+                days_to = $("#days_to").val() || 0
+                running_days = running_days + parseInt(days_req) + parseInt(days_af);
+
+                if (running_days > parseInt(days_to)){
+                    alert("Running Days Is grater then Template days range.");
+                    is_over_limit = true
+                    return false;
+                }
+                $(this).find(".days_running").val(running_days);
+            })
+            if (is_over_limit){
+                $(this).val('').keyup();
+            }
+        })
+
+
+        $("#form-save-btn").click(function(){
+            let is_form_valid = true;
+            $("table tbody tr").each(function(){
+                let sq_val = $(this).find("input[name='seq_no']").val();
+                if (sq_val != '1') {
+                    let target_tr = $(this)
+                    target_tr.find("input, select").each(function(){
+                        if (!$(this).val()){
+                            is_form_valid = false
+                        }
+                    })
+                    return false;
+                }
+            })
+            
+            if (is_form_valid === false) {
+                alert("Incomplete Form");
+                return false;
+            }
+        })
+
+
+        // $("#seq_no").on("change", function(){
+        //     alert("hello")
+        //     let sq = parseInt($(this).val());
+
+
+        //     if(sq === 1) {
+        //         $(this).closest("tr").find(".days_req").val('');
+        //         $(this).closest("tr").find(".days_af").val('');
+        //     }
+        // })
+
+    })
+</script>
+{% endblock script %}
+
+
+
+

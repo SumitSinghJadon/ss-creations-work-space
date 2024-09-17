@@ -1,0 +1,28 @@
+<table border>
+    <thead>
+        <th>Employee Name</th>
+        <th>Pay Code</th>
+        <th>Location</th>
+        <th>Department</th>
+        <th>Designation</th>
+        <th>From Date</th>
+        <th>Till Date</th>
+        <th>Application Type</th>
+        <th>Leave Type</th>
+        <th>Status</th>
+    </thead>
+    <tbody>
+        {% for item in application_list %} 
+            <td>{{ item.emp_name }}</td>
+            <td>{{ item.username }}</td>
+            <td>{{ item.loc_name }}</td>
+            <td>{{ item.dep_name }}</td>
+            <td>{{ item.des_name }}</td>
+            <td>{{ item.from_date|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.till_date|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.application_type }}</td>
+            <td>{{ item.leave_type }}</td>
+            <td>{{ item.status }}</td>
+        {% endfor %}
+    </tbody>
+</table>

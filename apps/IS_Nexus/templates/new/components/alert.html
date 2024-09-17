@@ -1,0 +1,45 @@
+<div class="absolute bottom-2 right-2 z-40 hidden">
+    <div class="p-1 alert-wrapper" data-type="error" data-content="Lorem ipsum dolor sit amet consectetur, adipisicing elit.">
+        <div class="rounded-box shadow-soft p-2 bg-error text-error-content flex space-x-2">
+            <p></p>
+            <button class="btn btn-xs"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        var shown_alert = []
+        $(".alert-wrapper").each(function () {
+            const alert = $(this);
+            const alert_type = alert.data("type");
+            const alert_content = alert.data("content");
+            // Remove Duplicate Alerts
+            var duplicateAlerts = $(`.alert-wrapper[data-type='${alert_type}'][data-content='${alert_content}']`).not($(this)).remove();
+            // Set alert content
+            alert.find("p").text(alert_content);
+            // Auto hide alert
+            alert.data("timeoutId", setTimeout(function () {
+                alert.fadeOut();
+            }, 4000));
+            // Manual Hide alert
+            alert.find("button").click(function () {
+                alert.fadeOut();
+                clearTimeout(timeoutId);
+            })
+            // Pause Timeout on hover
+            alert.hover(
+                function () {
+                    clearTimeout($(this).data('timeoutId'));
+                },
+                function () {
+                    var $alert = $(this);
+                    $alert.data('timeoutId', setTimeout(function () {
+                        $alert.fadeOut();
+                    }, 4000));
+                }
+            )
+        });
+    });
+</script>

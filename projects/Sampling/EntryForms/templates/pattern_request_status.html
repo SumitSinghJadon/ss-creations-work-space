@@ -1,0 +1,100 @@
+{% extends 'form.html' %}
+
+
+{% block form %}
+
+<div class="w-full p-1 pt-3 overflow-auto">
+    <div class="table-wrapper overflow-y-auto">
+        <table id="size-wise-cut-qty-table" class="table table-bordered">
+            <thead>
+                <tr class="sticky top-0">
+                    <th rowspan="2">Sr.</th>
+                    <th rowspan="2">Request No</th>
+                    <th rowspan="2">Request Date</th>
+                    <th rowspan="2">Request Type</th>
+                    <th rowspan="2">Buyer</th>
+                    <th rowspan="2">Style</th>
+                    <th rowspan="2">Pattern Type</th>
+                    <th rowspan="2">Pattern Stage</th>
+                    <th rowspan="2">Pattern Master</th>
+                    <th rowspan="2">Expected Date Time</th>
+                    <th rowspan="2">Pattern Done</th>
+                    <th rowspan="2">Pattern Command Date & Time</th>
+                    <th rowspan="2">Upload Pattern</th>
+                    <th rowspan="2">Upload By</th>
+                    <th rowspan="2">Plot Done</th>
+                    <th rowspan="2">Plot Date & Time</th>
+                    <th rowspan="2">Plot By Done</th>
+                    <th rowspan="2">Merchant</th>
+                    <th rowspan="2">Pattern Value</th>
+                </tr>
+            </thead>
+
+            <tbody class="z-0">
+                {% for i in '123456789' %}
+                <tr>
+                    <th class="!p-0 text-center">{{ i }}</th>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="date" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="datetime-local" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="datetime-local" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="datetime-local" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                    <td class="!p-0">
+                        <input type="text" class="!input-sm">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<input type="submit" hidden id="submit-btn">
+</form>
+{% endblock form %}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{% block theme %}light{% endblock theme %}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntteliSync</title>
+    {% include './components/head.html' %}
+</head>
+
+<body>
+    <div class="flex h-screen bg-base-100">
+        {% include './components/sidebar.html' %}
+
+        <div class="h-screen flex-grow flex flex-col overflow-hidden">
+            <!-- Site Header -->
+            {% include './components/header.html' %}
+
+            <!-- Main Content wrapper -->
+            <main class="flex-grow w-full overflow-auto relative">
+                <div class="rounded-lg overflow-hidden p-3 shadow-inner bg-base-200 min-h-full h-full overflow-y-auto">
+                    <div class="w-full rounded-xl space-y-2 flex flex-col h-full">
+                        <!-- Filter bar -->
+                        <div class="py-1 px-3 rounded-xl shadow-lg w-full flex justify-between bg-base-100" data-aos="zoom-in">
+                            <div class="text-sm font-semibold space-x-2 flex items-center">
+                                {% block table-btn %}
+                                <a href="add/" class="btn btn-xs btn-success">
+                                    <span><i class="fa-solid fa-plus"></i></span>
+                                    <span>{% block buttonName %} Add New {% endblock buttonName %}</span>
+                                </a>
+                                {% endblock table-btn %}
+                                <div class="dt-filter-top flex items-center space-x-2"></div>
+                            </div>
+                            <div>
+                                {% block tfRight %}
+                                <h1 class="font-semibold capitalize">{{ page_name }}</h1>
+                                {% block table-filter %}
+                                {% endblock table-filter %}
+                                {% endblock tfRight %}
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        {% block beforeTable %} {% endblock beforeTable %}
+                        {% block tableWrapperStart %}
+                        <div class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-xl" data-aos="zoom-in">
+                        {% endblock tableWrapperStart %}
+                            <table class="!w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+                                <thead>
+                                    <tr class="sticky top-0 bg-blue-500 text-slate-800">
+                                        {% block thead %} {% endblock thead %}
+                                    </tr>
+                                </thead>
+                                
+                                <tbody class="[&>*]:hover">
+                                    {% block tbody %} {% endblock tbody %}
+                                </tbody>
+                            </table>
+                        {% block tableWrapperEnd %}
+                        </div>
+                        {% endblock tableWrapperEnd %}
+                        {% block afterTable %} {% endblock afterTable %}
+
+                        <!-- Table footer -->
+                        <div data-aos="zoom-in" class="py-1 px-3 rounded-xl shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center">
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Notification panel -->
+            {% include './components/notification.html' %}
+        </div> 
+    </div>
+    {% include './components/alert.html' %}
+</body>
+
+<script>
+    $(document).ready(function () {
+        try {
+            // Refine data-table design
+            $(".dataTables_length select").addClass('select select-xs select-bordered').prependTo(".dt-filter-top");
+            $(".dataTables_filter input").addClass('input input-xs input-bordered').attr(
+                'placeholder', 'search in table...'
+            ).prependTo(".dt-filter-top");
+            $(".dataTables_info, .dataTables_paginate").prependTo(".dt-filter-bottom");
+            $(".dataTables_length, .dataTables_filter").remove();
+            
+            // Align tbody text if thead is in center
+            $('thead tr').find('th').each(function (index) {
+                const thClasses = $(this).attr('class').split(' ');
+                const relevantClasses = thClasses.filter(cls => cls === '!text-right' || cls === '!text-center');
+                relevantClasses.forEach(function (cls) {
+                    $('tbody tr').each(function () {
+                        const $td = $(this).find('td, th').eq(index);
+                        if (cls) { $td.addClass(cls); }
+                    });
+                });
+            });
+        } catch (error) {
+            console.error("An error occurred:", error);
+        }
+    })
+</script>
+
+{% block script %} {% endblock script %}
+</html>

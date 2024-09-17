@@ -1,0 +1,100 @@
+{% extends 'form.html' %}
+
+
+{% block form %}
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    <div class="flex flex-wrap items-start sticky left-0">
+        <!-- user -->
+        <div class="w-full pt-2"> 
+            <label class="float-input-label {% if data.user %} floated-label {% endif %}">
+                <span class="label-text z-40">User</span>
+                <select name="user" class="select-input select-2" multiple>
+                    <option value=""> --- </option>
+                    {% for item in user_list %}
+                    <option value="{{ item.id }}">{{ item.first_name }} {{ item.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- title -->
+        <div class="w-full pt-2">
+            <label class="float-input-label {% if data.title %}floated-label{% endif %}">
+                <span class="label-text">Title</span>
+                <input type="text" name="title" maxlength="40" value="{{ data.title}}" class="text-input">
+            </label>
+        </div>
+        <!-- description -->
+        <div class="w-full pt-2">
+            <label class="float-input-label {% if data.description %}floated-label{% endif %}">
+                <span class="label-text">Description</span>
+                <input type="text" name="description" value="{{ data.description}}" class="text-input">
+            </label>
+        </div>
+        <!--owner -->
+        <div class="w-1/4 pt-2"> 
+            <label class="float-input-label {% if data.owner %} floated-label {% endif %}">
+                <span class="label-text">Owner</span>
+                <select name="owner" class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in user_list %}
+                    <option value="{{ item.id }}">{{ item.first_name }} {{ item.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- start_time -->
+        <div class="w-1/4 pt-2">
+            <label class="float-input-label {% if data.start_time %} floated-label {% endif %}">
+                <span class="label-text">Start Time</span>
+                <input type="datetime-local" name="start_time" class="text-input">
+            </label>
+        </div>
+        <!-- end time -->
+        <div class="w-1/4 pt-2">
+            <label class="float-input-label {% if data.end_time %} floated-label {% endif %}">
+                <span class="label-text">End Time</span>
+                <input type="datetime-local" name="end_time" class="text-input">
+            </label>
+        </div>
+        <!-- frequency -->
+        <div class="w-1/4 pt-2"> 
+            <label class="float-input-label {% if data.frequency %} floated-label {% endif %}">
+                <span class="label-text">Frequency</span>
+                <select name="frequency" class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in frequency_list %}
+                    <option value="{{ item.0 }}">{{ item.1 }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- priority  -->
+        <div class="w-1/4 pt-2"> 
+            <label class="float-input-label {% if data.priority %} floated-label {% endif %}">
+                <span class="label-text">Priority</span>
+                <select name="priority" class="select-input">
+                    <option value=""> --- </option>
+                    {% for item in priority_list %}
+                    <option value="{{ item.0 }}">{{ item.1 }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- remainder -->
+        <!-- <div class="w-1/4 pt-2">
+            <label class="float-input-label {% if data.remainder %} floated-label {% endif %}">
+                <span class="label-text">Remainder</span>
+                <input type="datetime-local" name="remainder" class="text-input">
+            </label>
+        </div> -->
+        <!-- remarks -->
+        <div class="w-full pt-2">
+            <label class="float-input-label {% if data.remarks %}floated-label{% endif %}">
+                <span class="label-text">Remarks</span>
+                <input type="text" name="remarks" maxlength="40" value="{{ data.remarks}}" class="text-input">
+            </label>
+        </div>
+    </div>
+    <input type="submit" hidden id="submit-btn">
+</form>
+{% endblock form %}

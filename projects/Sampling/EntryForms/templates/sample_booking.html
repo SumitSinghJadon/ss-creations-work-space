@@ -1,0 +1,675 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block main %}
+<div class="w-full rounded-lg space-y-2 flex flex-col h-full overflow-hidden">
+    <div class="flex bg-base-200 py-1 px-4 rounded-lg justify-between items-center">
+        <div data-aos="zoom-in">
+            <h1 class="font-semibold capitalize">Sample Booking</h1>
+        </div>
+        <div data-aos="zoom-in">
+            {% if request.GET.bid %}
+            <a href="/entry-forms/sample-booking/print/?bid={{ request.GET.bid }}" target="_blank" class="btn btn-sm btn-primary px-6">Print</a>
+            {% if mt_data.booking_status == 'pending' or not mt_data.booking_status %}
+            <button id="form-save-btn" class="btn btn-sm btn-success px-6">Update</button>
+            {% endif %}
+            {% else %}
+            {% if mt_data.booking_status == 'pending' or not mt_data.booking_status %}
+            <button id="form-save-btn"  class="btn btn-sm btn-success px-6">Save</button>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <form class="flex flex-col overflow-hidden" onsubmit="return disableButtonIfValid()" method="post" enctype="multipart/form-data"> {% csrf_token %}
+        {% if request.GET.bid %}
+        <input type="text" name="flag" value="update" class="hidden">
+        <input type="text" name="bid" value="{{ item.id }}" class="hidden">
+        {% endif %}
+        <div class="flex flex-wrap flex-row-reverse items-start overflow-y-auto">
+            <div class="flex flex-wrap w-full md:w-1/2 lg:w-1/4 pt-2">
+                <!-- Images 1 -->
+                <div class="w-1/2 p-2">
+                    <label class="label w-full flex-col border !p-0 rounded-lg overflow-hidden"> 
+                        <img id="w_garment_img_1" src="{% if mt_data.image1 %} {{ mt_data.image1.url }} {% else %} {% static 'images/sample_dummy.webp' %} {% endif %}" alt="">
+                        <input name="garment_img_1" id="garment_img_1" type="file" accept=".jpg, .png, .jpeg" class="h-1 w-1 p-0 text-[1px]" {% if not mt_data.image1 %} required {% endif %}>
+                        <span class="label-text bg-base-300 w-full text-center py-1 text-xs">Primary sample IMG</span>
+                    </label>
+                </div>
+                <!-- Images 2 -->
+                <div class="w-1/2 p-2">
+                    <label class="label w-full flex-col border !p-0 rounded-lg overflow-hidden">
+                        <img id="w_garment_img_2" src="{% if mt_data.image2 %} {{ mt_data.image2.url }} {% else %} {% static 'images/sample_dummy.webp' %} {% endif %}" alt="">
+                        <input name="garment_img_2" id="garment_img_2" type="file" accept=".jpg, .png, .jpeg" hidden>
+                        <span class="label-text bg-base-300 w-full text-center py-1 text-xs">Secondary sample IMG</span>
+                    </label>
+                </div>
+                <!-- Size Wise -->
+                <div class="w-full p-2">
+                    <div class="table-wrapper relative overflow-hidden">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th colspan="3">Size wise Quantity</th>
+                                </tr>
+                                <tr>
+                                    <th>Size</th>
+                                    <th>Color</th>
+                                    <th>QTY</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in sq_data %}
+                                <tr>
+                                    <td class="!p-0">
+                                        <input type="text" required name="size" value="{{ row.size }}" class="!input-sm uppercase size-ip">
+                                    </td>
+                                    <td class="!p-0 w-full">
+                                        <input type="text" required list="color-list" name="color" value="{{ row.color }}" class="!input-sm uppercase color-list-ip">
+                                    </td>
+                                    <td class="!p-0">
+                                        <input name="quantity" required type="number" min="1" value="{{ row.quantity }}" class="!input-sm sw-qty">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th class="!p-0.5">Total QTY</th>
+                                    <th class="p-0"><input name="total_qty" value="{{ mt_data.total_qty }}" readonly id="total_qty" type="number" class="!input-sm"></th>
+                                    <th class="!p-0.5">
+                                        <div class="join justify-center flex rounded-none">
+                                            <button type="button" class="join-item btn btn-xs add-row btn-success"><i class="fa-regular fa-plus"></i></button>
+                                            <button type="button" class="join-item btn btn-xs del-row btn-error"><i class="fa-regular fa-minus"></i></button>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <datalist id="color-list" class ="color !select-sm">
+                            <option value="">-------</option>
+                            {% for color in color_list %}
+                            <option value="{{ color }}">{{ color }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="flex flex-wrap w-full md:w-1/2 lg:w-3/4 h-full">
+                <!-- Booking No  -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text z-40">Booking No. </span>
+                        <input type="text" name="booking_no" id="booking_no" value="{% if mt_data %} {{ mt_data.booking_no }} {% else %} New Booking {% endif %}" class="text-input">
+                    </label>
+                </div>
+                <!-- Booking Type -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Booking Type</span>
+                        <select name="booking_type" id="booking_type" required class="select-input">
+                            <option value=""> --- </option>
+                            <option {% if mt_data.booking_type == 'F' %} selected {% endif %} value="F">Fresh</option>
+                            <option {% if mt_data.booking_type == 'A' %} selected {% endif %} value="A">Alter</option>
+                            <option {% if mt_data.booking_type == 'R' %} selected {% endif %} value="R">Resubmission</option>
+                        </select>
+                    </label>
+                </div>
+                <!-- Merchant Head -->
+                <div class="w-1/3 pt-2"> 
+                    <label class="float-input-label">
+                        <span class="label-text">Merchant Head</span>
+                        <select name="merchant_head" required id="merchant_head" class="select-input">
+                            <option value=""> --- </option>
+                            {% for item in merchant_head_list %}
+                            <option value="{{ item.id }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <!-- Merchant Name -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label h-full">
+                        <span class="label-text z-30">Merchant Name</span>
+                        <select name="merchant" required id="merchant" class="select-input select-2">
+                            <option value=""> --- </option>
+                        </select>
+                    </label>
+                </div>
+                <!-- Buyer -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text z-30">Buyer</span>
+                        <select name="buyer" required id="buyer" class="select-input select-2">
+                            <option value=""> --- </option>
+                            {% for item in buyer_list %}
+                            <option value="{{ item.party_code }}">{{ item.party_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <!-- Sample Group Type -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Sample Group Type</span>
+                        <select name="sample_group_type" required id="sample_group_type" class="select-input">
+                            <option value=""> --- </option>
+                            {% for item in sample_group_list %}
+                            <option value="{{ item.id }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <!-- Sample Type -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Sample Type</span>
+                        <select name="sample_type" required id="sample_type" class="select-input">
+                            <option value=""> ---- </option>
+                        </select>
+                    </label>
+                </div>
+                <!-- Style Number -->
+                <div class="w-1/3 pt-2 hidden" id="style-wrapper-text">
+                    <label class="float-input-label">
+                        <span class="label-text">Style Number</span>
+                        <input type="text" name="style_no" id="style_no2"  class="text-input">
+                    </label>
+                </div>
+                <div class="w-1/3 pt-2" id="style-wrapper-select">
+                    <label class="float-input-label h-full">
+                        <span class="label-text z-30">Style Number</span>
+                        <select id="style_no1" class="select-input select-2">
+                            <option value=""> ---- </option>
+                        </select>
+                    </label>
+                </div>
+                <!-- Season -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Season</span>
+                        <select name="season" id="season" required class="select-input">
+                            <option value=""> --- </option>
+                            {% for item in season_list %}
+                            <option value="{{ item.id }}">{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <!-- Season Year -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Season Year</span>
+                        <select name="season_year" id="season_year" required class="select-input">
+                            <option value=""> --- </option>
+                        </select>
+                    </label>
+                </div>
+                <!-- Booking Date -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label floated-label">
+                        <span class="label-text">Booking Date Time</span>
+                        <input name="booking_date" id="booking_date" readonly type="datetime-local" required class="text-input">
+                    </label>
+                </div>
+                <!-- Target Date -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Target Date Time</span>
+                        <input name="target_date" type="datetime-local" id="target_date" value="{{ mt_data.target_date|date:'Y-m-d\TH:i' }}" required class="text-input">
+                    </label>
+                </div>
+                <!-- Product Type -->
+                <div class="w-1/3 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Product Type</span>
+                        <select name="product_type" required class="select-input">
+                            <option value=""> --- </option>
+                            {% for item in product_type_list %}
+                            <option value="{{ item.id }}" {% if mt_data.product_type.id == item.id %} selected {% endif %}>{{ item.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <!-- Remarks -->
+                <div class="w-4/6 pt-2">
+                    <label class="float-input-label">
+                        <span class="label-text">Remarks</span>
+                        <input type="text" name="remarks" value="{{ mt_data.remarks }}" class="text-input">
+                    </label>
+                </div>
+                <!-- Reason -->
+                <div class="w-full pt-2 hidden" id="reason-wrapper">
+                    <label class="float-input-label">
+                        <span class="label-text">Reason *</span>
+                        <input type="text" name="reason" id="reason" value="{{ mt_data.reason|default_if_none:'' }}" class="text-input">
+                    </label>
+                </div>
+                <!-- Article table -->
+                <div class="w-full p-1 pt-3 overflow-auto">
+                    <div class="table-wrapper overflow-y-auto">
+                        <table id="size-wise-table" class="table table-bordered">
+                            <thead>
+                                <tr class="sticky top-0">
+                                    <th rowspan="2">Sr.</th>
+                                    <th class="!p-2">Given By Merchant</th>
+                                    <th rowspan="2">Article Name</th>
+                                    <th rowspan="2">Additional details</th>
+                                    <th rowspan="2">Comment</th>
+                                    <th rowspan="2">EXPECTED DATE (If not given)</th>
+                                </tr>
+                                <tr class="sticky top-8">
+                                    <th class="!py-1">
+                                        <div class="w-full flex justify-around space-x-1">
+                                            <div class="btn btn-circle btn-warning btn-xs">NA</div>
+                                            <div class="btn btn-circle btn-primary btn-xs">PA</div>
+                                            <div class="btn btn-circle btn-error btn-xs"><i class="fa-solid fa-xmark"></i></div>
+                                            <div class="btn btn-circle btn-success btn-xs"><i class="fa-solid fa-check"></i></div>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            
+                            <tbody class="z-0">
+                                {% for article in article_list %}
+                                <tr>
+                                    <th class="!p-0 text-center">{{ forloop.counter }}</th>
+                                    <td class="!py-0">
+                                        {% if article.name == 'Fabric' or article.article == 'Fabric' %}
+                                        <div class="w-full flex justify-around space-x-1">
+                                            <input name="given_by_merchant_{{ forloop.counter }}" required value="na" type="radio" class="!radio !radio-warning at-gbm at-na" {% if article.given_by_merchant == 'na' %} checked {% endif %}>
+                                            <input name="given_by_merchant_{{ forloop.counter }}" required value="pa" type="radio" class="!radio !radio-primary at-gbm at-pa" {% if article.given_by_merchant == 'pa' %} checked {% endif %}>
+                                            <input name="given_by_merchant_{{ forloop.counter }}" required value="no" type="radio" class="!radio !radio-error at-gbm at-no" {% if article.given_by_merchant == 'no' %} checked {% endif %}>
+                                            <input name="given_by_merchant_{{ forloop.counter }}" required value="yes" type="radio" class="!radio !radio-success at-gbm at-yes" {% if article.given_by_merchant == 'yes' %} checked {% endif %}>
+                                        </div>
+                                        {% else %}
+                                        <div class="w-full flex justify-around space-x-1">
+                                            <input name="given_by_merchant_{{ forloop.counter }}" value="na" type="radio" class="!radio !radio-warning at-gbm at-na" checked>
+                                            <input name="given_by_merchant_{{ forloop.counter }}" value="pa" type="radio" class="!radio !radio-primary at-gbm at-pa" {% if article.given_by_merchant == 'pa' %} checked {% endif %}>
+                                            <input name="given_by_merchant_{{ forloop.counter }}" value="no" type="radio" class="!radio !radio-error at-gbm at-no" {% if article.given_by_merchant == 'no' %} checked {% endif %}>
+                                            <input name="given_by_merchant_{{ forloop.counter }}" value="yes" type="radio" class="!radio !radio-success at-gbm at-yes" {% if article.given_by_merchant == 'yes' %} checked {% endif %}>
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="!py-0 !px-0.5">
+                                        <span>{{ article.name }} {{ article.article }}</span>
+                                        <input type="hidden" name="article_{{ forloop.counter }}" value="{% if article.name %} {{ article.id }} {% else %} {{ article.article.id }} {% endif %}" class="article">
+                                    </td>
+                                    <td class="!p-0">
+                                        <input type="text" name="details_{{ forloop.counter }}" value="{{ article.details|default_if_none:'' }}" class="!input-sm details">
+                                    </td>
+                                    <td class="!p-0">
+                                        <input type="text" name="comment_{{ forloop.counter }}" value="{{ article.comment|default_if_none:'' }}" class="!input-sm comment">
+                                    </td>
+                                    <td class="!py-0">
+                                        <input type="datetime-local" name="expected_date_{{ forloop.counter }}" value="{{ article.expected_date|date:'Y-m-d\TH:i' }}" class="!input-sm expected_date">
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <input type="submit" class="hidden" id="submit-btn">
+        <input type="hidden" name="article_counter" value="{{ article_list|length }}">
+        <input type="hidden" id="scq_counter" name="scq_counter" value="1">
+    </form>
+</div>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    const merchant_id = '{{ mt_data.merchant_name }}'; 
+    // {% if request.GET.bid %}
+    // Set data for update (fixed data)
+    const booking_type      = '{{ mt_data.booking_type }}';
+    const merchant_head     = '{{ mt_data.merchant_head.id }}';
+    const merchant_name     = '{{ mt_data.merchant_name.id }}';
+    const buyer             = '{{ mt_data.buyer_code  }}';
+    const sample_group_type = '{{ mt_data.sample_group_type.id  }}';
+    const sample_type       = '{{ mt_data.sample_type.id  }}';
+    const style_no          = '{{ mt_data.style_no  }}';
+    const season            = '{{ mt_data.season.id }}';
+    const season_year       = '{{ mt_data.season_year.id }}';
+    const booking_date      = '{{ mt_data.booking_date|date:"Y-m-d\TH:i"  }}';
+    const target_date       = '{{ mt_data.target_date  }}';
+    // {% endif %}
+
+    $(document).ready(function () {
+        let time = getCurrentDateTime();
+        $("#target_date").on("change", function(){
+            target_date_latest = $(this).val();
+            $(".expected_date").attr("max", target_date_latest)
+        });
+
+        $("#target_date, .expected_date").attr("min", time).change();
+        $("#booking_date").val(getCurrentDateTime());
+        
+        $('.color-list-ip').on('change', function() {
+            var inputValue = $(this).val();
+            var optionExists = false;
+            
+            // Check if input value exists in datalist options
+            $('#color-list option').each(function() {
+                if ($(this).val() === inputValue) {
+                    optionExists = true;
+                    return false; // Exit the loop if option found
+                }
+            });
+            
+            // If input value not found in datalist options, set input to blank
+            if (!optionExists) {
+                $(this).val('');
+            }
+        });
+
+
+        // Verify size and color unique or not
+        $(document).on("change", ".color-list-ip, .size-ip", function(){
+            var tr = $(this).closest("tr");
+            var color = tr.find(".color-list-ip").val();
+            var size = tr.find(".size-ip").val();
+            var tbody = tr.closest("tbody");
+            var cs_string = color + size;
+            console.log(cs_string)
+            
+            tbody.find("tr").not(tr).each(function(){
+                var color = $(this).find(".color-list-ip").val();
+                var size  = $(this).find(".size-ip").val();
+                var ccs_string = color + size;
+
+                if (cs_string == ccs_string){
+                    alert("This Color ans Size combination already found.")
+                    $(this).find(".color-list-ip").val('');
+                    $(this).find(".size-ip").val('');
+                    return false;
+                }
+            })
+        })
+
+
+        // ----------- Add or Remove Row from Size wise Quantity table -----------
+        
+         
+        // {% if sq_data %}
+        var scq_counter = {{ sq_data|length }};
+        // {% else %}
+        var scq_counter = 1;
+        // {% endif %}
+        $(document).on("click", ".add-row", function () {
+            var lastRow = $(this).closest("table").find("tbody").find("tr").last();
+            var newRow = lastRow.clone();
+            // Clear selected options in the cloned row
+            newRow.find('select, input').val('');
+            // Append the new row
+            lastRow.after(newRow);
+            // Increment Sr. number
+            scq_counter = scq_counter + 1
+            $("#scq_counter").val(scq_counter)
+            $(".sw-qty").keyup();
+        });
+
+        $(document).on("click", ".del-row", function () {
+            var row = $(this).closest("table").find("tbody").find("tr").last();
+            if (scq_counter > 1) {
+                row.remove();
+                // Reset Sr. numbers
+                $("#size-wise-table tbody tr").each(function (index) {
+                    $(this).find('th').text(index + 1);
+                });
+                scq_counter = scq_counter - 1
+                $("#scq_counter").val(scq_counter)
+                $(".sw-qty").keyup()
+            }
+        });
+
+
+        // ----------- Refresh Page with Booking Number -----------
+        // $("#booking-no").on("change", function(){
+        //     let bid = $(this).val();
+        //     if (bid != '00') {
+        //         window.location.replace("?bid="+bid);
+        //     } else (
+        //         window.location.replace('?')
+        //     )
+        // })
+
+
+        // ---------- Send Ajax Request ----------
+
+        // Get merchant name
+        $("#merchant_head").on("change", function(){
+            let merchant_head = $(this).val();
+            $.ajax({
+                method: 'GET',
+                data : {
+                    'flag' : 'get_merchant_by_merchant_head',
+                    'merchant_head' : merchant_head,
+                },
+                success: function(data) {
+                    $("#merchant").html(new Option('--------', '', false, false))
+                    // $('#merchant').append(new Option('--------', '', false, false));
+
+                    $(data).each(function(i, row){
+                        var newOption = new Option(row.name, row.id, false, false);
+                        $('#merchant').append(newOption).val(merchant_id)
+                        $('#merchant').trigger('change');
+                    })
+                    // {% if request.GET.bid %}
+                    $("#merchant").val(merchant_name).change();
+                    // {% endif %}
+                },
+                error : function() {
+                    show_alert("error", "Unable to fetch data")
+                }
+            })
+        })
+
+        // Fetch style based on buyer
+        $("#buyer").on("change", function(){
+            $.ajax({
+                method: "GET",
+                data : {
+                    "flag" : "get_style_by_buyer",
+                    "bid" : $(this).val(),
+                },
+                success: function(data) {
+                    $("#style_no1").html('')
+                    $('#style_no1').append(new Option('--------', '', false, false));
+                    $(data).each(function(i, row){
+                        var newOption = new Option(row.styleno, row.styleno, false, false);
+                        $('#style_no1').append(newOption).val(merchant_id)
+                        $('#style_no1').trigger('change');
+                    })
+
+                    // {% if request.GET.bid %}
+                    $("#style_no1").val(style_no).change();
+                    // {% endif %}
+                },
+                error: function(error) {
+                    console.error(error)
+                    alert("Something went wrong.")
+                }
+            })
+        })
+
+        // Fetch season year based on season
+        $("#season").on("change", function(){
+            $.ajax({
+                method: "GET",
+                data : {
+                    "flag" : "get_season_year_by_season",
+                    "sid" : $(this).val(),
+                },
+                success: function(data) {
+                    $("#season_year").html('')
+                    $('#season_year').append(new Option('--------', '', false, false));
+                    $(data).each(function(i, row){
+                        var newOption = new Option(row.name, row.id, false, false);
+                        $('#season_year').append(newOption).val(merchant_id)
+                        $('#season_year').trigger('change');
+                    })
+
+                    // {% if request.GET.bid %}
+                    $("#season_year").val(season_year).change();
+                    // {% endif %}
+                },
+                error: function(error) {
+                    console.error(error)
+                    alert("Something went wrong.")
+                }
+            })
+        })
+          
+        // get_sample_type_by_sample_group & Toggle Style Dropdown and set data in text-input
+        $("#sample_group_type").on("change", function(){
+            let sv = $(this).find('option:selected').text();
+
+            
+            if (sv == 'Production') {
+                $("#style-wrapper-select").removeClass("hidden").find("select").attr("name", "style_no").attr("required", true);
+                $("#style-wrapper-text").addClass("hidden").find("input").removeAttr("name", "style_no").removeAttr("required", true);
+            } else {
+                $("#style-wrapper-select").addClass("hidden").find("select").removeAttr("name", "style_no").removeAttr("required", true);
+                $("#style-wrapper-text").removeClass("hidden").find("input").attr("name", "style_no").attr("required", true);
+                
+                $("#style_no2").val('')
+
+                // {% if request.GET.bid %} 
+                $("#style_no2").val(style_no);
+                // {% endif %} 
+            }
+
+
+            $.ajax({
+                method : "GET",
+                data : {
+                    "flag" : "get_sample_type_by_sample_group",
+                    "sgt_id" : $(this).val()
+                },
+                success : function(data) { 
+                    $("#sample_type").html('')
+                    $('#sample_type').append(new Option('--------', '', false, false));
+                    $(data).each(function(i, row){
+                        var newOption = new Option(row.name, row.id, false, false);
+                        $('#sample_type').append(newOption).val(merchant_id)
+                        $('#sample_type').trigger('change');
+                        // {% if request.GET.bid %}
+                        $("#sample_type").val(sample_type).change();
+                        // {% endif %}
+                    })
+
+                },
+                error : function(error) {
+                    console.log(error)
+                    alert("Something went wrong.")
+                }
+            })
+        })
+
+        // ----------- Replace dumy sample image with selected images -----------
+        $('#garment_img_1').change(function(){
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#w_garment_img_1').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+        $('#garment_img_2').change(function(){
+            var input = this;
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#w_garment_img_2').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+
+
+        // ---------- Calculate and display total quantity in Size wise quantity table ----------
+        var total_qty = 0
+
+        $(document).on("keyup", ".sw-qty", function(){
+            let total_now = $("#total_qty") || 0
+
+            var total_qty = $(".sw-qty").map(function() {
+                return parseInt($(this).val()) || 0;
+            }).get().reduce(function(acc, val) {
+                return acc + val;
+            }, 0);
+
+            $("#total_qty").val(total_qty)
+        })
+
+        // Set required fields in Article table based on Given By Merchant
+        $(".at-gbm").on("change", function() {
+            let at_val = $(this).val();
+            let row = $(this).closest("tr");
+
+            if (at_val == 'na' || at_val == 'yes') {
+                row.find(".details").removeAttr('required');
+                row.find(".comment").removeAttr('required');
+                row.find(".expected_date").removeAttr('required');
+
+            } else if (at_val == 'pa' || at_val == 'no') {
+                row.find(".details").removeAttr('required');
+                row.find(".comment").attr('required', true);
+                row.find(".expected_date").attr('required', true);
+
+            }
+        });
+        
+        $("#booking_type").on("change", function(){
+            vlu = $(this).val();
+            if (vlu == 'A' || vlu == 'R'){
+                $("#reason-wrapper").show()
+                $("#reason").attr('required', true)
+            } else {
+                $("#reason-wrapper").hide()
+                $("#reason").removeAttr('required')
+            }
+        })
+    });
+    
+    // {% if request.GET.bid %}
+    // Set data for update (fixed data)
+    $(document).ready(function(){
+        $(".float-input-label").addClass("floated-label");
+        $("#merchant_head").val(merchant_head).change();
+        $("#buyer").val(buyer).change();
+        $("#sample_group_type").val(sample_group_type).change();
+        $("#booking_date").val(booking_date).change();
+        $("#season").val(season).change();
+        $("#booking_type").change();
+    })
+    // {% endif %}
+
+    function disableButtonIfValid() {
+        var form = document.getElementById('myForm');
+        // Check if the form is valid
+        if (form.checkValidity()) {
+            // Disable the submit button to prevent multiple submissions
+            document.querySelector('button[type="submit"]').disabled = true;
+            // You can also add some visual feedback to indicate that the form is being submitted
+            document.querySelector('button[type="submit"]').innerText = 'Submitting...';
+            return true; // Allow form submission
+        } else {
+            // If the form is not valid, let the default HTML5 validation handle it
+            return false;
+        }
+    }
+
+</script>
+{% endblock script %}
+

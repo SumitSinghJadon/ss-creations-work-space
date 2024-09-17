@@ -1,0 +1,465 @@
+{% extends 'base-3.html' %}
+{% load knox_filter %}
+{% block main %}
+<div class="grid gap-4">
+
+    <div class="col-span-12 bg-white p-2">
+        <!-- style="display: inline-table;position: fixed;height: 600px; margin-right: 1rem;" -->
+        <div id="calendar"></div>
+    </div>
+
+    <dialog id="eventModal" class="modal">
+        <div class="modal-box  w-11/12 max-w-5xl">
+            <div class="p-2">
+                <h1 class="w-full bg-base-200 p-2 rounded-lg text-center font-semibold">Schedule a meeting in <span
+                        class="font-bold">{{ room_data.room_name }}</span></h1>
+                <form action="" method="POST" name="add_meeting" class="flex flex-wrap">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ request.GET.id }}" name="room_id" />
+                    <!-- Meeting Date -->
+                    <div class="w-1/2 pt-1">
+                        <label class="float-input-label floated-label">
+                            <span class="label-text">Meeting Date</span>
+                            <input name="meeting_date" type="date" class="text-input meet_date" required>
+                        </label>
+                    </div>
+                    <!-- Start Time -->
+                    <div class="w-1/2 flex pt-1">
+                        <label class="float-input-label floated-label w-full">
+                            <span class="label-text">Start Time</span>
+                            <select name="start_time" id="start_time" required
+                                class="select-input timePicker startTimePicker">
+
+                            </select>
+                        </label>
+                        <label class="float-input-label floated-label w-full">
+                            <span class="label-text">End Time</span>
+                            <select name="end_time" id="end_time" required
+                                class="select-input timePicker endTimePicker">
+
+                            </select>
+                        </label>
+                    </div>
+
+                    <!-- Purpose -->
+                    <div class="w-full pt-1">
+                        <label class="float-input-label floated-label">
+                            <span class="label-text">Purpose</span>
+                            <input name="purpose" required type="text" class="text-input">
+                        </label>
+                    </div>
+
+                    <!-- Meeting Type -->
+                    <div class="w-1/2 pt-1">
+                        <label class="float-input-label floated-label">
+                            <span class="label-text">Meeting Type</span>
+                            <select name="meeting_type" required class="select-input">
+                                <option>-</option>
+                                <option value="IN">Internal</option>
+                                <option value="EX">External</option>
+                            </select>
+                        </label>
+                    </div>
+                    <!-- Buyer -->
+                    <div class="w-1/2 pt-1">
+                        <label class="float-input-label floated-label">
+                            <span class="label-text">Buyer</span>
+                            <input name="buyer" type="text" class="text-input">
+                        </label>
+                    </div>
+
+                    <!-- Guest Name -->
+                    <div class="w-1/2 pt-1">
+                        <label class="float-input-label floated-label">
+                            <span class="label-text">Guest Name</span>
+                            <input name="guest_name" type="text" class="text-input">
+                        </label>
+                    </div>
+
+                    <!-- No of Attendees -->
+                    <div class="w-1/2 pt-1">
+                        <label class="float-input-label floated-label">
+                            <span class="label-text">No. of attendees</span>
+                            <input name="no_of_attendees" type="number" class="text-input">
+                        </label>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="w-full pt-1">
+                        <label class="float-input-label floated-label">
+                            <span class="label-text">Description</span>
+                            <input name="description" type="text" class="text-input">
+                        </label>
+                    </div>
+
+                    <div class="flex w-full">
+                        <div class="py-1 px-1">
+                            <input type="submit" disabled class="btn btn-success btn-sm" id="form-submit-btn"
+                                value="Save">
+                        </div>
+                        <div class="py-1 ml-auto">
+                            <button class="btn btn-sm" type="button"
+                                onclick="document.getElementById('eventModal').close()">Close</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog id="detailModal" class="modal">
+        <div class="modal-box">
+            <div class="p-2">
+                <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Meeting Details</h1>
+                <table class="table table-hard">
+                    <tbody>
+                        <tr>
+                            <th class="py-2">Meeting Room</th>
+                            <td class="py-2"><span class="room_name"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Meeting Date</th>
+                            <td class="py-2"><span class="meeting_date"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Meeting Type</th>
+                            <td class="py-2"><span class="meeting_type"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Start Time</th>
+                            <td class="py-2"><span class="start_time"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">End Time</th>
+                            <td class="py-2"><span class="end_time"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Purpose</th>
+                            <td class="py-2"><span class="purpose"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Description</th>
+                            <td class="py-2"><span class="description"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Guest Name</th>
+                            <td class="py-2"><span class="guest_name"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">No of Attendees</th>
+                            <td class="py-2"><span class="no_of_attendees"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Buyer</th>
+                            <td class="py-2"><span class="buyer"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Booked on</th>
+                            <td class="py-2"><span class="booked_on"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="py-2">Booked By</th>
+                            <td class="py-2"><span class="booked_by"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="flex w-full">
+                    <div class="py-1 ml-auto">
+                        <button class="btn btn-sm" type="button"
+                            onclick="document.getElementById('detailModal').close()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+</div>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var calendarEl = document.getElementById('calendar');
+        var today = new Date();
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,list'
+            },
+            initialDate: today,
+            events: [
+                // {% for item in meeting_data %}
+                    {
+                        id: '{{ item.pk }}',
+                        title: '{{ item.purpose }}',
+                        start: '{{ item.meeting_date|date:"Y-m-d" }} {{ item.start_time|time:"H:i" }}',
+                        end: '{{ item.meeting_date|date:"Y-m-d" }} {{ item.end_time|time:"H:i" }}',
+                        user: '{{ item.user.full_name }}',
+                        meeting_date: '{{ item.meeting_date|date:"d-m-Y" }}',
+                        meeting_type: '{{ item.meeting_type }}',
+                        start_time: '{{ item.start_time|time:"H:i" }}',
+                        end_time: '{{ item.end_time|time:"H:i" }}',
+                        purpose: '{{ item.purpose }}',
+                        description: '{{ item.description }}',
+                        booked_on: '{{ item.created_at|date:"d-m-Y h:i A" }}',
+                        booked_by: '{{ item.user.username }}',
+                        location: '{{ item.location }}',
+                        room_name: '{{ item.room_name.room_name }}',
+                        guest_name: '{{ item.guest_name }}',
+                        no_of_attendees: '{{ item.no_of_attendees }}',
+                        buyer: '{{ item.buyer }}'
+                    },
+                // {% endfor %}
+            ],
+            dateClick: function (info) {
+                // Get the current date without time component
+                var currentDate = new Date();
+                currentDate.setHours(0, 0, 0, 0);
+                
+                // Get the clicked date without time component
+                var clickedDate = new Date(info.date);
+                clickedDate.setHours(0, 0, 0, 0);
+                if (clickedDate < currentDate) {
+                    // If it's a past date, prevent the default behavior (e.g., navigating to that date)
+                    info.jsEvent.preventDefault();
+                }
+                else
+                {
+                    var clickedDate = info.dateStr;
+                    $(".meet_date").val(clickedDate)
+                    var clickedDate = moment(info.date); // Wrap info.date in a moment object
+                    var eventsOnDate = calendar.getEvents().filter(function (event) {
+                        return moment(event.start).isSame(clickedDate, 'day');
+                    });
+                    var eventTimes = eventsOnDate.map(function (event) {
+                        return {
+                            start_time: moment(event.start).format('HH:mm'),
+                            end_time: moment(event.end).format('HH:mm')
+                        };
+                    });
+                    // You can perform any actions based on the eventTimes array
+                    console.log(eventTimes)
+                    updateSelectOptions(eventTimes);
+                    document.getElementById("eventModal").showModal()
+                }
+            },
+            eventClick: function (arg) {
+                var user = arg.event.extendedProps.user
+                var meeting_date = arg.event.extendedProps.meeting_date
+                var meeting_type = arg.event.extendedProps.meeting_type
+                var start_time = arg.event.extendedProps.start_time
+                var end_time = arg.event.extendedProps.end_time
+                var purpose = arg.event.extendedProps.purpose
+                var description = arg.event.extendedProps.description
+                var booked_on = arg.event.extendedProps.booked_on
+                var booked_by = arg.event.extendedProps.booked_by
+                var location = arg.event.extendedProps.location
+                var room_name = arg.event.extendedProps.room_name
+                var guest_name = arg.event.extendedProps.guest_name
+                var no_of_attendees = arg.event.extendedProps.no_of_attendees
+                var buyer = arg.event.extendedProps.buyer
+                $(".user").text(user)
+                $(".meeting_date").text(meeting_date)
+                $(".meeting_type").text(meeting_type)
+                $(".start_time").text(start_time)
+                $(".end_time").text(end_time)
+                $(".purpose").text(purpose)
+                $(".description").text(description)
+                $(".booked_on").text(booked_on)
+                $(".booked_by").text(booked_by)
+                $(".location").text(location)
+                $(".room_name").text(room_name)
+                $(".guest_name").text(guest_name)
+                $(".no_of_attendees").text(no_of_attendees)
+                $(".buyer").text(buyer)
+                document.getElementById("detailModal").showModal()
+            }
+
+        });
+
+        calendar.render();
+
+        function updateSelectOptions(eventTimes) {
+            startSelect = document.getElementById("start_time")
+            endSelect = document.getElementById("end_time")
+            var startOptions = startSelect.options
+            var endOptions = endSelect.options
+            // Filter out options to keep
+            var remainingStartOptions = Array.from(startOptions).filter(function (option) {
+                return !eventTimes.some(function (eventTime) {
+                    return option.value >= eventTime.start_time && option.value < eventTime.end_time;
+                });
+            });
+            var remainingEndOptions = Array.from(endOptions).filter(function (option) {
+                return !eventTimes.some(function (eventTime) {
+                    return option.value >= eventTime.start_time && option.value < eventTime.end_time;
+                });
+            });
+
+            // Set select options to remaining options
+            startSelect.innerHTML = '';
+            remainingStartOptions.forEach(function (option) {
+                startSelect.appendChild(option.cloneNode(true));
+            });
+
+            endSelect.innerHTML = '';
+            remainingEndOptions.forEach(function (option) {
+                endSelect.appendChild(option.cloneNode(true));
+            });
+        }
+    });
+
+    var timePickers = document.getElementsByClassName('timePicker');
+
+    // Function to populate time options for a given time picker
+    function populateTimeOptions(timePicker) {
+        // Clear existing options
+        timePicker.innerHTML = '';
+
+        // Loop to populate options for every half-hour interval
+        for (var hour = 0; hour <= 23; hour++) {
+            for (var minute = 0; minute < 60; minute += 30) {
+                // Convert hour and minute to string with leading zeros if necessary
+                var hourString = ('0' + hour).slice(-2);
+                var minuteString = ('0' + minute).slice(-2);
+
+                // Determine AM/PM
+                var ampm = (hour < 12) ? 'AM' : 'PM';
+                if (hour === 0) {
+                    hourString = '12'; // Special case for 12 AM
+                } else if (hour > 12) {
+                    hourString = ('0' + (hour - 12)).slice(-2);
+                }
+
+                // Format time as HH:MM AM/PM
+                var time12HourFormat = hourString + ':' + minuteString + ' ' + ampm;
+
+                // Format time as HH:MM (24-hour format)
+                var time24HourFormat = ('0' + hour).slice(-2) + ':' + minuteString;
+
+                // Create an option element and append to the time picker
+                var option = document.createElement('option');
+                option.value = time24HourFormat; // Set value in 24-hour format
+                option.textContent = time12HourFormat; // Set display text in 12-hour format
+                timePicker.appendChild(option);
+            }
+        }
+    }
+
+
+    // Function to update end time options based on the selected start time
+    function updateEndTimeOptions() {
+        // Get the selected start time
+        var startTime = timePickers[0].value;
+
+        // Extract hour and minute from the selected start time
+        var [startHour, startMinute] = startTime.split(':').map(Number);
+
+        // Calculate the end time (half an hour after the start time)
+        var endHour = startHour;
+        var endMinute = startMinute + 30;
+        if (endMinute >= 60) {
+            endHour++;
+            endMinute -= 60;
+        }
+
+        // Format the end time
+        var endTimeHour = ('0' + endHour).slice(-2);
+        var endTimeMinute = ('0' + endMinute).slice(-2);
+        var endTime = endTimeHour + ':' + endTimeMinute;
+
+        // Update the options for the end time picker
+        populateTimeOptions(timePickers[1]);
+
+        // Set the end time to half an hour after the start time
+        timePickers[1].value = endTime;
+    }
+
+
+    // Add event listener to start time picker to update end time options when start time changes
+    timePickers[0].addEventListener('change', function () {
+        $("#form-submit-btn").prop("disabled", true)
+        updateEndTimeOptions();
+        // Ensure end time is not before start time
+        if (timePickers[1].value < timePickers[0].value) {
+            timePickers[1].value = timePickers[0].value;
+        }
+        meetingDate = $(".meet_date").val()
+        startTime = timePickers[0].value
+        endTime = timePickers[1].value
+        $.ajax({
+            type: "GET",
+            url: "{% url 'book_meeting_room_page' %}",
+            data: {
+                meeting_date: meetingDate,
+                start_time: startTime,
+                end_time: endTime
+            },
+            success: function (response) {
+                if (response.available) {
+                    $("#form-submit-btn").prop("disabled", false)
+                } else {
+                    $("#form-submit-btn").prop("disabled", true)
+                    alert("Time slot is not available. Please choose a different time.");
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error(xhr.responseText);
+            }
+        });
+    });
+
+
+    // Add event listener to end time picker to ensure end time is not before start time or less than half an hour after start time
+    timePickers[1].addEventListener('change', function () {
+        $("#form-submit-btn").prop("disabled", true)
+        // Get the selected start and end times
+        var startTime = timePickers[0].value;
+        var endTime = timePickers[1].value;
+
+        // Calculate the minimum allowed end time (half an hour after start time)
+        var [startHour, startMinute] = startTime.split(':').map(Number);
+        var minEndTime = new Date();
+        minEndTime.setHours(startHour);
+        minEndTime.setMinutes(startMinute + 30);
+
+        // Convert minimum allowed end time to HH:MM format
+        var minEndHour = ('0' + minEndTime.getHours()).slice(-2);
+        var minEndMinute = ('0' + minEndTime.getMinutes()).slice(-2);
+        var minEndTimeStr = minEndHour + ':' + minEndMinute;
+
+        // Ensure end time is not before start time or less than half an hour after start time
+        if (endTime < startTime || endTime < minEndTimeStr) {
+            // Set end time to half an hour after start time
+            timePickers[1].value = minEndTimeStr;
+        }
+        meetingDate = $(".meet_date").val()
+        startTime = timePickers[0].value
+        endTime = timePickers[1].value
+        $.ajax({
+            type: "GET",
+            url: "{% url 'book_meeting_room_page' %}",
+            data: {
+                meeting_date: meetingDate,
+                start_time: startTime,
+                end_time: endTime
+            },
+            success: function (response) {
+                if (response.available) {
+                    $("#form-submit-btn").prop("disabled", false)
+                } else {
+                    $("#form-submit-btn").prop("disabled", true)
+                    alert("Time slot is not available. Please choose a different time.");
+                }
+            },
+            error: function (xhr, status, error) {
+                // Handle errors
+                console.error(xhr.responseText);
+            }
+        });
+    });
+    // Initial call to populate time options and update end time options based on default start time
+    populateTimeOptions(timePickers[0]);
+    updateEndTimeOptions();
+</script>
+{% endblock main %}

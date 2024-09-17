@@ -1,0 +1,134 @@
+{% include 'blank.html' %}
+
+{% block main %}
+<style>
+    table {
+        width: 100%;
+    }
+    table tr td {
+        border: 1px solid black;
+    }
+    .td_one_cls {
+        background-color: rgb(227 227 227);
+        width: 10%;
+        font-weight: 600;
+    }
+    .td_two_cls {
+        /* background-color: rgb(153, 0, 255); */
+        width: 10%;
+        height: 25px;
+    }
+    .td_third_cls {
+        /* background-color: yellow; */
+        width: 20%;
+        text-align: center;
+    }
+    .center_cls {
+        text-align: center;
+    }
+</style>
+
+<main class="all-center p-3">
+    <div class="flex items-stretch max-w-6xl {% if dt_data|length <= 9 %} flex-col {% endif %}">
+        <div class="table-wrapper !rounded-none">
+            <table class="table table-hard [&>*_th]:bg-base-300 [&>*_th]:border [&>*_th]:border-black">
+                <tr>
+                    <th>Booking No.</th>
+                    <td>{{ mt_data.booking_no }}</td>
+                    <th>
+                        Booking Date <br>
+                        Target Date
+                    </th>
+                    <td>
+                        {{ mt_data.booking_date|date:'d-m-Y H:i' }} <br>
+                        {{ mt_data.target_date|date:'d-m-Y H:i' }}
+                    </td>
+                    <th>Booking Type</th>
+                    <td>
+                        {% if mt_data.booking_type == 'F' %}
+                        Fresh
+                        {% elif mt_data.booking_type == 'A' %}
+                        Alter
+                        {% elif mt_data.booking_type == 'R' %}
+                        Resubmission
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Buyer</th>
+                    <td colspan="3">{{ mt_data.buyer_name }}</td>
+                    <th>Sample Group Type</th>
+                    <td>{{ mt_data.sample_group_type }}</td>
+                </tr>
+                <tr>
+                    <th>Style</th>
+                    <td>{{ mt_data.style_no }}</td>
+                    <th>Sample Type</th>
+                    <td>{{ mt_data.sample_type }}</td>
+                    <th>Season + Season Year</th>
+                    <td>{{ mt_data.season }} {{ mt_data.season_year }}</td>
+                </tr>
+                <tr>
+                    <th>Marchent Head</th>
+                    <td>{{ mt_data.merchant_head }}</td>
+                    <th>Marchent</th>
+                    <td>{{ mt_data.merchant_name }}</td>
+                    <th>Product Type</th>
+                    <td>{{ mt_data.product_type }}</td>
+                </tr>
+                <tr>
+                    <th>Qty (Size & Colour Wise)</th>
+                    <td colspan="5">
+                        {% for item in sq_data %}
+                        {% if forloop.counter != 1 %} / {% endif %}
+                        {{ item.quantity }} [{{ item.size }}] {{ item.color }}
+                        {% endfor %} =
+                        <span class="font-bold"> {{ mt_data.total_qty }} Pcs.</span>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Article Name</th>
+                    <th colspan="2" >Article Description</th>
+                    <th>Comment</th>
+                    <th>Status</th>
+                    <th>Expected Date</th>
+                </tr>
+                <!-- Article Details Part -->
+                {% for row in dt_data %}
+                <tr>
+                    <td>{{ row.article.name }}</td>
+                    <td colspan="2">{{ row.details }}</td>
+                    <td>{{ row.comment|default_if_none:'' }}</td>
+                    <td class="uppercase">{% if row.given_by_merchant == 'yes' %} GIVEN {% elif row.given_by_merchant == 'no' %} PENDING {% elif row.given_by_merchant == 'pa' %} PARTIAL {% endif %}</td>
+                    <td>{{ row.expected_date|date:'d-m-Y H:i' }}</td>
+                </tr>
+                {% endfor %}
+    
+                <tr>
+                    <th>Additional Details</th>
+                    <td colspan="5"></td>
+                </tr>
+                <tr>
+                    <th>Comment</th>
+                    <td colspan="5">{{ mt_data.remarks }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="flex {% if dt_data|length > 9 %} flex-col {% endif %} text-center">
+            <div class="h-[calc(100vh_/_6)] {% if dt_data|length <= 9 %} w-full {% endif %} all-center border border-black border-l-0 border-b-0">
+                <img class="h-[calc(100vh_/_6)]" width="auto" src="{{ mt_data.image1.url }}" alt="">
+            </div>
+            {% if mt_data.image2 %}
+            <div class="h-[calc(100vh_/_6)] {% if dt_data|length <= 9 %} w-full {% endif %} all-center border border-black border-l-0 border-b-0">
+                <img class="h-[calc(100vh_/_6)]" width="auto" src="{{ mt_data.image2.url }}" alt="">
+            </div>
+            {% endif %}
+            <div class="h-[calc(100vh_/_6)] {% if dt_data|length <= 9 %} w-full {% endif %} all-center border border-black border-b-0">Fabric Swatch</div>
+            <div class="h-[calc(100vh_/_6)] {% if dt_data|length <= 9 %} w-full {% endif %} all-center border border-black border-b-0">Shell Swatch</div>
+            <div class="h-[calc(100vh_/_6)] {% if dt_data|length <= 9 %} w-full {% endif %} all-center border border-black border-b-0">Lining Swatch</div>
+            <div class="h-[calc(100vh_/_6)] {% if dt_data|length <= 9 %} w-full {% endif %} all-center border border-black">Binding / Piping / Fusing Swatch</div>
+        </div>
+    </div>
+</main>
+{% endblock main %}

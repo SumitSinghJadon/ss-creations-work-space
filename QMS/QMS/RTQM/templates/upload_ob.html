@@ -1,0 +1,186 @@
+{% extends 'new/base.html' %}
+
+{% block main %}
+<!-- Table with all function -->
+<div class="rounded-box bg-base-100 shadow-soft flex flex-col h-full overflow-hidden knox-table-wrapper">
+    <div class="table-header-wrapper">
+        <h1 class="font-semibold">OB Upload</h1>
+        <div class="join">
+            <button class="btn btn-primary btn-sm join-item table-filter-toggle"><i class="fa-regular fa-filter-list"></i></button>
+            <input class="input input-sm input-primary bg-base-200 join-item knox-table-search" type="search" placeholder="Search in table" />
+            <button class="btn btn-sm btn-primary join-item kt-export-btn"><i class="fa-solid fa-file-arrow-down"></i></button>
+        </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="table-filter-wrapper">
+        {% csrf_token %}
+        <div class="flex flex-wrap w-full p-2">
+            <!-- File -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input type="file" name="file" max-size="2048" accept=".csv, .xlsx" class="knox-input">
+                        <span class="label-text">File Input</span>
+                    </label>
+                </div>
+            </div>
+            <!-- Buyer -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="buyer" id="buyer" required class="knox-select">
+                            <option value=""></option>
+                            {% for item in buyer_list %}
+                            <option value="{{ item.party_code }}">{{ item.party_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text">Buyer</span>
+                    </label>
+                </div>
+            </div>
+            <!-- Style -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="style_code" id="style_code" required class="knox-select">
+                            <option value=""></option>
+                        </select>
+                        <span class="label-text">Style</span>
+                    </label>
+                </div>
+            </div>
+            <!-- OB Date -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input type="datetime" name="ob_date" min="01-05-2024" required class="knox-input">
+                        <span class="label-text">OB Date</span>
+                    </label>
+                </div>
+            </div>
+            <!-- Re-Cutting -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input placeholder="Enter a number" name="re_cutting" type="number" required min="1" maxlength="4" class="knox-input">
+                        <span class="label-text">Re-Cutting</span>
+                    </label>
+                </div>
+            </div>
+            <!-- Kaz-Button -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input placeholder="Enter a number" name="kaz_button" type="number" required min="1" maxlength="4" class="knox-input">
+                        <span class="label-text">Kaz-Button</span>
+                    </label>
+                </div>
+            </div>
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="flex w-full">
+                    {% if columns %}
+                    <input type="submit" value="Save" class="btn btn-md btn-success w-1/2">
+                    <a href="?" class="btn btn-md btn-primary w-1/2">Clear</a>
+                    {% else %}
+                    <input type="submit" value="Upload" class="btn btn-md btn-primary w-full">
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <div class="flex-grow table-wrapper overflow-auto">
+        <table class="knox-table">
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                        <th data-sort="number">{{ column }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    {% for value in row.values %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+            <tfoot>
+                <tr>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        function get_set_data_in_select(get_element, set_element, flag, key, value){
+            const id = get_element.val();
+
+            if (id && flag){
+                const data = {
+                    "flag" : flag,
+                    "id" : id
+                }
+
+                $.ajax({
+                    method: "GET",
+                    data  : data,
+                    async : true,
+                    beforeSend: function(){
+                        $("#loading-screen").show()
+                    },
+                    success : function(data){
+                        if (data) {
+                            var html = '<option value=""></option>';
+                            $(data).each(function(i, row){
+                                let option = '<option value="' + row[key] + '">' + row[value] + '</option>';
+                                html = html + option
+                            })
+                            set_element.html('')
+                            set_element.append(html).kf_select_refresh();
+                        } else {
+                            alert("Related Data Not Found.")
+                        }
+                    },
+                    error: function(error){
+                        alert("Something Went Wrong.")
+                    }, 
+                    complete: function(){
+                        $("#loading-screen").hide()
+                    }
+                })
+            }
+        }
+
+
+
+        $("#buyer").on("change", function(){
+            get_set_data_in_select($(this), $("#style_code"), "get_style_buyer", "styleno", "styleno")
+
+            // $.ajax({
+            //     method: "GET",
+            //     data: {
+            //         "flag" : "get_style_buyer",
+            //         "buyer" : $(this).val()
+            //     },
+            //     success: function(data){
+            //         console.info(data)
+            //     },
+            //     error: function(error){
+            //         alert("Something went wrong.")
+            //         console.log(error)
+            //     }
+            // })
+        })
+    })
+</script>
+{% endblock script %}

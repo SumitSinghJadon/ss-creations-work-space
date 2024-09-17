@@ -1,0 +1,253 @@
+{% extends 'form-table.html' %}
+
+{% block form %}
+{% if form_visibility %}
+    <form action="{% url 'leave_application_form_page' %}" id="application_form" method="POST" enctype="multipart/form-data" class="flex flex-wrap">
+        {% csrf_token %}
+        <!-- Employee Code -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text">Employee Pay Code</span>
+                <input type="text" name="emp_code" value="{{ request.user.username }}"  readonly required class="text-input">
+            </label>
+        </div>
+        <!-- Employee Name -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text">Employee Name</span>
+                <input type="text" name="emp_name" value="{{ request.user.full_name }}"  readonly required class="text-input">
+            </label>
+        </div>
+        <!-- Unit -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text">Location</span>
+                <select name="unit" class="select-input">
+                    <option value="{{ employee.loc_code }}" selected>{{ employee.loc_name }}</option>
+                </select>
+            </label>
+        </div>
+        <!-- Department -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text">Department</span>
+                <input type="text" name="department" value="{{ employee.dep_name }}"  readonly required class="text-input">
+            </label>
+        </div>
+        <!-- Reporting Manager -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text">Reporting Manager</span>
+                <select name="reporting_manager" class="select-input">
+                    <option selected value="{{ request.user.reporting_manager.id }}">{{ request.user.reporting_manager.full_name }}</option>
+                </select>
+            </label>
+        </div>
+        <!-- Application Type -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Application Type</span>
+                <input type="text" name="application_type" class="text-input" value="Leave" readonly required>
+            </label>
+        </div>
+        <!-- Leave From -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label">
+                <span class="label-text">Leave From</span>
+                <input type="date" name="from_date" required min="{{ min_date|date:'Y-m-d' }}" value="{{ leave_date }}" class="text-input from_date">
+            </label>
+        </div>
+        <!-- Leave Till -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label">
+                <span class="label-text min-w-[120px]">Leave Till</span>
+                <input type="date" name="till_date" required min="{{ min_date|date:'Y-m-d' }}" value="{{ leave_date }}" class="text-input till_date">
+            </label>
+        </div>
+        <!-- Full Day/Half Day -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label">
+                <span class="label-text z-40">Full Day/Half Day (Day Count)</span>
+                <select data-col-index="2" name="day_part" class="select-input select-2" required>
+                    <option value="">--</option>
+                    <option value="FD">Full Day</option>
+                    <option value="HD">Half Day</option>
+                    <option value="SD">Short Leave</option>
+                </select>
+            </label>
+        </div>
+        <!-- Address During Day Period -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label">
+                <span class="label-text z-40">Address During Day Period</span>
+                <input type="text" name="address" required class="text-input">
+            </label>
+        </div>
+        <!-- Mobile Number -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Mobile Number</span>
+                <input type="number" name="phone" value="{{ employee.emp_phn }}" autocomplete="nope" required class="text-input onlyNumberField" data-max-length="10">
+            </label>
+        </div>
+        <!-- Leave Type -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label">
+                <span class="label-text z-40">Leave Type</span>
+                <select data-col-index="2" name="leave_type" class="select-input select-2" required>
+                    <option value="SL">SL (Balance - {{ leave_balance.bsl|default_if_none:0 }})</option>
+                    <option value="CL">CL (Balance - {{ leave_balance.bcl|default_if_none:0 }})</option>
+                    <option value="EL">EL (Balance - {{ leave_balance.bel|default_if_none:0 }})</option>
+                </select>
+            </label>
+        </div>
+        <!-- Reason For Leave -->
+        <div class="w-1/2 pt-1">
+            <label class="float-input-label">
+                <span class="label-text z-40">Reason For Leave</span>
+                <input type="text" name="reason" required class="text-input">
+            </label>
+        </div>
+        <!-- Attachment -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label">
+                <span class="label-text z-40 min-w-[120px]">Attachment</span>
+                <input type="file" name="attachment" class="text-input file-input file-input-bordered file-input-ghost w-full">
+            </label>
+        </div>
+        <div class="w-1/4 pt-0.5 px-1">
+            <input type="Submit" value="Save" class="btn btn-success btn-sm px-8 mt-3">
+        </div>
+    </form>
+{% else %}
+    <div class="flex justify-center items-center">
+        <div class="bg-gray-200 p-2 rounded-lg">
+            <p class="text-center text-warning">Leave Application can be applied between 09:30 AM to 04:00 PM</p>
+        </div>
+    </div>
+{% endif %}
+{% endblock form %}
+
+
+{% block endMain %}
+<dialog id="my_modal_view_attachment" class="modal"> Hello
+    <div class="modal-box w-11/12 max-w-5xl">
+      <img id="view_attachment_img" class="w-auto h-auto max-w-full max-h-full"/>
+      <div class="modal-action">
+        <form method="dialog">
+              <a id="view_attachment_download" class="btn btn-sm btn-success" href="" download><i class="fa-regular fa-download"></i></a>
+              <button class="btn btn-sm">Close</button>
+        </form>
+      </div>
+    </div>
+</dialog> 
+{% endblock endMain %}
+
+
+{% block tfilter %}
+<div class="p-2">
+    <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Leave Application History</h1>
+    <form action="" method="GET" class="flex flex-wrap">
+        <!-- Year -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Year</span>
+                <select name="year" class="select-input select-2">
+                    <option value="">--</option>
+                    {% for item in year_list %}
+                        <option {% if item.name == current_year %} selected {% endif %}>{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Month -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Month</span>
+                <select name="month" class="select-input select-2">
+                    <option value="">--</option>
+                    {% for item in month_list %}
+                        <option {% if item.value == current_month %} selected {% endif %} value="{{ item.value }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Application Status -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label {% if application_status %}floated-label{% endif %}">
+                <span class="label-text z-40">Application Status</span>
+                <select data-col-index="2" name="application_status" class="select-input select-2">
+                    <option value="">--</option>
+                    <option {% if application_status == 'Pending' %} selected {% endif %}>Pending</option>
+                    <option {% if application_status == 'Approved' %} selected {% endif %}>Approved</option>
+                    <option {% if application_status == 'Rejected' %} selected {% endif %}>Rejected</option>
+                </select>
+            </label>
+        </div>
+        <div class="w-1/4 pt-0.5 px-1">
+            <input type="Submit" value="Search" class="btn btn-success btn-sm px-8 mt-3">
+        </div>
+    </form>
+</div>
+{% endblock tfilter %}
+
+
+{% block thead %}
+<tr>
+    <td>Cancel</td>
+    <td>Application Type</td>
+    <td>Leave Type</td>
+    <td>From</td>
+    <td>Till</td>
+    <td>Day Part</td>
+    <td>Day Count</td>
+    <td>Application Status</td>
+    <td>Reason</td>
+    <td>Applied On</td>
+    <td>Approved/Rejected On</td>
+    <td>Cancelled On</td>
+    <td>Approved/Rejected By</td>
+    <td>Remarks</td>
+    <td>Attachment</td>
+</tr>
+{% endblock thead %}
+
+{% block tbody %}
+    {% for item in leave_list %}
+    <tr>
+        <td>{% if item.status == 'Pending' %}<form method="POST">{% csrf_token %}<input type="hidden" name="application_id" value="{{ item.pk }}"><input type="submit" name="cancel_application" value="Cancel" class="btn btn-sm text-white bg-red-500 hover:bg-red-300"></form>{% endif %}</td>
+        <td>{{ item.application_type }}</td>
+        <td>{{ item.leave_type }}</td>
+        <td class="whitespace-nowrap">{{ item.from_date|date:"d-m-Y" }}</td>
+        <td class="whitespace-nowrap">{{ item.till_date|date:"d-m-Y" }}</td>
+        <td>{{ item.day_part }}</td>
+        <td>{{ item.day_count }}</td>
+        <td class="{% if item.status == 'Pending' %} bg-warning {% elif item.status == 'Approved' %} bg-success {% elif item.status == 'Cancelled' %} bg-gray-500 text-white {% else %} bg-error {% endif %}">{{ item.status }}</td>
+            <td>{{ item.reason }}</td>
+        <td>{{ item.applied_on|date:"d-m-Y h:i A" }}</td>
+        <td>{{ item.approved_on|date:"d-m-Y h:i A" }}</td>
+        <td>{{ item.cancelled_on|date:"d-m-Y h:i A" }}</td>
+        <td>{{ item.updated_by.full_name }}</td>
+        <td>{{ item.remarks|default_if_none:'' }}</td>
+        <td>{% if item.attachment %} 
+            <button class="btn btn-xs btn-outline view-attachment" data-img_path="../../media/{{ item.attachment }}">View</button>{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+{% endblock tbody %}
+
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $('.data-table').on('click','.view-attachment',function(){
+            data=$(this).data('img_path')
+            $('#view_attachment_img').attr('src',data)
+            $('#view_attachment_download').attr('href',data)
+            var modal = document.getElementById('my_modal_view_attachment').showModal();
+        })
+    })
+</script>
+{% endblock script %}
+

@@ -1,0 +1,99 @@
+{%  load static %}
+
+<header class="w-full p-1 z-40">
+    <div class="flex justify-between items-center p-1 shadow-soft-lg bg-base-100 rounded-box">
+        <div class="flex items-center space-x-2">
+            <button class="btn btn-sm btn-square btn-ghost" onClick="toggleSidebar()">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+            <h4 class="font-semibold text-lg">{{ module_name }}</h4>
+        </div>
+
+        <div class="flex space-x-3">
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle btn-sm avatar">
+                    <div class="w-10 rounded-full">
+                        <img alt="Tailwind CSS Navbar component" src="{% static 'images/dummy-user.png' %}" />
+                    </div>
+                </div>
+
+                <ul tabindex="0" class="mt-1 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-lg w-52">
+                    <li>
+                        <a><i class="fa-regular fa-user"></i>Profile</a>
+                    </li>
+                    <li>
+                        <a><i class="fa-regular fa-gear"></i>Settings</a>
+                    </li>
+                    <li>
+                        <a href="/logout/"><i class="fa-regular fa-right-from-bracket -rotate-180"></i>Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-sm btn-square shadow-soft bg-gradient-primary">
+                    <span><i class="fa-duotone fa-swatchbook"></i></span>
+                </div>
+                <ul tabindex="0" class="dropdown-content z-[1] p-2 mt-1 shadow-2xl bg-base-300 rounded-box w-52 theme-collection overflow-y-auto h-96">
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Light" value="light"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Cupcake" value="cupcake"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Corporate" value="corporate"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Retro" value="retro"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Valentine" value="valentine"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Garden" value="garden"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Lofi" value="lofi"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Pastel" value="pastel"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Wireframe" value="wireframe"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Autumn" value="autumn"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Acid" value="acid"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Lemonade" value="lemonade"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Winter" value="winter"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Nord" value="nord"/></li>
+                    <li>---------</li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dark" value="dark"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Synthwave" value="synthwave"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Halloween" value="halloween"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Forest" value="forest"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Aqua" value="aqua"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Black" value="black"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Luxury" value="luxury"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dracula" value="dracula"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Business" value="business"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Night" value="night"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Coffee" value="coffee"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Dim" value="dim"/></li>
+                    <li><input type="radio" name="theme-dropdown" class="theme-controller btn btn-sm btn-block btn-ghost justify-start" aria-label="Sunset" value="sunset"/></li>
+                </ul>
+            </div>
+
+            <div>
+                <button class="btn btn-sm btn-circle shadow-soft noti-toggle-btn">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            let sidebar = $("#sideMenuBar");
+
+            if (sidebar.width() > 1) {
+                $("#menuLinkWrapper").addClass("[&>*_a]:whitespace-nowrap");
+                sidebar.animate({ width: '0' }, 400, 'linear', function () { $(this).css('overflow', 'hidden'); });
+                localStorage.setItem("sidebar", 'close');
+            } else {
+                sidebar.animate({ width: '240px' }, 400, 'linear', function () { $(this).css('overflow', ''); });
+                $("#menuLinkWrapper").addClass("[&>*_a]:whitespace-nowrap");
+                localStorage.setItem("sidebar", 'open');
+            }
+        }
+
+        $(document).ready(function(){
+            $(".theme-collection input").on("change", function(){
+                let currentTheme = $(this).val();
+                localStorage.setItem("theme", currentTheme);
+            })
+        })
+    </script>
+</header>

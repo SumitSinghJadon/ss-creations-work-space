@@ -1,0 +1,263 @@
+{% extends 'form.html' %}
+{% load static %}
+{% block form %}
+
+<style>
+    body { zoom: 75%; }
+    .table-sm :where(th,td) {
+        padding: .25rem .25rem;
+    }
+</style>
+<div class="overflow-auto">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}" id="form_size" class="flex flex-col"> {% csrf_token %}
+        <div class="flex">
+            <input type="text" hidden name="flag" value="manpower_alloc" class="input input-sm input-bordered w-full">
+            <input type="date" name="dayno" id="dayno" class="input input-sm input-bordered" value="{{ dayno }}">
+            <select name="unit_code" id="unit_code" class="select select-sm select-2">
+                <option value="">Select Unit</option>
+                {% for unit_val in unit_list %}
+                <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+                {% endfor %}
+            </select>
+    
+            <span id="get_data" class="btn btn-primary btn-sm">Search</span>
+
+            
+
+        </div>
+        <div class="flex">
+            <span class="btn btn-primary btn-sm w-20" id="form_btn" style="float:right;">Save & Update</span>
+            <span id="form_btn_disp"></span>
+        </div>
+
+        <div class="table-wrapper relative" style="height: 30rem;">
+            <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border ">
+                <thead>
+                    <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                        <th>#</th>
+                        <th>#</th>
+                        <th>Line Type</th>
+                        <th>Line Name</th>
+                        <th>Card No</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>In</th>
+                        <th>Out</th>
+                        <th>OT Line</th>
+                        <th>OT Hour</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    {% for dept in data_list %}
+                    <tr id="tr{{ forloop.counter }}" {%if dept.ot_hour %} style="background-color: #dbffdb;" {% endif %}>
+                        <td>
+                            <input type="hidden" value="{{forloop.counter0}}" name="counter" >
+                            <input type="text" hidden value="{{dept.emp_code}}" class="emp_code_cls" name="emp_code[{{forloop.counter0}}]" id="emp_code{{ forloop.counter }}" >
+                            <input type="text" hidden value="{{dept.emp_name}}" class="emp_name_cls" name="emp_name[{{forloop.counter0}}]" id="emp_name{{ forloop.counter }}" >
+                            {{ forloop.counter }}
+                        </td>
+                        <td>
+                             <span class="" style="font-size: 25px;" onClick="save_data('{{ forloop.counter }}');"><i class="fa-solid fa-floppy-disk" style="color: teal;"></i></span>
+                             <span id="div_btn_disp{{ forloop.counter }}"></span>
+                        </td>
+                        <td {% if dept.line_type == '' %} style='background-color: rgb(236, 162, 162);' {% endif %} >
+                            <select name="line_type[{{forloop.counter0}}]" required id="line_type{{ forloop.counter }}" class="select select-sm line_type_cls "  {% if dept.ot_line == '' %} style="height: 1.7rem;min-height: 1.7rem;border: 1px black solid;" {% else %} style="height: 1.7rem;min-height: 1.7rem;border: 1px black solid;background-color: #a5ffd2;" {% endif %} >
+                                <option value="">Select</option>
+                                {% for ltype in line_type_list %}
+                                    <option value="{{ ltype.name }}" {% if dept.line_type == ltype.name %}selected{% endif %} >{{ ltype.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>
+                            <select name="line_name[{{forloop.counter0}}]" required id="line_name{{ forloop.counter }}" class="select select-sm line_name_cls " {% if dept.ot_line == '' %} style="height: 1.7rem;min-height: 1.7rem;border: 1px black solid;" {% else %} style="height: 1.7rem;min-height: 1.7rem;border: 1px black solid;background-color: #a5ffd2;" {% endif %} >
+                                <option value="">Select</option>
+                                {% for ltype in line_name_list %}
+                                    <option value="{{ ltype.name }}" {% if dept.line_code == ltype.name %}selected{% endif %} >{{ ltype.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>{{ dept.emp_cardno }}</td>
+                        <td>{{ dept.emp_name }}</td>
+                        <td>{{ dept.dep_name }}</td>
+                        <td>{{ dept.des_name }}</td>
+                        <td>{{ dept.in_time }}</td>
+                        <td>{{ dept.out_time }}</td>
+                        <td>
+                            <select name="ot_line[{{forloop.counter0}}]" required id="ot_line{{ forloop.counter }}" class="select select-sm ot_line_cls "  {% if dept.ot_line == '' %} style="height: 1.7rem;min-height: 1.7rem;border: 1px black solid;" {% else %} style="height: 1.7rem;min-height: 1.7rem;border: 1px black solid;background-color: #a5ffd2;" {% endif %} >
+                                <option value="">Select</option>
+                                {% for ltype in line_name_list %}
+                                    <option value="{{ ltype.name }}" {% if dept.ot_line == ltype.name %}selected{% endif %}>{{ ltype.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td>{{ dept.ot_time }}</td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+            
+        </div>
+
+        <!--
+            <input type="submit" class="hidden" value="">
+        -->
+    </form>
+</div>
+{% endblock form %}
+
+
+{% block script %}
+<script>
+/*
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            new_url = `?unit_code=${val}`
+            window.location.replace(new_url);
+        })
+    })
+*/
+    $(document).ready(function(){
+        $("#get_data").on("click", function(){
+            dayno = $("#dayno").val()
+            unit_code = $("#unit_code").val()
+            new_url = `?unit_code=${unit_code}&dayno=${dayno}`
+            window.location.replace(new_url);
+        })
+    })
+
+
+
+
+    $(document).ready(function(){
+        // $("#unit_code").on("change", function(){
+        //     val = $(this).val()
+        //     new_url = `?unit_code=${val}`
+        //     window.location.replace(new_url);
+        // })
+
+        $("#form-save-btn").hide();
+        $("#form-save-btn").click(function(){
+            $("input[type='submit']").click();
+        })
+
+
+    })
+
+    $(document).ready(function(){
+        $("#form_btn").on('click',function(){
+            // var fd=$("#form_size").serializeArray();
+            // var emp_name = []; $("select.emp_name_cls").each(function(i, sel){ var selectedVal = $(sel).val(); emp_name.push(selectedVal); });
+            var dayno = $("#dayno").val();
+            var unit_code = $("#unit_code").val();
+            var counter = $('.emp_name_cls').length;
+            var vm=$("#form_btn_disp");
+            for(var i=1;i<=counter;i++) {
+                var emp_code = $("#emp_code" + i).val();
+                var emp_name = $("#emp_name" + i).val();
+                var line_type = $("#line_type" + i).val();
+                var line_name = $("#line_name" + i).val();
+                var ot_line = $("#ot_line" + i).val();
+
+                if(line_type =='' ) { $("#line_type" + i).css('border','solid 1px red'); } else { $("#line_type" + i).css('border','solid 1px black'); }
+                if(line_name =='' ) { $("#line_name" + i).css('border','solid 1px red'); } else { $("#line_name" + i).css('border','solid 1px black'); }
+                if(ot_line =='' ) { $("#ot_line" + i).css('border','solid 1px red'); } else { $("#ot_line" + i).css('border','solid 1px black'); }
+
+                if(emp_code !='' && emp_name !='' && line_type !='' && line_name !='' && ot_line !='' ) {
+                    $.ajax({
+                        url:"/miscellaneous/save/",
+                        type:'GET',
+                        data:{ 
+                            flag : "manpower_alloc", 
+                            dayno: dayno,
+                            unit_code: unit_code,
+                            emp_code: emp_code,
+                            emp_name: emp_name,
+                            line_type: line_type,
+                            line_name: line_name,
+                            ot_line: ot_line
+                        },
+                        dataType:'json',
+                        beforeSend:function(){
+                            vm.text('');
+                        },
+                        success:function(res){
+                            console.log(res);
+                            if(res==1){
+                                vm.text('');
+                                // $(".ajax-res").text('Data has been added');
+                                // $(".reset").trigger('click');
+                            }else{
+                                vm.text('Error');
+                                // $(".ajax-res").text('Data has not been added');
+                            }
+                            
+                        }
+                    });
+                }
+
+            }
+
+        });
+
+    });
+
+    function save_data(i) {
+            // var fd=$("#form_size").serializeArray();
+            // var emp_name = []; $("select.emp_name_cls").each(function(i, sel){ var selectedVal = $(sel).val(); emp_name.push(selectedVal); });
+            var dayno = $("#dayno").val();
+            var unit_code = $("#unit_code").val();
+            var counter = $('.emp_name_cls').length;
+            var vm=$("#div_btn_disp" + i);
+                var emp_code = $("#emp_code" + i).val();
+                var emp_name = $("#emp_name" + i).val();
+                var line_type = $("#line_type" + i).val();
+                var line_name = $("#line_name" + i).val();
+                var ot_line = $("#ot_line" + i).val();
+                if(line_type =='' ) { $("#line_type" + i).css('border','solid 1px red'); } else { $("#line_type" + i).css('border','solid 1px black'); }
+                if(line_name =='' ) { $("#line_name" + i).css('border','solid 1px red'); } else { $("#line_name" + i).css('border','solid 1px black'); }
+                if(ot_line =='' ) { $("#ot_line" + i).css('border','solid 1px red'); } else { $("#ot_line" + i).css('border','solid 1px black'); }
+// alert(emp_code);
+// alert(emp_name);
+// alert(line_type);
+// alert(line_name);
+// alert(ot_line);
+                if(emp_code !='' && emp_name !='' && line_type !='' && line_name !='' && ot_line !='' ) {
+                    $.ajax({
+                        url:"/miscellaneous/save/",
+                        type:'GET',
+                        data:{ 
+                            flag : "manpower_alloc", 
+                            dayno: dayno,
+                            unit_code: unit_code,
+                            emp_code: emp_code,
+                            emp_name: emp_name,
+                            line_type: line_type,
+                            line_name: line_name,
+                            ot_line: ot_line,
+                        },
+                        dataType:'json',
+                        beforeSend:function(){
+                            vm.text('<i class="fa-duotone fa-spinner"></i>');
+                        },
+                        success:function(res){
+                            console.log(res);
+                            if(res==1){
+                                vm.text('');
+                                // $(".ajax-res").text('Data has been added');
+                                // $(".reset").trigger('click');
+                            }else{
+                                vm.text('Error');
+                                // $(".ajax-res").text('Data has not been added');
+                            }
+                        }
+                    });
+                }
+
+        }
+</script>
+
+{% endblock script %}

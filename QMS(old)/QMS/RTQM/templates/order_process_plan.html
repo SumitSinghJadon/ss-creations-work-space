@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Process Plan</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <select id="buyer-dropdown">
+        <option value="">Select Buyer</option>
+        {% for order_mt in order_mts %}
+            <option value="{{ order_mt.buyer }}">{{ order_mt.buyer }}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <select id="buyer-order-dropdown">
+        <option value="">Select Buyer Order No</option>
+    </select>
+    <br>
+    <select id="ref-no-dropdown">
+        <option value="">Select Our Ref No</option>
+    </select>
+    <br>
+    <select id="quantity-dropdown">
+        <option value="">Select Quantity</option>
+    </select>
+    <br>
+    <select id="color-dropdown">
+        <option value="">Select Color</option>
+    </select>
+    <br>
+    <select id="style-no-dropdown">
+        <option value="">Select Style No</option>
+    </select>
+    <script>
+        $(document).ready(function(){
+            $("#buyer-dropdown").change(function(){
+                var buyer = $(this).val();
+                $.ajax({
+                    url: "{% url 'order_process_plan' %}",
+                    method: 'post',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        buyer: buyer
+                    },
+                    dataType: 'json',
+                    success: function(data){
+                        // Populate dropdowns with received data
+                        $('#buyer-order-dropdown').empty();
+                        $('#buyer-order-dropdown').append($('<option>', {
+                            value: data.buyer_order_no,
+                            text: data.buyer_order_no
+                        }));
+                        $('#ref-no-dropdown').val(data.ref_no);
+                        $('#quantity-dropdown').val(data.quantity);
+                        $('#color-dropdown').val(data.color);
+                        $('#style-no-dropdown').val(data.style_no);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

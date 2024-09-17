@@ -1,0 +1,49 @@
+{% extends 'form.html' %}
+
+
+{% block form %}
+<form method="POST" class="flex flex-col overflow-auto"> {% csrf_token %}
+    <div class="flex flex-wrap items-start sticky left-0">
+        <!-- task -->
+        <div class="w-full pt-2"> 
+            <label class="float-input-label {% if data.task %} floated-label {% endif %}">
+                <span class="label-text z-40">Select Task</span>
+                <select name="task" class="select-input select-2">
+                    <option value=""> --- </option>
+                    {% for item in task_list %}
+                    <option value="{{ item.id }}">{{ item.title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!--forward_to -->
+        <div class="w-1/3 pt-2"> 
+            <label class="float-input-label {% if data.forward_to %} floated-label {% endif %}">
+                <span class="label-text z-40">Forward to</span>
+                <select name="forward_to" class="select-input select-2">
+                    <option value=""> --- </option>
+                    {% for item in user_list %}
+                    <option value="{{ item.id }}">{{ item.first_name }} {{ item.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- start_time -->
+        <div class="w-1/3 pt-2">
+            <label class="float-input-label {% if data.start_time %} floated-label {% endif %}">
+                <span class="label-text">Start Time</span>
+                <input type="datetime-local" name="start_time" class="text-input">
+            </label>
+        </div>
+        <!-- end time -->
+        <div class="w-1/3 pt-2">
+            <label class="float-input-label {% if data.end_time %} floated-label {% endif %}">
+                <span class="label-text">End Time</span>
+                <input type="datetime-local" name="end_time" class="text-input">
+            </label>
+        </div>
+    </div>
+    <input type="submit" hidden id="submit-btn">
+</form>
+
+{% endblock form %}

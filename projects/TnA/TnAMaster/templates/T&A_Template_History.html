@@ -1,0 +1,51 @@
+{% extends 'table.html' %}
+
+{% block buttonName %}New Template{% endblock buttonName %}
+
+{% block thead %}
+<tr class="sticky top-0 bg-base-200">
+    <th rowspan="2">SR.</th>
+    <th rowspan="2">Template No</th>
+    <th rowspan="2">Template Name</th>
+    <th rowspan="2">Template Desc</th>
+    <th rowspan="2">Buyer Name</th>
+    <th rowspan="2">Days From</th>
+    <th rowspan="2">Days To</th>
+    <th rowspan="2">Active</th>
+    <th rowspan="2">Status</th>
+</tr>
+{% endblock thead %}
+
+
+{% block tbody %}
+    {% for item in template_data %}
+        <tr>
+            <th>{{ forloop.counter }}</th>
+            <th>
+                <a href="add/?tid={{ item.id }}" class="link-hover">{{ item.template_no }}</a>
+            </th>
+            <td>{{ item.template_name }}</td>
+            <td>{{ item.template_desc }}</td>
+            <td>{{ item.buyer_name }}</td>
+            <td>{{ item.days_from }}</td>
+            <td>{{ item.days_to }}</td>
+            <td>
+                {% if item.status %}
+                <span class="text-success"><i class="fa-solid fa-square-check"></i></span>
+                {% else %}
+                <span class="text-error"><i class="fa-solid fa-square-x"></i></span>
+                {% endif %}
+            </td>
+            <td>
+                {% if item.status == 'pending' %}
+                <a href="?flag=approve&id={{ item.id }}" type="button" class="btn btn-success btn-xs">Approve</a>
+                {% else %}
+                <span class="capitalize">{{ item.status }}</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock tbody %}
+
+{% block script %}
+{% endblock script %}

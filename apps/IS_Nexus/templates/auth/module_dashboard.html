@@ -1,0 +1,100 @@
+{% extends 'blank.html' %}
+{% load static %}
+
+
+{% block main %}
+<style>
+    .tilt-wrapper {
+        box-shadow: 5px 5px 20px #3f3f4c55;
+    }
+    
+    .tilt-wrapper:hover img, .tilt-wrapper:hover h1 {
+        transform: translateZ(40px);
+        filter: drop-shadow(0.3rem 0.3rem 0.5rem #2c2c3a5d);
+    }
+
+    #dd {
+        background-image: url('https://static.vecteezy.com/system/resources/thumbnails/000/536/543/small/paper2-01.jpg');
+    }
+</style>
+
+
+<main class="min-h-screen overflow-y-auto overflow-x-hidden flex flex-col h-full" id="dd">
+    <div class="w-full sticky py-3 flex justify-between px-4">
+        <!-- Brand Logo -->
+        <div class="flex items-center logo select-none">
+            <img src="{% static 'images/logo.jpg' %}" alt="" class="h-4 md:h-6 lg:h-8">
+            <div class="ignore-small text-end space-x-3">
+                <h1 class="bg-gradient-to-r from-rose-600 via-yellow-500 to-blue-500 text-transparent bg-clip-text md:text-lg lg:text-xl font-bold">
+                    IntelliSYNC
+                </h1>
+            </div>
+        </div>
+        
+        <div class="flex items-center space-x-3">
+            <label for="my_modal_6" class="btn">Change Password</label>
+
+            <!-- logout button -->
+            <a href="/logout/" class="btn hover:!btn-error btn-sm md:btn-md">
+                <span class="rotate-180"><i class="fa-regular fa-right-from-bracket"></i></span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-center h-full flex-1">
+        <div class="flex flex-wrap items-center justify-center max-w-6xl w-full">
+            {% for module in module_list %}
+            <div class="w-full md:w-1/2 lg:w-1/4 h-full p-3">
+                <a href="http://{{module.server_ip}}:{{module.port_no}}{{ module.dashboard_url }}" 
+                    data-tilt style="transform-style: preserve-3d;" 
+                    class="flex flex-col items-center rounded-box border p-3 hover:scale-105
+                    bg-gradient-to-br from-rose-50 via-white to-fuchsia-50 tilt-wrapper">
+                    <img class="duration-300 h-24 drop-shadow-2xl" src="/media/{{ module.image }}" alt="">
+                    <h1 class="duration-300 font-semibold pt-1 drop-shadow-2xl">{{ module.name }}</h1>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+
+<!-- Put this part before </body> tag -->
+<input type="checkbox" id="my_modal_6" class="modal-toggle" />
+<div class="modal" role="dialog">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">Change Password</h3>
+        <div class="py-4">
+            <form action="" method="POST" class=""> {% csrf_token %}
+                <div class="flex space-x-2">
+                    <input type="text" required name="old_password" class="input input-bordered w-full" placeholder="Old Password">
+                    <input type="text" required name="new_password" class="input input-bordered w-full" placeholder="New Password">
+                </div>
+                <input type="submit" hidden id="submit-form">
+            </form>
+        </div>
+        <div class="modal-action">
+            <label for="my_modal_6" class="btn">Close!</label>
+            <button class="btn btn-success" onclick="$('#submit-form').click()">Change</button>
+        </div>
+    </div>
+</div>
+{% endblock main %}
+
+
+{% block script %}
+<script src="{% static 'js/tilt.js' %}"></script> 
+<script>
+    $(document).ready(function(){
+        $(".module-toggle-btn").on("click", function(){
+            $(this).closest(".module-wrapper").find(".module-menu-wrapper").toggle();
+            $(this).closest(".module-wrapper").find(".module-btn").toggleClass("rounded-b-none");
+        })
+    })
+</script>
+{% endblock script %}
+
+
+
+
+

@@ -1,0 +1,124 @@
+{% extends 'form.html' %}
+
+{% block form %} 
+
+<div style="overflow: scroll;">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}"> {% csrf_token %}
+        <input type="text" hidden name="flag" value="add_btn_other">
+		<select name="unit_code" id="unit_code" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Unit</option>
+			{% for unit_val in unit_list %}
+			<option {% if request.GET.unit_code == unit_val.id|stringformat:"i" %}selected{% endif %} value="{{ unit_val.id }}">{{ unit_val.name }}</option>
+			{% endfor %}
+		</select>
+
+        <select name="month" id="month" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Month</option>
+			{% for month_no in month_list %}
+			<option {% if request.GET.month == forloop.counter|stringformat:"i" %}selected{% endif %} value="{{ forloop.counter }}">{{ month_no }}</option>
+			{% endfor %}
+		</select>
+
+        <select name="year" id="year" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Month</option>
+			{% for year_no in year_list %}
+			<option {% if request.GET.year == year_no|stringformat:"i" %}selected{% endif %} value="{{ year_no }}">{{ year_no }}</option>
+			{% endfor %}
+		</select>
+        <span id="get_data" class="btn btn-primary btn-sm">Search</span>
+        
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th></th>
+                    <th colspan="4">Staff</th>
+                    <th colspan="4">Worker</th>
+                    <th colspan="4">Total</th>
+                </tr>
+                <tr>
+                    <th>Unit</th>
+
+					<th >Onroll (On 1st)</th>
+					<th >Joined (In a Period)</th>
+					<th >Left (In a Period)</th>
+					<th >Attrition Rate (%)</th>
+
+					<th >Onroll (On 1st)</th>
+					<th >Joined (In a Period)</th>
+					<th >Left (In a Period)</th>
+					<th >Attrition Rate (%)</th>
+
+					<th >Onroll (On 1st)</th>
+					<th >Joined (In a Period)</th>
+					<th >Left (In a Period)</th>
+					<th >Attrition Rate (%)</th>
+					
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for dept in staff_worker_list %}
+                <tr id="tr{{ forloop.counter }}">
+<!--                    <td>
+                        <input type="hidden" value="{{forloop.counter0}}" name="counter">
+                        {{ forloop.counter }}
+                    </td>
+-->
+                    <td>{{ dept.unit_name }}</td>
+					
+					<td>{{ dept.onroll_1st_staff }}</td>
+					<td>{{ dept.joining_period_staff }}</td>
+					<td>{{ dept.left_period_staff }}</td>
+					<td>{{ dept.attr_staff }}</td>
+
+					<td>{{ dept.onroll_1st_worker }}</td>
+					<td>{{ dept.joining_period_worker }}</td>
+					<td>{{ dept.left_period_worker }}</td>
+					<td>{{ dept.attr_worker }}</td>
+
+					<td>{{ dept.onroll_1st_total }}</td>
+					<td>{{ dept.joining_period_total }}</td>
+					<td>{{ dept.left_period_total }}</td>
+					<td>{{ dept.attr_total }}</td>
+                </tr>
+                {% endfor %}
+				
+            </tbody>
+        </table>
+
+        <input type="submit" class="hidden" value="">
+    </form>
+</div>
+ 
+
+{% endblock form %}
+
+
+
+
+{% block script %}
+<script>
+/*
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            new_url = `?unit_code=${val}`
+            window.location.replace(new_url);
+        })
+    })
+*/
+    $(document).ready(function(){
+        $("#get_data").on("click", function(){
+            unit_code = $("#unit_code").val()
+            month = $("#month").val()
+            year = $("#year").val()
+            new_url = `?unit_code=${unit_code}&month=${month}&year=${year}`
+            window.location.replace(new_url);
+        })
+    })
+
+
+
+</script>
+
+{% endblock script %}

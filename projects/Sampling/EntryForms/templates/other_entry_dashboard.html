@@ -1,0 +1,94 @@
+{% extends 'base-3.html' %}
+{% load static %}
+
+
+{% block main %}
+<div class="w-full rounded-xl space-y-2 flex flex-col h-full">
+    <!-- Filter Bar -->
+    <div class="py-1 px-3 rounded-xl shadow-lg w-full flex justify-between items-center bg-base-100" data-aos="zoom-in">
+        <div data-aos="zoom-in">
+            <h1 class="font-semibold capitalize">Other Dashboard</h1>
+        </div>
+        <div data-aos="zoom-in" class="flex space-x-2">
+            <a href="/entry-forms/other-transaction-entry/" class="btn btn-sm btn-success px-6">Add</a>
+            <!--<button id="form-save-btn" class="btn btn-sm btn-success px-6">Save</button>-->
+        </div>
+    </div>
+
+    <form class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-xl" method="post" data-aos="zoom-in"> {% csrf_token %}
+        <table class="!w-full table [&>*_th]:border [&>*_td]:border data-table capitalize">
+            <thead>
+                <tr class="sticky top-0 bg-blue-300 text-slate-800">
+                    <th rowspan="2">Sr.</th>
+                    <th rowspan="2">Booking no</th>
+                    <th rowspan="2">Transaction no</th>
+                    <th rowspan="2">Buyer name</th>
+                    <th rowspan="2">Style no</th>
+                    <th rowspan="2">Sample type</th>
+                    <th rowspan="2">other type</th>
+                    <th rowspan="2">other size</th>
+                    <th rowspan="2">Qty</th>
+                    <th rowspan="2">cutter name</th>
+                    <th rowspan="2">other date</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in other_trans_list %}
+                <tr>
+                    <th class="!p-0 text-center">
+                        {{ forloop.counter }}
+                    </th>
+                    <td class="!py-0">{{ row.booking_no }}</td>
+                    <td class="!py-0">{{ row.transaction_no }}</td>
+                    <td class="!py-0">{{ row.buyer_name }}</td>
+                    <td class="!py-0">{{ row.style_no }}</td>
+                    <td class="!py-0">{{ row.sample_type }}</td>
+                    <td class="!py-0">{{ row.other_type }}</td>
+                    <td class="!py-0">{{ row.other_size }}</td>
+                    <td class="!py-0">{{ row.qty }}</td>
+                    <td class="!py-0">{{ row.cutter_name }}</td>
+                    <td class="!py-0">{{ row.other_date }}</td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!--<input type="submit" class="hidden" id="submit-btn">-->
+    </form>
+
+    <!-- Table footer -->
+    <div data-aos="zoom-in" class="py-1 px-3 rounded-xl shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center"></div>
+</div>
+
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    // $(document).ready(function () {
+    //     // Refine data-table design
+    //     $(".dataTables_length select").addClass('select select-xs select-bordered').prependTo(".dt-filter-top");
+    //     $(".dataTables_filter input").addClass('input input-xs input-bordered').attr(
+    //         'placeholder', 'search in table...'
+    //     ).prependTo(".dt-filter-top");
+    //     $(".dataTables_info, .dataTables_paginate").prependTo(".dt-filter-bottom");
+    //     $(".dataTables_length, .dataTables_filter").remove();
+
+    //     // Align tbody text if thead is in center
+    //     $('thead tr').find('th').each(function (index) {
+    //         const thClasses = $(this).attr('class').split(' ');
+    //         const relevantClasses = thClasses.filter(cls => cls === '!text-right' || cls === '!text-center');
+    //         relevantClasses.forEach(function (cls) {
+    //             $('tbody tr').each(function () {
+    //                 const $td = $(this).find('td, th').eq(index);
+    //                 if (cls) { $td.addClass(cls); }
+    //             });
+    //         });
+    //     });
+    // })
+</script>
+
+{% endblock script %}
+

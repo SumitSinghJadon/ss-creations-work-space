@@ -1,0 +1,196 @@
+{% extends 'form.html' %}
+
+{% block form %} 
+
+<div style="overflow: scroll;">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}"> {% csrf_token %}
+        <input type="text" hidden name="flag" value="add_btn_other">
+		<select name="unit_code" id="unit_code" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Unit</option>
+			{% for unit_val in unit_list %}
+			<option {% if request.GET.unit_code == unit_val.id|stringformat:"i" %}selected{% endif %} value="{{ unit_val.id }}">{{ unit_val.name }}</option>
+			{% endfor %}
+		</select>
+
+        <select name="month" id="month" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Month</option>
+			{% for month_no in month_list %}
+			<option {% if request.GET.month == month_no|stringformat:"i" %}selected{% endif %} value="{{ month_no }}">{{ month_no }}</option>
+			{% endfor %}
+		</select>
+
+        <select name="year" id="year" style="width: 125px; border: 1px solid black;" >
+			<option value="">Select Month</option>
+			{% for year_no in year_list %}
+			<option {% if request.GET.year == year_no|stringformat:"i" %}selected{% endif %} value="{{ year_no }}">{{ year_no }}</option>
+			{% endfor %}
+		</select>
+        <span id="get_data" class="btn btn-primary btn-sm">Search</span>
+        
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Unit Code</th>
+                    <th>Card No</th>
+                    <th>Name</th>
+                    {% for i in numday %}
+                    <th colspan="2">{{ i }}</th>
+                    {% endfor %}
+                </tr>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Unit Code</th>
+                    <th>Card No</th>
+                    <th>Name</th>
+                    {% for i in numday %}
+                    <th>In</th>
+                    <th>Out</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for dept in punch_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>
+                        <input type="hidden" value="{{forloop.counter0}}" name="counter">
+                        {{ forloop.counter }}
+                    </td>
+                    <td>{{ dept.unit }}</td>
+                    <td>{{ dept.emp_cardno }}</td>
+                    <td>{{ dept.emp_name }}</td>
+
+                    <td>{{ dept.idt1 }}</td>
+                    <td>{{ dept.idt2 }}</td>
+                    <td>{{ dept.idt3 }}</td>
+                    <td>{{ dept.idt4 }}</td>
+                    <td>{{ dept.idt5 }}</td>
+                    <td>{{ dept.idt6 }}</td>
+                    <td>{{ dept.idt7 }}</td>
+                    <td>{{ dept.idt8 }}</td>
+                    <td>{{ dept.idt9 }}</td>
+                    <td>{{ dept.idt10 }}</td>
+                    <td>{{ dept.idt11 }}</td>
+                    <td>{{ dept.idt12 }}</td>
+                    <td>{{ dept.idt13 }}</td>
+                    <td>{{ dept.idt14 }}</td>
+                    <td>{{ dept.idt15 }}</td>
+                    <td>{{ dept.idt16 }}</td>
+                    <td>{{ dept.idt17 }}</td>
+                    <td>{{ dept.idt18 }}</td>
+                    <td>{{ dept.idt19 }}</td>
+                    <td>{{ dept.idt20 }}</td>
+                    <td>{{ dept.idt21 }}</td>
+                    <td>{{ dept.idt22 }}</td>
+                    <td>{{ dept.idt23 }}</td>
+                    <td>{{ dept.idt24 }}</td>
+                    <td>{{ dept.idt25 }}</td>
+                    <td>{{ dept.idt26 }}</td>
+                    <td>{{ dept.idt27 }}</td>
+                    <td>{{ dept.idt28 }}</td>
+                    <td>{{ dept.idt29 }}</td>
+                    <td>{{ dept.idt30 }}</td>
+                    <td>{{ dept.idt31 }}</td>
+					
+                    <td>{{ dept.odt1 }}</td>
+                    <td>{{ dept.odt2 }}</td>
+                    <td>{{ dept.odt3 }}</td>
+                    <td>{{ dept.odt4 }}</td>
+                    <td>{{ dept.odt5 }}</td>
+                    <td>{{ dept.odt6 }}</td>
+                    <td>{{ dept.odt7 }}</td>
+                    <td>{{ dept.odt8 }}</td>
+                    <td>{{ dept.odt9 }}</td>
+                    <td>{{ dept.odt10 }}</td>
+                    <td>{{ dept.odt11 }}</td>
+                    <td>{{ dept.odt12 }}</td>
+                    <td>{{ dept.odt13 }}</td>
+                    <td>{{ dept.odt14 }}</td>
+                    <td>{{ dept.odt15 }}</td>
+                    <td>{{ dept.odt16 }}</td>
+                    <td>{{ dept.odt17 }}</td>
+                    <td>{{ dept.odt18 }}</td>
+                    <td>{{ dept.odt19 }}</td>
+                    <td>{{ dept.odt20 }}</td>
+                    <td>{{ dept.odt21 }}</td>
+                    <td>{{ dept.odt22 }}</td>
+                    <td>{{ dept.odt23 }}</td>
+                    <td>{{ dept.odt24 }}</td>
+                    <td>{{ dept.odt25 }}</td>
+                    <td>{{ dept.odt26 }}</td>
+                    <td>{{ dept.odt27 }}</td>
+                    <td>{{ dept.odt28 }}</td>
+                    <td>{{ dept.odt29 }}</td>
+                    <td>{{ dept.odt30 }}</td>
+                    <td>{{ dept.odt31 }}</td>
+					
+                </tr>
+                {% endfor %}
+				
+            </tbody>
+        </table>
+
+        <input type="submit" class="hidden" value="">
+    </form>
+</div>
+ 
+
+{% endblock form %}
+
+
+
+
+{% block script %}
+<script>
+/*
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            new_url = `?unit_code=${val}`
+            window.location.replace(new_url);
+        })
+    })
+*/
+    $(document).ready(function(){
+        $("#get_data").on("click", function(){
+            unit_code = $("#unit_code").val()
+            month = $("#month").val()
+            year = $("#year").val()
+            new_url = `?unit_code=${unit_code}&month=${month}&year=${year}`
+            window.location.replace(new_url);
+        })
+    })
+
+
+    $(document).ready(function () {
+
+        {% block dt_config %}
+        $(".data-table").DataTable({
+            lengthMenu: [ [1000, 1500, 2000, -1], [1000, 1500, 2000, 'All'] ]
+        });
+        {% endblock dt_config %}
+
+        // Refine data-table design
+        $(".dataTables_length select").addClass('select select-xs select-bordered').prependTo(".dt-filter-top");
+        $(".dataTables_filter input").addClass('input input-xs input-bordered').attr(
+            'placeholder', 'search in table...'
+        ).prependTo(".dt-filter-top");
+        $(".dataTables_info, .dataTables_paginate").prependTo(".dt-filter-botom");
+        $(".dataTables_length, .dataTables_filter").remove();
+
+        // Align tbody text if thead is in center
+        // $('thead tr').find('th').each(function (index) {
+        //     const thClasses = $(this).attr('class').split(' ');
+        //     const relevantClasses = thClasses.filter(cls => cls === '!text-right' || cls === '!text-center');
+        //     relevantClasses.forEach(function (cls) {
+        //         $('tbody tr').each(function () {
+        //             const $td = $(this).find('td, th').eq(index);
+        //             if (cls) { $td.addClass(cls); }
+        //         });
+        //     });
+        // });
+    })
+</script>
+
+{% endblock script %}

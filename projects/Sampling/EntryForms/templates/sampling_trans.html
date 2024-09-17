@@ -1,0 +1,237 @@
+{% extends 'base-3.html' %}
+{% load static %}
+
+
+{% block main %}
+<div class="h-full bg-base-100 shadow-soft rounded-box overflow-hidden flex flex-col knox-table-wrapper">
+    <div class="p-3 flex justify-between items-center">
+        <h1 class="font-semibold">Transaction</h1>
+        
+        <div class="join">
+            <input class="input input-bordered input-sm join-item knox-table-search" type="search" placeholder="Search in table" />
+
+            <select class="select select-bordered select-sm join-item kt-export">
+                <option disabled selected>Export</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+            </select>
+
+            <button class="btn btn-sm btn-primary join-item kt-export-btn">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper flex-grow overflow-auto">
+        
+        {% if trans_type == 'cutting' %}
+        <table class="knox-table table-sm" export-name="Sampling Cost Summary" id="knox-table-2">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th>S/N</th>
+                    <th>transaction_no</th>
+                    <th>ttype</th>
+                    <th>qty</th>
+                    <th>size_breakup</th>
+                    <th>cutter_name</th>
+                    <th>assign_date</th>
+                    <th>handover_to_supervisor</th>
+                    <th>created_at</th>
+                    <th>created_by</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in data_list %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ row.transaction_no }}</td>
+                    <td>{{ row.ttype }}</td>
+                    <td>{{ row.qty }}</td>
+                    <td>{{ row.size_breakup }}</td>
+                    <td>{{ row.cutter_name }}</td>
+                    <td>{{ row.assign_date }}</td>
+                    <td>{{ row.handover_to_supervisor }}</td>
+                    <td>{{ row.created_at }}</td>
+                    <td>{{ row.created_by }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+<!--
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <th></th>
+                    <th></th>
+                    {% for _ in '1234567891234567' %}
+                    <th class="kt-total"></th>
+                    {% endfor %}
+                </tr>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td class="p-0"></td>
+                    {% for _ in '12345678912345678' %}
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    {% endfor %}
+                </tr>
+            </tfoot>
+        -->
+        </table>
+        {% endif %}
+
+    </div>
+</div>
+
+
+
+
+
+<div class="w-full rounded-xl space-y-2 flex flex-col h-full hidden">
+    <!-- Filter Bar -->
+    <div class="py-1 px-3 rounded-xl shadow-lg w-full flex justify-between items-center bg-base-100" data-aos="zoom-in">
+        <div data-aos="zoom-in">
+            <h1 class="font-semibold capitalize">Sampling Cost Summ</h1>
+        </div>
+        <div data-aos="zoom-in" class="flex space-x-2">
+            <form method="get" class="flex items-center space-x-2">
+                <label class="label !p-0 w-32">
+                    <select name="dept" class="select-2">
+                        <option value="">-- Sample Department --</option>
+                        {% for item in data_list_dept %}
+                        <option {% if request.GET.dept == item.dep_code %}selected{% endif %} value="{{ item.dep_code }}">{{ item.dep_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label class="label !p-0 w-32">
+                    <select name="month" class="select-2">
+                        <option>-- Month --</option>
+                        {% for item in month_list %}
+                        <option {% if month|stringformat:"i" == item.m_num %}selected{% endif %} value="{{ item.m_num }}">{{ item.m_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="label !p-0 w-32">
+                    <select name="year" class="select-2">
+                        <option>-- Year --</option>
+                        {% for year_no in year_list %}
+                        <option {% if year|stringformat:"i" == year_no|stringformat:"i" %}selected{% endif %} value="{{ year_no }}">{{ year_no }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <button type="submit" class="btn btn-sm btn-primary">Search</button>                
+            </form>
+        </div>
+    </div>
+
+
+        <div class="h-full bg-base-100 shadow-soft rounded-box overflow-hidden flex flex-col knox-table-wrapper">
+            <div class="p-3 flex justify-between items-center">
+                <h1 class="font-semibold">Data </h1>
+                <div class="join">
+                    <input class="input input-bordered input-sm join-item knox-table-search" type="search"
+                        placeholder="Search in table" />
+        
+                    <select class="select select-bordered select-sm join-item kt-export">
+                        <option disabled selected>Export</option>
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                    </select>
+        
+                    <button class="btn btn-sm btn-primary join-item kt-export-btn">
+                        <i class="fa-solid fa-file-arrow-down"></i>
+                    </button>
+                </div>
+            </div>
+        
+            <div class="table-wrapper flex-grow overflow-auto">
+                <table class="knox-table table-sm" export-name="Employee Table" id="knox-table-2">
+
+                    <thead>
+                        <tr style="background-color: #aeaeff;">
+                            <th style="white-space: normal;">Department</th>
+                            <th style="white-space: normal;">Manpower FTD</th>
+                            <th style="white-space: normal;">Manpower FTM</th>
+                            <th style="white-space: normal;">Manpower Cost FTD</th>
+                            <th style="white-space: normal;">Manpower Cost FTM</th>
+                            <th style="white-space: normal;">Operator FTD</th>
+                            <th style="white-space: normal;">Operator FTM</th>
+                            <th style="white-space: normal;">Operator Cost FTD</th>
+                            <th style="white-space: normal;">Operator Cost FTM</th>
+                            <th style="white-space: normal;">Stitch PCS FTD</th>
+                            <th style="white-space: normal;">Stitch PCS FTM</th>
+                            <th style="white-space: normal;">Dispatch PCS FTD</th>
+                            <th style="white-space: normal;">Dispatch PCS FTM</th>
+                            <th style="white-space: normal;">Cost / PCS (Stitch) FTD</th>
+                            <th style="white-space: normal;">Cost / PCS (Stitch) FTM</th>
+                            <th style="white-space: normal;">Cost / PCS (Dispatch) FTD</th>
+                            <th style="white-space: normal;">Cost / PCS (Dispatch) FTM</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        
+                        {% for row in data_list %}
+                        <tr>
+                            <td>{{ row.dep_name }}</td>
+                            <td>{{ row.emp_count_ftd|default_if_none:'' }}</td>
+                            <td>{{ row.emp_count_mtd|default_if_none:'' }}</td>
+                            <td>{{ row.day_cost_ftd|default_if_none:'' }}</td>
+                            <td>{{ row.day_cost_mtd|default_if_none:'' }}</td>
+            
+                            <td>{{ row.op_count_ftd|default_if_none:'' }}</td>
+                            <td>{{ row.op_count_mtd|default_if_none:'' }}</td>
+                            <td>{{ row.op_cost_ftd|default_if_none:'' }}</td>
+                            <td>{{ row.op_cost_mtd|default_if_none:'' }}</td>
+            
+                            <td>{{ row.stitch_qty_ftd|default_if_none:'' }}</td>
+                            <td>{{ row.stitch_qty_mtd|default_if_none:'' }}</td>
+            
+                            <td>{{ row.dispatch_qty_ftd|default_if_none:'' }}</td>
+                            <td>{{ row.dispatch_qty_mtd|default_if_none:'' }}</td>
+            
+                            <td>{{ row.stitch_pcs_cost_ftd|floatformat:0 }}</td>
+                            <td>{{ row.stitch_pcs_cost_mtd|floatformat:0 }}</td>
+            
+                            <td>{{ row.dispatch_pcs_cost_ftd|floatformat:0 }}</td>
+                            <td>{{ row.dispatch_pcs_cost_mtd|floatformat:0 }}</td>
+            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+
+    <!-- Table footer -->
+    <div data-aos="zoom-in" class="py-1 px-3 rounded-xl shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center"></div>
+</div>
+
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    // $(document).ready(function () {
+    //     // Refine data-table design
+    //     $(".dataTables_length select").addClass('select select-xs select-bordered').prependTo(".dt-filter-top");
+    //     $(".dataTables_filter input").addClass('input input-xs input-bordered').attr(
+    //         'placeholder', 'search in table...'
+    //     ).prependTo(".dt-filter-top");
+    //     $(".dataTables_info, .dataTables_paginate").prependTo(".dt-filter-bottom");
+    //     $(".dataTables_length, .dataTables_filter").remove();
+
+    //     // Align tbody text if thead is in center
+    //     $('thead tr').find('th').each(function (index) {
+    //         const thClasses = $(this).attr('class').split(' ');
+    //         const relevantClasses = thClasses.filter(cls => cls === '!text-right' || cls === '!text-center');
+    //         relevantClasses.forEach(function (cls) {
+    //             $('tbody tr').each(function () {
+    //                 const $td = $(this).find('td, th').eq(index);
+    //                 if (cls) { $td.addClass(cls); }
+    //             });
+    //         });
+    //     });
+    // })
+</script>
+
+{% endblock script %}
+

@@ -1,0 +1,323 @@
+{% extends 'new/base.html' %}
+{% block main %}
+
+<div class="flex flex-wrap">
+    <div class="w-full bg-base-100 rounded-box py-2 pt-0 shadow-soft flex flex-wrap">
+        <div class="py-1.5 px-3 flex justify-between items-center w-full border-b">
+            <h1 class="font-semibold"> Buyer Claim Edit </h1>
+            <div class="flex space-x-2">
+                <button class="btn btn-success btn-sm px-8" onclick="$('#submit-btn').click()">Save</button>
+            </div>
+        </div>
+
+        <form method="POST" class="flex flex-wrap p-1 pt-1.5 w-full">
+            {% csrf_token %}
+            <input type="submit" id="submit-btn" hidden>
+            <div class="divider w-full">  </div>
+
+            <!-- Financial Date -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="financial_year" id="financial_year" class="knox-select" required>
+                            <option value="">Please Select</option>
+                            {% for year in unique_years %}
+                            <option value="{{ year }}">{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text"> Financial Year </span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Type -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="type" class="knox-select">
+                            <option selected value=""> Please Select </option>
+                            {% for item in claim_type_list %}
+                            <option value="{{item.0}}"> {{item.1}} </option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text"> Type </span>
+                    </label>
+                </div>
+            </div>
+                
+            <!-- Date -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input name="claim_date" type="date" required class="knox-input">
+                        <span class="label-text"> Date </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Invoice No -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="invoice_no" required id="invoice_no" class="knox-select">
+                            <option selected value=""> Please Select </option>
+                        </select>
+                        <span class="label-text"> Invoice No </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Buyer -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select  id="buyer_select" name="buyer_code" class="knox-select">
+                            <option selected value=""> Please Select </option>
+                            <option value=""> -- </option>
+                        </select>
+                        <span class="label-text"> Buyer </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Styles -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select id="styles_select" name="styles" class="knox-select">
+                            <option selected value=""> Please Select </option>
+                            <option value=""> -- </option>
+                        </select>
+                        <span class="label-text"> Styles </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Unit -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="unit_code" id="unit_select" class="knox-select">
+                            <option selected value=""> Please Select </option>
+                            <option value=""> -- </option>
+                        </select>
+                        <span class="label-text"> Unit </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Amount FC -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input id="amount_fc" name="amount_fc" type="number" required class="knox-input">
+                        <span class="label-text"> Amount FC </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Currency -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select id="currency_select" name="currency" class="knox-select">
+                            <option selected value=""> Please Select </option>
+                            <option value=""> -- </option>
+                        </select>
+                        <span class="label-text"> Currency </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input id="conversion_rate" type="number" name="conversion_rate" required class="knox-input">
+                        <span class="label-text"> Conversion Rate </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input id="amount" type="number" name="amount" required class="knox-input" readonly>
+                        <span class="label-text"> Amount </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Debit Note Amount -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input type="number" name="debit_note_amount" required class="knox-input">
+                        <span class="label-text"> Debit Note Amount </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Debit No -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input type="number" name="debit_no" required class="knox-input">
+                        <span class="label-text"> Debit No </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Reasons -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <select name="reason" class="knox-select">
+                            <option selected value=""> Please Select </option>
+                            {% for item in reason_type %}
+                            <option value="{{item.name}}"> {{item.name}} </option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text"> Reasons </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                <div class="knox-form-input">
+                    <label>
+                        <input type="text" name="remarks" required class="knox-input">
+                        <span class="label-text"> Remarks </span>
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+     $(document).ready(function() {
+        $("#save-btn").on("click", function() {
+            $("#submit-btn").click();
+        });
+
+        $("#financial_year").on("change", function() {
+            let financialYear = $(this).val();
+            $.ajax({
+                method: 'GET',
+                url: '{% url 'buyerClaimEdit' id=data.id %}', 
+                async : true,
+                data: {
+                    'flag': 'get_invoice_by_year',
+                    'financial_year': financialYear,
+                },
+                success: function(data) {
+                    if (data) {
+                        var html = '<option value=""></option>';
+                        
+                        $(data).each(function(index, item) {  // Change here: item is the second parameter
+                            let option = `<option value='${item.invoiceno}'>${item.invoiceno}</option>`;
+                            html = html + option;
+                        });
+
+                        $("#invoice_no").html('');  // Clear the existing options
+                        $("#invoice_no").append(html).kf_select_refresh();  
+                    } else {
+                        alert("Related Data Not Found.");
+                    }
+                },
+                error: function() {
+                    alert("Unable to fetch data");
+                }
+            });
+        });
+
+
+    $("#invoice_no").on("change", function() {
+        let invoice_no = $(this).val();
+        let financialYear = $("#financial_year").val();
+        console.log(financialYear)
+        $.ajax({
+            method: 'GET',
+            url: '{% url 'buyerClaimEdit' id=data.id %}', 
+            async : true,
+            data: {
+                'flag': 'get_buyer_style_unit_by_invoice',
+                'invoice_no': invoice_no,
+                'financial_year':financialYear,
+            },
+            success: function(data) {
+                    if (data) {
+                        var stylehtml = '<option value=""></option>';
+                        var currencyhtml = '<option value=""></option>';
+                        var buyerhtml = '<option value=""></option>';
+                        var unithtml = '<option value=""></option>';
+                        
+                        $(data).each(function(index, item) { 
+                            let option = `<option value='${item.styleno}'>${item.styleno}</option>`;
+                            stylehtml = stylehtml + option;
+                        });
+                        $("#styles_select").html('');  
+                        $("#styles_select").append(stylehtml).kf_select_refresh();  
+
+                        let uniqueCurrencies = new Set(); 
+                        $(data).each(function(index, item) { 
+                            if (!uniqueCurrencies.has(item.Currency)) {
+                                let option = `<option value='${item.Currency}'>${item.Currency}</option>`;
+                                currencyhtml = currencyhtml + option;
+                                uniqueCurrencies.add(item.Currency); 
+                            }
+                        });
+                        $("#currency_select").html('');  
+                        $("#currency_select").append(currencyhtml).kf_select_refresh();  
+
+                        let uniqueBuyers = new Set(); 
+                        $(data).each(function(index, item) { 
+                            if (!uniqueBuyers.has(item.party_name)) {
+                                console.log("Adding unique party_name:", item.party_name);
+                                let option = `<option value='${item.Buyer}'>${item.party_name}</option>`;
+                                buyerhtml = buyerhtml + option;
+                                uniqueBuyers.add(item.party_name); 
+                            }
+                        });
+
+                        $("#buyer_select").html('');  
+                        $("#buyer_select").append(buyerhtml).kf_select_refresh();  
+                        
+                        let uniqueInvHomeLocations = new Set(); 
+                        $(data).each(function(index, item) { 
+                            if (!uniqueInvHomeLocations.has(item.InvHomeLocation)) {
+                                let option = `<option value='${item.HomeLocation}'>${item.InvHomeLocation}</option>`;
+                                unithtml = unithtml + option;
+                                uniqueInvHomeLocations.add(item.InvHomeLocation); 
+                            }
+                        });
+                        $("#unit_select").html('');  
+                        $("#unit_select").append(unithtml).kf_select_refresh();    
+                    
+                    } else {
+                        alert("Related Data Not Found.");   
+                    }
+                },
+            error: function() {
+                alert("Unable to fetch data");
+            }
+        });
+    });
+});
+
+document.getElementById('amount_fc').addEventListener('input', updateAmount);
+    document.getElementById('conversion_rate').addEventListener('input', updateAmount);
+
+    function updateAmount() {
+        var amountFc = parseFloat(document.getElementById('amount_fc').value) || 0;
+        var conversionRate = parseFloat(document.getElementById('conversion_rate').value) || 0;
+        var amount = amountFc * conversionRate;
+        document.getElementById('amount').value = amount.toFixed(2); // Set value and format to 2 decimal places
+    }
+</script>
+
+{% endblock main %}

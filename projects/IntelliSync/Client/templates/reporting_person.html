@@ -1,0 +1,88 @@
+{% extends 'base-3.html' %}
+
+
+{% block main %}
+<div class="w-full rounded-lg space-y-2 flex flex-col h-full">
+    <!-- Filter bar -->
+    <div class="py-1 px-3 rounded-lg shadow-lg w-full flex justify-between items-center bg-base-100" data-aos="zoom-in">
+        <div>
+            <h1 class="font-semibold capitalize">HOD</h1>
+        </div>
+        <div class="text-sm font-semibold space-x-2 flex items-center">
+            <div class="dt-filter-top flex items-center space-x-2"></div>
+            <form action="" method="POST" class="flex items-center space-x-2">
+                {% csrf_token %}
+                <label class="label !p-0 w-56">
+                    <select name="dep_code" class="select-2">
+                        <option>-- Department --</option>
+                        {% for item in department_list %}
+                        <option {% if request.GET.uid == item.dep_code %} selected {% endif %} value="{{ item.dep_code }}">
+                            {{ item.dep_name }} ( {{ item.dep_code }} )
+                        </option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="label !p-0 w-44">
+                    <select name="emp_code" class="select-2">
+                        <option>-- Employee Name --</option>
+                        {% for item in employee_list %}
+                        <option {% if request.GET.uid == item.emp_paycode %}selected{% endif %} value="{{ item.emp_paycode }}">
+                            {{ item.emp_name }} ( {{ item.emp_paycode }} )
+                        </option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <button type="submit" class="btn btn-sm btn-success rounded px-10">Save</button>
+            </form>
+        </div>
+    </div>
+    <!-- Permission Table -->
+<div class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-lg" data-aos="zoom-in">
+    <form method="POST" class="rounded-lg">
+        {% csrf_token %}
+        <table class="table-hard data-table">
+            <thead>
+                <tr class="bg-slate-300 text-black dt-col-search sticky top-0 z-30">
+                    <th>SNo.</th>
+                    <th>Emp Code</th>
+                    <th>Name</th>
+                    <th>Date Of Joining</th>
+                    <th>Date of Birth</th>
+                    <th>Gender</th>
+                    <th>Location</th>
+                    <th>Designation</th>
+                    <th>Department</th>
+                    <th>Email</th>
+                    <th>Mobile Number</th>
+                    <th>Reporting Manager</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for item in data %}
+                <tr class="z-20">
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ item.emp_paycode }}</td>
+                    <td>{{ item.emp_name }}</td>
+                    <td>{{ item.doj|date:'d-m-Y' }}</td>
+                    <td>{{ item.dob|date:'d-m-Y' }}</td>
+                    <td>{{ item.gender }}</td>
+                    <td>{{ item.location }}</td>
+                    <td>{{ item.designation }}</td>
+                    <td>{{ item.department }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.phone_no }}</td>
+                    <td>{{ item.reporting_person.emp_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <input type="submit" id="submit-btn" class="hidden">
+    </form>
+</div>
+
+<!-- Table Paging -->
+<div data-aos="zoom-in" class="py-1 px-3 rounded-lg shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center"></div>
+</div>
+
+{% endblock main %}

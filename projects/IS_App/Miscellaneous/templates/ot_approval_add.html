@@ -1,0 +1,133 @@
+{% extends 'form.html' %}
+
+{% block form %}
+<div class="overflow-auto">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}" class="flex flex-col"> {% csrf_token %}
+        <div class="flex">
+            <input type="text" hidden name="flag" value="add_btn_other" class="input input-sm input-bordered w-full">
+            <input type="date" name="dayno" id="dayno" class="input input-sm input-bordered" value="{{ request.GET.dayno }}">
+            <select name="unit_code" id="unit_code" class="select select-sm select-2">
+                <option value="">Select Unit</option>
+                {% for unit_val in unit_list %}
+                <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+                {% endfor %}
+            </select>
+    
+            <select name="dept" id="dept" class="select select-sm select-2">
+                <option value="">Select Department</option>
+                {% for dept_val in dept_list %}
+                <option {% if request.GET.dept == dept_val.dep_code|stringformat:"i" %}selected{% endif %} value="{{ dept_val.dep_code }}">{{ dept_val.dep_name }}</option>
+                {% endfor %}
+            </select>
+    
+            <select name="desg" id="desg" class="select select-sm select-2">
+                <option value="">Select Designation</option>
+                {% for desg_val in desg_list %}
+                <option {% if request.GET.desg == desg_val.des_code|stringformat:"i" %}selected{% endif %} value="{{ desg_val.des_code }}">{{ desg_val.des_name }}</option>
+                {% endfor %}
+            </select>
+    
+            <select name="ot_hour" id="ot_hour" class="select select-sm select-2">
+                <option value="">Select Ot Hour</option>
+                {% for ot_hour_val in ot_hour_list %}
+                <option {% if request.GET.ot_hour == ot_hour_val|stringformat:"i" %}selected{% endif %} value="{{ ot_hour_val }}">{{ ot_hour_val }}</option>
+                {% endfor %}
+            </select>
+    
+            <span id="get_data" class="btn btn-primary btn-sm">Search</span>
+        </div>
+       
+        <div class="table-wrapper overflow-auto relative">
+            <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border ">
+                <thead>
+                    <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                        <th>#</th>
+                        <th>Card No</th>
+                        <th>Name</th>
+                        <th>Department</th>
+                        <th>Designation</th>
+                        <th>In</th>
+                        <th>Out</th>
+                        <th>OT Hour (FTD)</th>
+                        <th>OT Hour (MTD)</th>
+                        <th>OT Hour</th>
+                    </tr>
+                </thead>
+                <tbody>
+    
+                    {% for dept in ot_emp_list %}
+                    <tr id="tr{{ forloop.counter }}" {%if dept.ot_hour %} style="background-color: #dbffdb;" {% endif %}>
+                        <td>
+                            <input type="hidden" value="{{forloop.counter0}}" name="counter">
+                            {{ forloop.counter }}
+                        </td>
+                        <td>{{ dept.emp_cardno }}</td>
+                        <td>{{ dept.emp_name }}</td>
+                        <td>{{ dept.dep_name }}</td>
+                        <td>{{ dept.des_name }}</td>
+                        <td>{{ dept.in_tm }}</td>
+                        <td>{{ dept.out_tm }}</td>
+                        <td>{{ dept.ot_hour }}</td>
+                        <td>{{ dept.total_ot_hour }}</td>
+                        <td {% if dept.ot_hour %} style="background-color: #dbffdb;"; {% elif dept.total_ot_hour >= dept.ot_month %} style="background-color:#ff7272;" {% endif %} >
+                            <input type="text" hidden value="{{dept.emp_code}}" name="emp_code[{{forloop.counter0}}]" >
+                            <input type="text" hidden value="{{dept.emp_name}}" name="name[{{forloop.counter0}}]" >
+                             {% if dept.ot_hour and dept.approve_status != 1 %} <span class="from-lime-400" style="line-height: 2rem;">Already Approved</span> {% elif dept.total_ot_hour >= dept.ot_month and dept.approve_status != 1 %} <span style="line-height: 2rem;">OT Limit Exceeded</span> {% else %} 
+                             <input type="number" value="{{ request.GET.ot_hour  }}" max="{{ dept.ot_daily }}" placeholder="Enter OT" name="ot_hour2[{{forloop.counter0}}]" id="ot_hour{{ forloop.counter }}">
+                             {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                </tbody>
+            </table>
+        </div>
+
+        <input type="submit" class="hidden" value="">
+    </form>
+</div>
+{% endblock form %}
+
+
+{% block script %}
+<script>
+/*
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            new_url = `?unit_code=${val}`
+            window.location.replace(new_url);
+        })
+    })
+*/
+    $(document).ready(function(){
+        $("#get_data").on("click", function(){
+            dayno = $("#dayno").val()
+            unit_code = $("#unit_code").val()
+            dept = $("#dept").val()
+            desg = $("#desg").val()
+            ot_hour = $("#ot_hour").val()
+            new_url = `?unit_code=${unit_code}&dept=${dept}&desg=${desg}&ot_hour=${ot_hour}&dayno=${dayno}`
+            window.location.replace(new_url);
+        })
+    })
+
+    $(document).ready(function(){
+        // $("#unit_code").on("change", function(){
+        //     val = $(this).val()
+        //     new_url = `?unit_code=${val}`
+        //     window.location.replace(new_url);
+        // })
+
+
+        $("#form-save-btn").click(function(){
+            $("input[type='submit']").click();
+        })
+
+
+    })
+
+
+</script>
+
+{% endblock script %}

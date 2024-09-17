@@ -1,0 +1,27 @@
+{% extends 'table.html' %}
+
+
+{% block thead %}
+<tr>
+    <th>Sr.</th>
+    <th>Username</th>
+    <th>Full Name</th>
+    <th>Location</th>
+    <th>Email</th>
+    <th>Permission</th>
+</tr>
+{% endblock thead %}
+
+{% block tbody %}
+{% for item in user_list %}
+<tr>
+    <th>{{ forloop.counter }}</th>
+    <td>{{ item.username }}</td>
+    <td>{{ item.full_name }}</td>
+    <td>{{ item.location|default_if_none:'' }}</td>
+    <td>{{ item.email|default_if_none:'' }}</td>
+    <td>{{ item.permission }}</td>
+</tr>
+{% endfor %}
+{% endblock tbody %}
+

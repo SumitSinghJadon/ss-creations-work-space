@@ -1,0 +1,344 @@
+{% extends 'new/base.html' %}
+{% load static %}
+
+
+{% block main %}
+
+<div class="knox-table-wrapper w-full p-1">
+    <div class="table-header-wrapper">
+        <h1 class="font-semibold">Sampling Allocation</h1>
+        <div class="flex space-x-1">
+            <div class="join">
+                <button class="btn btn-primary btn-sm join-item table-filter-toggle"><i class="fa-regular fa-filter-list"></i></button>
+                <input class="input input-sm input-primary bg-base-200 join-item knox-table-search" type="search" placeholder="Search in table" />
+                <button class="btn btn-sm btn-primary join-item kt-export-btn"><i class="fa-solid fa-file-arrow-down"></i></button>
+            </div>
+            <button class="btn btn-sm btn-success join-item px-8" onClick="$('#submit-btn').click()">Save</button>
+        </div>
+    </div>
+
+    <form method="GET" class="hidden table-filter-wrapper">
+        <div class="flex flex-wrap w-full p-2">
+            <div class="p-1 w-1/4">
+                <div class="knox-form-input w-full">
+                    <label>
+                        <select name="closer" id="closer" class="knox-select">
+                            <option value="A" {% if request.GET.closer == 'A' %} selected {% endif %}>Active</option>
+                            <option value="C" {% if request.GET.closer == 'C' %} selected {% endif %}>Closed</option>
+                        </select>
+                        <span class="label-text">Closer</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="p-1 w-1/4">
+                <div class="knox-form-input w-full">
+                    <label>
+                        <select name="buyer" id="buyer" class="knox-select">
+                            <option value="">----</option>
+                            {% for buyer in samp_buyer %}
+                            <option value="{{ buyer.buyer_code }}" {% if buyer|stringformat:"i" == buyer.buyer_code %} selected {% endif %} >{{ buyer.buyer_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="label-text">Buyer</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="p-1 w-1/4">
+                <div class="knox-form-input w-full">
+                    <label>
+                        <input type="date" name="from_date" value="{{ from_date|default_if_none:'' }}" class="knox-input peer">
+                        <span class="label-text">From Date</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="p-1 w-1/4">
+                <div class="knox-form-input w-full">
+                    <label>
+                        <input type="date" name="to_date" value="{{ to_date|default_if_none:'' }}" class="knox-input peer">
+                        <span class="label-text">Till Date</span>
+                    </label>
+                </div>
+            </div>
+            
+            <input type="submit" value="search" class="btn btn-md btn-success">
+        </div>
+    </form>
+    <style> .knox-table thead tr { position: sticky; top: 0px; background-color: lightblue; font-size: 16px; }  </style>
+    <form method="POST" class="table-wrapper">
+        {% csrf_token %}
+        <input type="submit" class="hidden" id="submit-btn">
+        <table class="knox-table table-xs" export-name="Sampling Allocation">
+            <thead>
+                <tr>
+                    <th>Sr.</th>
+                    <th class="no-export">#</th>
+                    <th>Booking no</th>
+                    <th>Buyer name</th>
+                    <th>Style no</th>
+                    <th>Booking Date</th>
+                    <th>Target Date</th>
+                    <th>Sample Dept</th>
+                    <th>Cutting</th>
+                    <th>Stitching</th>
+                    <th>Finishing</th>
+                    <th>Dispatch</th>
+                    <th>Closer Status</th>
+                    <th>Sample Qty</th>
+                    <th>Cut Qty</th>
+                    <th>Stitch Qty</th>
+                    <th>Finish Qty</th>
+                    <th>Dispatch Qty</th>
+                    <th>Action</th>
+                    <th>Hold Process</th>
+                    <th>Hold Reason</th>
+                    <th>Hold Remarks</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in data_list %}
+                <tr {% if row.total_qty == row.dispatch_qty %} style="background-color: yellow;" {% endif %}>
+                    <td class="text-center" style="position:sticky;left:0; background-color: lightblue;">
+                        {{ forloop.counter }}
+                        <input type="hidden" value="{{forloop.counter0}}" name="counter">
+                        <input type="hidden" value="{{ row.booking_id }}"  name="booking_id[{{forloop.counter0}}]" >
+                    </td>
+
+                    <td class="no-export" style="position:sticky;left:0; background-color: lightblue;">
+                        {% if row.active_status == 'active' %}
+                        <input type="checkbox" id="status{{ forloop.counter }}" name="status[{{forloop.counter0}}]" onclick="get_div('{{ forloop.counter }}');" class="checkbox checkbox-primary checkbox-sm" value="1">
+                        {% endif %}
+                    </td>
+
+                    <td>{{ row.booking_no }}</td>
+                    <td>{{ row.buyer_name }}</td>
+                    <td>{{ row.style_no }}</td>
+                    <td>{{ row.booking_date_disp }}</td>
+                    <td>{{ row.target_date_disp }}</td>
+                    <td>
+                        <div id="dept_div{{ forloop.counter }}">
+                            {{ row.dep_name|default_if_none:'' }}
+                        </div>
+                        <div id="dept_div_inp{{ forloop.counter }}" style='display:none;'>
+                            <select name="sample_dept[{{forloop.counter0}}]"  id="sample_dept{{ forloop.counter }}" class="input input-sm input-bordered min-w-[140px]" style="height: 2rem !important;min-height: 2rem !important;">
+                                <option value="">Select</option>
+                                {% for dep in samp_dept_list %}
+                                <option value="{{ dep.dep_code }}" {% if dep.dep_code|stringformat:"i" == row.dep_code %} selected {% endif %} >{{ dep.dep_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div id="cut_div{{ forloop.counter }}">
+                            {{ row.cut_assign_date_disp|default_if_none:'' }}
+                        </div>
+                        <div id="cut_div_inp{{ forloop.counter }}" style='display:none;'>
+                            {% if row.cut_qty > 0 %} {{ row.cut_assign_date_disp|default_if_none:'' }} {% else %}
+                                <input type="datetime-local" name="cut_assign_date[{{forloop.counter0}}]" onchange="get_div_date('{{ forloop.counter }}');" id="cut_assign_date{{forloop.counter}}" value="{{ row.cut_assign_date|default_if_none:'' }}" min="{{ row.booking_date }}"   class="input input-sm input-bordered min-w-[140px]">
+                            {% endif %}
+                        </div>
+                    </td>
+
+                    <td>
+                        <div id="stitch_div{{ forloop.counter }}">
+                            {{ row.stitch_assign_date_disp|default_if_none:'' }}
+                        </div>
+                        <div id="stitch_div_inp{{ forloop.counter }}" style='display:none;'>
+                            {% if row.cut_assign_date %}
+                                {% if row.stitch_qty > 0 %} {{ row.stitch_assign_date_disp|default_if_none:'' }} {% else %}
+                                    <input type="datetime-local" name="stitch_assign_date[{{forloop.counter0}}]" onchange="get_div_date('{{ forloop.counter }}');" id="stitch_assign_date{{forloop.counter}}" value="{{ row.stitch_assign_date|default_if_none:'' }}" min="{{ row.cut_assign_date }}"   class="input input-sm input-bordered min-w-[140px]">
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div id="finish_div{{ forloop.counter }}">
+                            {{ row.finish_assign_date_disp|default_if_none:'' }}
+                        </div>
+                        <div id="finish_div_inp{{ forloop.counter }}" style='display:none;'>
+                            {% if row.stitch_assign_date %}
+                                {% if row.finish_qty > 0 %} 
+                                {{ row.finish_assign_date_disp|default_if_none:'' }} 
+                                {%endif %}
+                                <input type="datetime-local" name="finish_assign_date[{{forloop.counter0}}]" onchange="get_div_date('{{ forloop.counter }}');" id="finish_assign_date{{forloop.counter}}" value="{{ row.finish_assign_date|default_if_none:'' }}" min="{{ row.stitch_assign_date }}"   class="input input-sm input-bordered min-w-[140px]">
+                            {%endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div id="dispatch_div{{ forloop.counter }}">
+                            {{ row.dispatch_assign_date_disp|default_if_none:'' }}
+                        </div>
+                        <div id="dispatch_div_inp{{ forloop.counter }}" style='display:none;'>
+                            {% if row.finish_assign_date %}
+                                {% if row.dispatch_qty > 0 %} 
+                                    {{ row.dispatch_assign_date_disp|default_if_none:'' }} 
+                                {% endif %}
+                                <input type="datetime-local" name="dispatch_assign_date[{{forloop.counter0}}]" onchange="get_div_date('{{ forloop.counter }}');" id="dispatch_assign_date{{forloop.counter}}" value="{{ row.dispatch_assign_date|default_if_none:'' }}" min="{{ row.finish_assign_date }}"   class="input input-sm input-bordered min-w-[140px]">
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if row.closer_status == 'closer' %}
+                        <!-- <div id="closer_div{{ forloop.counter }}"> To be close </div> -->
+                        <div id="closer_div_inp{{ forloop.counter }}" style='display:none;'>
+                            <select name="closer_status[{{forloop.counter0}}]"  id="closer_status{{ forloop.counter }}" class="input input-sm input-bordered min-w-[140px]" style="height: 2rem !important;min-height: 2rem !important;">
+                                <option value="">Select</option>
+                                <option value="close">Closer</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>{{ row.total_qty }}</td>
+                    <td>{{ row.cut_qty }}</td>
+                    <td>{{ row.stitch_qty }}</td>
+                    <td>{{ row.finish_qty }}</td>
+                    <td>{{ row.dispatch_qty }}</td>
+                    <td>
+
+                    </td>
+                    <td>
+                        <div id="hold_process_div{{ forloop.counter }}">
+                            {{ row.trans_hold_process|default_if_none:'' }}
+                        </div>
+                        <div id="hold_process_div_inp{{ forloop.counter }}" style='display:none;'>
+                            <select name="hold_process[{{forloop.counter0}}]"  id="hold_process{{ forloop.counter }}" class="input input-sm input-bordered min-w-[140px]" style="height: 2rem !important;min-height: 2rem !important;" 
+                            onchange="check_hold('{{ forloop.counter }}')">
+                                <option value="">Select</option>
+                                <option value="cutting" {% if row.trans_hold_process == 'cutting' %} selected {% endif %}>Cutting</option>
+                                <option value="stitching" {% if row.trans_hold_process == 'stitching' %} selected {% endif %}>Stitching</option>
+                                <option value="finishing" {% if row.trans_hold_process == 'finishing' %} selected {% endif %}>Finishing</option>
+                                <option value="Dispatch" {% if row.trans_hold_process == 'Dispatch' %} selected {% endif %}>Dispatch</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div id="hold_reason_div{{ forloop.counter }}">
+                            {{ row.trans_hold_reason_name|default_if_none:'' }}
+                        </div>
+                        <div id="hold_reason_div_inp{{ forloop.counter }}" style='display:none;'>
+                            <select name="hold_reason[{{forloop.counter0}}]"  id="hold_reason{{ forloop.counter }}" class="input input-sm input-bordered min-w-[140px]" style="height: 2rem !important;min-height: 2rem !important;">
+                                <option value="">Select</option>
+                                {% for dept in hold_reason_list %}
+                                <option value="{{ dept.id }}" {% if row.trans_hold_reason == dept.id|stringformat:"i" %} selected {% endif %} >{{ dept.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                    </td>
+                    <td>
+                        <div id="hold_remarks_div{{ forloop.counter }}">
+                            {{ row.trans_hold_remarks|default_if_none:'' }}
+                        </div>
+                        <div id="hold_remarks_div_inp{{ forloop.counter }}" style='display:none;'>
+                            <textarea name="hold_remarks[{{forloop.counter0}}]"   id="hold_remarks{{ forloop.counter }}" cols="100" rows="10"  style="width:300px; height:150px;">{{ row.trans_hold_remarks }}</textarea>
+                        </div>
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    <td><span class="kt-row-count"></span></td>
+                    <td></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                </tr>
+            </tfoot>
+        </table>
+    </form>
+ </div>
+
+{% endblock main %}
+
+
+
+
+{% comment %}
+{% block form %}
+
+{% endblock form %}
+{% endcomment %}
+
+
+{% block script %}
+<script>
+
+
+function get_div(cid) {
+    $('#status' + cid).closest('tr').css('background-color', $('#status' + cid).is(':checked') ? '#b3ffca': '');
+    if ($('#status' + cid).is(":checked")) {
+        $('#dept_div_inp' + cid).show(); $('#dept_div' + cid).hide();
+        $('#closer_div_inp' + cid).show(); $('#closer_div' + cid).hide();
+        $('#cut_div_inp' + cid).show(); $('#cut_div' + cid).hide();
+        $('#stitch_div_inp' + cid).show(); $('#stitch_div' + cid).hide();
+        $('#finish_div_inp' + cid).show(); $('#finish_div' + cid).hide();
+        $('#dispatch_div_inp' + cid).show(); $('#dispatch_div' + cid).hide();
+
+        $('#hold_process_div_inp' + cid).show(); $('#hold_process_div' + cid).hide();
+        $('#hold_reason_div_inp' + cid).show(); $('#hold_reason_div' + cid).hide();
+        $('#hold_remarks_div_inp' + cid).show(); $('#hold_remarks_div' + cid).hide();
+
+    } else {
+        $('#dept_div_inp' + cid).hide(); $('#dept_div' + cid).show();
+        $('#closer_div_inp' + cid).hide(); $('#closer_div' + cid).show();
+        $('#cut_div_inp' + cid).hide(); $('#cut_div' + cid).show();
+        $('#stitch_div_inp' + cid).hide(); $('#stitch_div' + cid).show();
+        $('#finish_div_inp' + cid).hide(); $('#finish_div' + cid).show();
+        $('#dispatch_div_inp' + cid).hide(); $('#dispatch_div' + cid).show();
+
+        $('#hold_process_div_inp' + cid).hide(); $('#hold_process_div' + cid).show();
+        $('#hold_reason_div_inp' + cid).hide(); $('#hold_reason_div' + cid).show();
+        $('#hold_remarks_div_inp' + cid).hide(); $('#hold_remarks_div' + cid).show();
+    }
+
+}
+
+function get_div_date(cid) {
+    var cut_date = $("#cut_assign_date" + cid).val();
+    var stitch_date = $("#stitch_assign_date" + cid).val();
+    var finish_date = $("#finish_assign_date" + cid).val();
+    var dispatch_date = $("#dispatch_assign_date" + cid).val();
+
+    $('#stitch_assign_date' + cid).attr('min' , cut_date);
+    $('#finish_assign_date' + cid).attr('min' , stitch_date);
+    $('#dispatch_assign_date' + cid).attr('min' , finish_date);
+
+    if(cut_date > stitch_date) { alert('Wrong Cutting date');  }
+    if(stitch_date > finish_date) { alert('Wrong Stitching date'); }
+    if(finish_date > dispatch_date) { alert('Wrong Finishing date'); }
+    if(dispatch_date > target_date) { alert('Wrong Disspatch date'); }
+}    
+
+function check_hold(cid){
+    vlu = $("#hold_process" + cid).val();
+    if (vlu == ''){
+        // $("#reason-wrapper").hide()
+        $("#hold_reason" + cid).removeAttr('required')
+        $("#hold_remarks" + cid).removeAttr('required')
+    } else {
+        // $("#reason-wrapper").show()
+        $("#hold_reason" + cid).attr('required', true)
+        $("#hold_remarks" + cid).attr('required', true)
+    }
+}
+
+</script>
+
+{% endblock script %}
+

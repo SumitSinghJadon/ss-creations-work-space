@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% include 'new/components/head.html' %}
+</head> 
+
+<body>
+    <div class="wrapper h-screen w-screen fixed flex">
+        <!-- Side Menu Bar -->
+        {% include 'new/components/sidebar.html' %}
+        
+        <aside class="w-1 h-full flex-grow flex flex-col" id="contentWrapper">
+            <!-- Top Module Header -->
+            {% comment %}
+            {% include 'new/components/nav.html' %}
+            {% endcomment %}
+            
+            <!-- Main header -->
+            {% include 'new/components/header.html' %}
+            
+            <!-- Main Content -->
+            <main class="h-full w-full overflow-auto p-1 space-y-3">
+                {% block main %} {% endblock main %}
+            </main> 
+        </div>
+    </div>
+
+    <!-- Alert -->
+    {% include 'new/components/alert.html' %}
+    {% block script %} {% endblock script %}
+</body>
+
+</html>

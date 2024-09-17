@@ -1,0 +1,158 @@
+{% extends 'form.html' %}
+
+{% block form %} 
+
+<div style="overflow: scroll;">
+    <form method="{% if request.GET.unit_code %}POST{% else %}GET{% endif %}"> {% csrf_token %}
+        <input type="submit" class="hidden">
+        <select name="mmr_code" id="mmr_code" style="width: 125px; border: 1px solid black;" >
+            <option value="">Select MMR</option>
+            {% for mmr_val in mmr_list %}
+            <option {% if request.GET.mmr_code == mmr_val.id|stringformat:"i" %}selected{% endif %} value="{{ mmr_val.id }}">{{ mmr_val.mmr_code }}</option>
+            {% endfor %}
+        </select>
+        <input type="date" name="dayno" id="dayno" value="{% if request.GET.dayno %}{{ request.GET.dayno }}{% else %}{{ curr_date }}{% endif %}">
+        <select name="unit_code" id="unit_code" style="width: 125px; border: 1px solid black;" >
+            <option value="">Select Unit</option>
+            {% for unit_val in unit_list %}
+            <option {% if request.GET.unit_code == unit_val.id|stringformat:"i" %}selected{% endif %} value="{{ unit_val.id }}">{{ unit_val.name }}</option>
+            {% endfor %}
+        </select>
+        {% if request.GET.unit_code %}
+
+        <table class=" table table-sm [&>*_th]:border [&>*_td]:border" style="width:50%">
+            <thead>
+                <th>#</th>
+                <th>Approve</th>
+                <th>Onroll</th>
+                <th>Present</th>
+                <th>Variant</th>
+            </thead>
+            <tbody>
+                {% for dept_summ in dept_desg_summ_list %}
+                <tr>
+                    <td>{{ dept_summ.cat_name }}</td>
+                    <td>{{ dept_summ.app_manp }}</td>
+                    <td>{{ dept_summ.onroll }}</td>
+                    <td>{{ dept_summ.present_emp }}</td>
+                    <td>{{ dept_summ.variant }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3"> Present Tailor : {{ present_tailor }} </td>
+                    <td colspan="2"> </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <div>plan MMR : {{ plan_mmr }}</div>
+            <div>Actual MMR : {{ actual_mmr }}</div>
+        </div>
+        <hr>
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th>#</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Approve Manpower</th>
+                    <th>Onroll Manpower</th>
+                    <th>Present Manpower</th>
+                    <th>Remarks</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                
+
+                {% for dept in dept_desg_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>
+                        <input type="number" hidden value="{{forloop.counter0}}" name="counter">
+                        <input type="number" hidden value="{{dept.app_id}}" name="app_id[{{forloop.counter0}}]">
+                        {{ forloop.counter }}
+                    </td>
+                    <td><input type="number" hidden value="{{dept.dep_code}}" name="dept_code[{{forloop.counter0}}]">{{ dept.dep_name }}</td>
+                    <td><input type="number" hidden value="{{dept.des_code}}" name="desg_code[{{forloop.counter0}}]">{{ dept.des_name }}</td>
+                    <td><input type="number" hidden value="{{dept.app_manp}}" name="app_manp[{{forloop.counter0}}]">{{ dept.app_manp }}</td>
+
+                    <td {% if dept.app_manp < dept.onroll %} style="background-color: rgb(255, 148, 148);" {% endif %} ><input type="number" hidden value="{{dept.onroll}}" name="onroll[{{forloop.counter0}}]">{{ dept.onroll }}</td>
+                    <td><input type="number" hidden value="{{dept.onroll}}" name="onroll[{{forloop.counter0}}]">{{ dept.present_manp }}</td>
+                    <td style="padding: 0 !important;">
+						<input type="text" name="remarks[{{ forloop.counter0 }}]" id="remarks{{ forloop.counter }}" value="{% if dept.remarks %}{{ dept.remarks }}{% endif %}" style="height: 36px;width: 100%;" class="number-input" list="order_list"></td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <input type="submit" class="hidden" value="">
+    </form>
+</div>
+ 
+
+{% endblock form %}
+
+
+
+
+{% block script %}
+<script>
+    $(document).ready(function(){
+        $("#unit_code").on("change", function(){
+            val = $(this).val()
+            dayno = $("#dayno").val();
+            mmr_code = $("#mmr_code").val();
+            new_url = `?unit_code=${val}&mmr_code=${mmr_code}&dayno=${dayno}`
+            window.location.replace(new_url);
+        })
+
+
+        $("#form-save-btn").click(function(){
+            $("input[type='submit']").click();
+        })
+
+  /*      $("#add-new-btn").on("click", function(){
+            let dept_sing = $("#dept_sing").val()
+            let desg_sing = $("#desg_sing").val()
+            let manp_sing = $("#manp_sing").val()
+            let unit_code = $("#unit_code").val()
+            $.ajax({
+                method : 'POST',
+                url : '',
+                data : {
+                    'flag' : 'add_btn',
+                    'dept_sing' : dept_sing,
+                    'desg_sing' : desg_sing,
+                    'manp_sing' : manp_sing,
+                    'unit_code' : unit_code,
+                    'csrfmiddlewaretoken' : "{{ csrf_token }}"
+                },
+                success : function() {
+                    alert("Data saved")
+                }, 
+                error: function(e){
+                    alert("Something went wrong")
+                    console.log(e)
+                }
+            })
+        }) */
+    })
+
+function add_row(i){
+    //$('#myTable > tbody:last').append('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>'); 
+    //$('#example thead tr:last').clone(true).appendTo( '#example thead' );
+    //$('#tr' + i).after('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>');
+    $('#tr' + i).after($('#tr' + i).clone());
+
+}
+
+function remove_row(i){
+    //$('#myTable > tbody:last').append('<tr><td>2</td><td>2</td><td>2</td><td>2</td></tr>'); 
+    $('#tr' + i).remove();
+}
+
+
+</script>
+
+{% endblock script %}

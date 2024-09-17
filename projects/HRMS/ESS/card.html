@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        .card-wrapper {
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            border: 1px solid black;
+            width: 8.75cm;
+            height: 5.5cm;
+            font-size: 0.35cm;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .card-front .emp-card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid black;
+            padding: 0.1cm 0.25cm;
+        }
+        
+        .card-back .emp-card-header {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: center;
+            border-bottom: 1px solid black;
+            padding: 0.1cm 0.25cm;
+        }
+
+        .card-front .emp-card-header span:first-child{
+            font-weight: 700;
+            font-size: 0.5cm;
+        }
+
+        .emp-card-body {
+            display: flex;
+            flex-grow: 1;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.25cm;
+        }
+
+        .emp-photo {
+            width: 100px;
+            height: 100px;
+            border: 1px dotted black;
+        }
+
+        .emp-details {
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            justify-content: space-between;
+            height: 100%;
+            width: 1cm;
+            padding-left: 0.2cm;
+            padding-bottom: 0.1cm;
+            flex-grow: 1;
+        }
+
+        .emp-details span {
+            align-items: end;
+            display: flex;
+            width: 100%;
+            flex-grow: 1;
+            border-bottom: 1px dotted black;
+        }
+
+        .emp-card-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.1cm 0.25cm;
+            border-top: 1px solid black;
+        }
+    </style>
+
+    <div class="wrapper" style="display: flex;">
+        <div class="card-wrapper card-front">
+            <div class="emp-card-header">
+                <span>Lorem</span>
+                <span>Lorem ipsum dolor sit.</span>
+                <span>Lorem, ipsum.</span>
+            </div>
+            <div class="emp-card-body">
+                <div class="emp-photo">
+    
+                </div>
+                <div class="emp-details">
+                    <span>Name:</span>
+                    <span>Emp. No.: </span>
+                    <span>Designation </span>
+                    <span>Department </span>
+                </div>
+            </div>
+            <div class="emp-card-footer">
+                <span>Lorem, ipsum.</span>
+                <span>Lorem, ipsum.</span>
+            </div>
+        </div>
+        
+        <span> &nbsp;</span>
+
+        <div class="card-wrapper card-back">
+            <div class="emp-card-header">
+                <span>Address</span>
+                <span>&nbsp;</span>
+                <span>Phone No.</span>
+            </div>
+            <div style="font-size: 12px;">
+                <h4 style="margin: 2px;">lorem:</h4>
+                <ol style="margin: 0px; padding-left: 20px;">
+                    <li>Lorem ipsum dolor sit amet consectetur adipisicing elit.</li>
+                    <li>Lorem ipsum dolor sit amet consectetur adipisicing elit.</li>
+                    <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. adipisicing elit adipisicing elit.</li>
+                </ol>
+            </div>
+            <div class="emp-card-body">
+                <div class="emp-qr" style="width: 50px; height: 50px; border: 1px solid #000;">
+                    
+                </div>
+                <div style="display: flex; flex-direction: column; flex-grow: 1; align-items: center; justify-content: center;">
+                    <span>If found please return to: </span>
+                    <span style="font-size: 0.5cm; font-weight: 600;">Global</span>
+                    <span>D-34, Sec-63, Noida (UP)</span>
+                    <span>Ph.: 0120-4799000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

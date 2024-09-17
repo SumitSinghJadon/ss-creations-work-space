@@ -1,0 +1,199 @@
+{% load knox_filter %}
+{% load static %}
+
+<header class="py flex justify-between items-center bg-base-100">
+    <div class="flex items-center space-x-4">
+        <div class="flex space-x-4 pl-2">
+            <div class="btn btn-sm btn-square text-lg btn-ghost sidebar-toggle-btn">
+                <i class="fa-regular fa-bars"></i>
+            </div>
+            <div class="header-logo hidden">
+                <img src="{% static 'images/logo.jpg' %}" alt="" class="h-8">
+            </div>
+            <div class="flex space-x-2 items-center">
+                <!-- Module Name  -->
+                <h1 class="font-bold text-lg">
+                    {{ module_name }}
+                </h1>
+                <!-- Shortcut Links Add Form -->
+                <div class="dropdown dropdown-start px-2 hidden md:block">
+                    <label tabindex="0" title="Shortcut Links" class="btn btn-sm btn-square btn-ghost">
+                        <i class="fa-regular fa-arrow-up-right-from-square"></i>
+                    </label>
+                    <div tabindex="0" class="dropdown-content z-[1] p-3 shadow bg-base-100 rounded-box">
+                        <form action="/base-boost/shortcut-links/add/" method="POST"> {% csrf_token %}
+                            <h1 class="text-sm font-semibold text-center pb-1">Create New Shortcut</h1>
+                            <div class="join py-2">
+                                <span class="btn btn-sm w-12 join-item rounded-r-full">Name</span>
+                                <input type="text" name="name" value="{{ page_name }}" class="input input-bordered input-sm join-item" />
+                            </div>
+                            <div class="join py-2 w-full">
+                                <span class="btn btn-sm w-12 join-item rounded-r-full">Color</span>
+                                <input type="color" name="color" value="#BAE6FD" id="scl_color_picker" class="input input-bordered input-sm join-item w-full" />
+                            </div>
+                            <div class="join py-2 w-full">
+                                <span class="btn btn-sm w-12 join-item rounded-r-full">Link</span>
+                                <input type="text" name="link" value="{{ request.path }}" class="input input-bordered input-sm join-item w-full" />
+                            </div>
+                            <div class="py-2">
+                                <input type="hidden" name="return_url" value="{{ request.path }}">
+                                <button type="submit" class="btn btn-sm btn-success w-full">Create Shortcut</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="dropdown w-full max-w-md hidden">
+        <span class="absolute top-2 left-2 opacity-80 text-indigo-500">
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </span>
+        <label tabindex="0" title="Calendar" class="w-full">
+            <input type="text" class="input input-sm rounded-lg bg-base-200 w-full !pl-8 py-5 border-none outline-none focus-within:outline-none focus-within:rounded-b-none" placeholder="Search Menu here . . .">
+        </label>
+        <ul tabindex="0" class="dropdown-content z-[1] menu p-2 bg-base-100 rounded-b-lg w-full glass bg-base-100/30 shadow-2xl">
+            <div class="flex justify-center w-full space-x-1 text-xl py-6">
+                <span class="flex">Loading</span>
+                <span class="animate-bounce ">.</span>
+                <span class="animate-bounce animate-delay-100">.</span>
+                <span class="animate-bounce animate-delay-200">.</span>
+            </div>
+        </ul>
+    </div>
+
+    <div class="flex space-x-1 md:space-x-4 items-center">
+        <div class="flex space-x-1 md:space-x-4 items-center">
+            <!-- Theme -->
+            <div>
+                <button data-new-theme="dark" class="theme-btn btn btn-sm btn-square m-1 bg-blue-100 text-blue-700 border-none"><i class="fa-solid fa-moon"></i></button>
+                <button data-new-theme="light" class="theme-btn btn btn-sm btn-square m-1 bg-amber-100 text-amber-600 border-none hidden"><i class="fa-solid fa-sun"></i></button>
+            </div>
+
+            <!-- Filter menu -->
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" title="Filter setting"
+                    class="btn btn-sm btn-square bg-green-100 text-green-700 m-1">
+                    <i class="fa-regular fa-filters"></i>
+                </label>
+                <div tabindex="0" class="dropdown-content z-[1] p-3 shadow bg-base-100 rounded-box">
+                    <div class="join py-2">
+                        <button class="btn btn-sm w-12 join-item rounded-r-full">From</button>
+                        <input type="date" class="input input-bordered input-sm join-item" />
+                    </div>
+
+                    <div class="join py-2">
+                        <button class="btn btn-sm w-12 join-item rounded-r-full">To</button>
+                        <input type="date" class="input input-bordered input-sm join-item" />
+                    </div>
+
+                    <div class="join py-2 w-full">
+                        <button class="btn btn-sm w-12 join-item rounded-r-full">Unit</button>
+                        <select name="" id="" class="select select-sm select-bordered join-item w-full">
+                            <option value="">Unit 1</option>
+                            <option value="">Unit 2</option>
+                            <option value="">Unit 3</option>
+                            <option value="">Unit 4</option>
+                        </select>
+                    </div>
+
+                    <div class="join py-2 w-full">
+                        <button class="btn btn-sm w-12 join-item rounded-r-full">Fn Year</button>
+                        <select name="" id="" class="select select-sm select-bordered join-item w-full">
+                            <option value="">2022-2023</option>
+                            <option value="">2023-2024</option>
+                        </select>
+                    </div>
+
+                    <div class="py-2">
+                        <input type="submit" value="save filter" class="w-full btn btn-sm btn-primary">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Calendar -->
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" title="Calendar" class="btn btn-sm btn-square bg-sky-100 text-blue-700 m-1">
+                    <i class="fa-light fa-calendar-days"></i>
+                </label>
+                <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    <li><a>View Calendar</a></li>
+                    <li><a>Add to calendar</a></li>
+                </ul>
+            </div>
+
+            <!-- Notification bell -->
+            <div title="Notification" id="noti-open-btn"
+                class="btn btn-square btn-sm bg-orange-100 text-orange-600 noti-close-btn">
+                <i class="fa-regular fa-bell-on"></i>
+            </div>
+        </div>
+
+        <!-- Avatar Dropdown -->
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="flex items-center btn btn-ghost hover:bg-transparent hover:border">
+                <div class="avatar">
+                    <div class="w-9 rounded-xl">
+                        <img src="{% static 'images/dummy-user.png' %}" />
+                    </div>
+                </div>
+                <div class="text-start hidden md:block">
+                    <h1 class="text-sm">{% truncate_str request.user.full_name 12 10 %}</h1>
+                    <span title="{{ request.user.designation }}" class="text-xs opacity-50 normal-case font-normal">
+                        {% truncate_str request.user.designation 12 10 %}
+                    </span>
+                </div>
+                <div class="px-2 hidden md:block"> <i class="fa-regular fa-chevron-down"></i> </div>
+            </label>
+
+            <ul tabindex="0" class="z-[100] p-2 shadow-lg border border-base-300 menu menu-sm dropdown-content bg-base-100 rounded-lg w-52">
+                <li>
+                    <a href="/user-profile/" class="user-profile/">
+                        <span><i class="fa-solid fa-user"></i></span>
+                        <span>Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="user-setting/">
+                        <span><i class="fa-solid fa-gear"></i></span>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/logout/">
+                        <span><i class="fa-solid fa-arrow-right-from-bracket text-error"></i></span>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<script>
+    $(document).ready(function(){
+        function randomLightColor() {
+            // Generate random values for the red, green, and blue components in the range [200, 255]
+            const red = Math.floor(Math.random() * 56) + 200;
+            const green = Math.floor(Math.random() * 56) + 200;
+            const blue = Math.floor(Math.random() * 56) + 200;
+            // Convert the values to hexadecimal and format the color code
+            const colorCode = `#${red.toString(16)}${green.toString(16)}${blue.toString(16)}`;
+            return colorCode;
+        }
+
+        // Example usage:
+        const randomColor = randomLightColor();
+        $("#scl_color_picker").val(randomColor);
+
+        // Change theme
+        $(".theme-btn").on("click", function(){
+            let html = $("html");
+            let theme = $(this).data("new-theme");
+            $(html).attr("data-theme", theme)
+            $(".theme-btn").toggle()
+        })
+    })
+</script>

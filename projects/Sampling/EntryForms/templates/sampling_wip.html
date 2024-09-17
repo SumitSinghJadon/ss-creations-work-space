@@ -1,0 +1,137 @@
+{% extends 'base-3.html' %}
+{% load static %}
+
+
+{% block main %}
+<div class="w-full rounded-xl space-y-2 flex flex-col h-full">
+    <!-- Filter Bar -->
+    <div class="py-1 px-3 rounded-xl shadow-lg w-full flex justify-between items-center bg-base-100" data-aos="zoom-in">
+        <div data-aos="zoom-in">
+            <h1 class="font-semibold capitalize">Sampling WIP</h1>
+        </div>
+        <div data-aos="zoom-in" class="flex space-x-2">
+            <form method="get">
+            <input type="date" class="input" value="{{ from_date }}" name="from_date" class="input">
+            <input type="date" class="input" value="{{ to_date }}" name="to_date" class="input">
+            
+            <select name="active_status" id="active_status" class="select select-sm select-bordered min-w-[140px] !h-[50px] !w-[140px]" style="height: 33px !important; width: 200px !important;">
+                <option value="">Select</option>
+                <option value="1" {% if active_status == '1' %} selected {% endif %}>Active</option>
+                <option value="0" {% if active_status == '0' %} selected {% endif %}>Closed</option>
+            </select>
+
+            <select name="samp_dept" id="samp_dept" class="select select-sm select-bordered min-w-[140px] !h-[50px] !w-[140px]" style="height: 33px !important; width: 200px !important;">
+                <option value="">-- Department --</option>
+                {% for dept in data_list_dept %}
+                <option value="{{ dept.dep_code }}" {% if samp_dept == dept.dep_code|stringformat:"i" %} selected {% endif %} >{{ dept.dep_name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="join-item btn btn-sm btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <form class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-xl" method="post" data-aos="zoom-in"> {% csrf_token %}
+        <table class="!w-full table [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-blue-300 text-slate-800 capitalize">
+                    <th rowspan="2">Sr.</th>
+                    <th>Department</th>
+                    <th>Buyer Name</th>
+                    <th>Style no</th>
+                    <th>Sample group</th>
+                    <th>booking no</th>
+                    <th>Merchant head</th>
+                    <th>Merchant name</th>
+                    <th>sample type</th>
+                    <th>booking date</th>
+                    <th>target date</th>
+                    <th>sample qty</th>
+                    <th>pending to load</th>
+                    <th>cutting qty</th>
+                    <th>cutting wip</th>
+                    <th>stitch qty</th>
+                    <th>stitch wip</th>
+                    <th>finish qty</th>
+                    <th>finish wip</th>
+                    <th>dispatch qty</th>
+                    <th>dispatch wip</th>
+                    <th>close status</th>
+                    <th>Hold Stage (Process)</th>
+                    <th>Hold Reason</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in data_list %}
+                <tr>
+                    <th class="!p-0 text-center">
+                        {{ forloop.counter }}
+                    </th>
+                    <td class="!py-0" style="white-space:nowrap;">{{ row.samp_dept|default_if_none:'' }}</td>
+                    <td class="!py-0">{{ row.buyer_name }}</td>
+                    <td class="!py-0">{{ row.style_no }}</td>
+                    <td class="!py-0">{{ row.sample_group }}</td>
+                    <td class="!py-0">{{ row.booking_no }}</td>
+                    <td class="!py-0">{{ row.Merchant_head }}</td>
+                    <td class="!py-0">{{ row.Merchant_name }}</td>
+                    <td class="!py-0">{{ row.sample_type }}</td>
+                    <td class="!py-0">{{ row.booking_date }}</td>
+                    <td class="!py-0">{{ row.target_date }}</td>
+                    <td class="!py-0 !bg-blue-50">{{ row.sample_qty }}</td>
+                    <td class="!py-0">{{ row.pending_to_load }}</td>
+                    <td class="!py-0 !bg-blue-50">{{ row.cutting_qty }}</td>
+                    <td class="!py-0">{{ row.cutting_wip }}</td>
+                    <td class="!py-0 !bg-blue-50">{{ row.stitch_qty }}</td>
+                    <td class="!py-0">{{ row.stitch_wip }}</td>
+                    <td class="!py-0 !bg-blue-50">{{ row.finish_qty }}</td>
+                    <td class="!py-0">{{ row.finish_wip }}</td>
+                    <td class="!py-0 !bg-blue-50">{{ row.dispatch_qty }}</td>
+                    <td class="!py-0">{{ row.dispatch_wip }}</td>
+                    <td class="!py-0">{{ row.close_status }}</td>
+                    <td></td>
+                    <td></td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <!--<input type="submit" class="hidden" id="submit-btn">-->
+    </form>
+
+    <!-- Table footer -->
+    <div data-aos="zoom-in" class="py-1 px-3 rounded-xl shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center"></div>
+</div>
+
+{% endblock main %}
+
+
+{% block script %}
+<script>
+    // $(document).ready(function () {
+    //     // Refine data-table design
+    //     $(".dataTables_length select").addClass('select select-xs select-bordered').prependTo(".dt-filter-top");
+    //     $(".dataTables_filter input").addClass('input input-xs input-bordered').attr(
+    //         'placeholder', 'search in table...'
+    //     ).prependTo(".dt-filter-top");
+    //     $(".dataTables_info, .dataTables_paginate").prependTo(".dt-filter-bottom");
+    //     $(".dataTables_length, .dataTables_filter").remove();
+
+    //     // Align tbody text if thead is in center
+    //     $('thead tr').find('th').each(function (index) {
+    //         const thClasses = $(this).attr('class').split(' ');
+    //         const relevantClasses = thClasses.filter(cls => cls === '!text-right' || cls === '!text-center');
+    //         relevantClasses.forEach(function (cls) {
+    //             $('tbody tr').each(function () {
+    //                 const $td = $(this).find('td, th').eq(index);
+    //                 if (cls) { $td.addClass(cls); }
+    //             });
+    //         });
+    //     });
+    // })
+</script>
+
+{% endblock script %}
+

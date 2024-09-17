@@ -1,0 +1,171 @@
+{% extends 'form-table.html' %}
+
+{% block form %}
+<form action="{% url 'miss_punch_application_form_page' %}" id="application_form" method="POST" class="flex flex-wrap">
+    {% csrf_token %}
+    <!-- Employee Code -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Employee Code</span>
+            <input type="text" name="emp_code" value="{{ request.user.username }}" required readonly class="text-input">
+        </label>
+    </div>
+    <!-- Employee Name -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Employee Name</span>
+            <input type="text" name="emp_name" value="{{ request.user.full_name }}" required readonly class="text-input">
+        </label>
+    </div>
+    <!-- Unit -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Location</span>
+            <select name="unit" class="select-input">
+                <option value="{{ employee.loc_code }}" selected>{{ employee.loc_name }}</option>
+            </select>
+        </label>
+    </div>
+    <!-- Department -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Department</span>
+            <input type="text" name="department" value="{{ employee.dep_name }}" required readonly class="text-input">
+        </label>
+    </div>
+    <!-- Reporting Manager -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Reporting Manager</span>
+            <select name="reporting_manager" class="select-input">
+                <option selected value="{{ request.user.reporting_manager.id }}">{{ request.user.reporting_manager.full_name }}</option>
+            </select>
+        </label>
+    </div>
+    <!-- Application Type -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text z-40">Application Type</span>
+            <input type="text" name="application_type" class="text-input" value="Miss Punch" readonly required>
+        </label>
+    </div>
+    <!-- Miss Punch From -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Miss Punch Date</span>
+            <input type="date" name="leave_from" required min="{{ min_date|date:'Y-m-d' }}" class="text-input">
+        </label>
+    </div>
+    <!-- Full Day/Half Day -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text z-40">Select Day Part (Miss Punch Count)</span>
+            <select name="day_part" class="select-input select-2" required>
+                <option value="">--</option>
+                <option value="IN">In</option>
+                <option value="OUT">Out</option>
+            </select>
+        </label>
+    </div>
+    <!-- Miss Punch In Time -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text">Miss Punch Time</span>
+            <input type="time" name="miss_punch_in" required class="text-input">
+        </label>
+    </div>
+    <!-- Reason for miss punch -->
+    <div class="w-1/4 pt-1">
+        <label class="float-input-label floated-label">
+            <span class="label-text z-40">Reason for miss punch</span>
+            <select data-col-index="2" name="reason" class="select-input search-in-table select-2" required>
+                <option>Forgot to punch</option>
+            </select>
+        </label>
+    </div>
+    <div class="flex w-1/2 justify-end pt-0.5 px-1">
+        <input type="Submit" value="Save" class="btn btn-success btn-sm px-8 mt-3">
+    </div>
+</form>
+{% endblock form %}
+
+{% block tfilter %}
+<div class="p-2">
+    <h1 class="w-full bg-base-200 p-2 rounded-lg font-semibold">Miss Punch Application History</h1>
+    <form action="" method="GET" class="flex flex-wrap">
+        <!-- Year -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Year</span>
+                <select name="year" class="select-input select-2">
+                    <option value="">--</option>
+                    {% for item in year_list %}
+                        <option {% if item.name == current_year %} selected {% endif %}>{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Month -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Month</span>
+                <select name="month" class="select-input select-2">
+                    <option value="">--</option>
+                    {% for item in month_list %}
+                        <option {% if item.value == current_month %} selected {% endif %} value="{{ item.value }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+        <!-- Application Status -->
+        <div class="w-1/4 pt-1">
+            <label class="float-input-label floated-label">
+                <span class="label-text z-40">Application Status</span>
+                <select data-col-index="2" name="application_status" class="select-input select-2">
+                    <option value="">--</option>
+                    <option {% if application_status == 'Pending' %} selected {% endif %}>Pending</option>
+                    <option {% if application_status == 'Approved' %} selected {% endif %}>Approved</option>
+                    <option {% if application_status == 'Rejected' %} selected {% endif %}>Rejected</option>
+                </select>
+            </label>
+        </div>
+        <div class="w-1/4 pt-0.5 px-1">
+            <input type="Submit" value="Search" class="btn btn-success btn-sm px-8 mt-3">
+        </div>
+    </form>
+</div>
+{% endblock tfilter %}
+
+{% block thead %}
+    <td>Cancel</td>
+    <td>Application Type</td>
+    <td>Miss Punch Date</td>
+    <td>Miss Punch Time</td>
+    <td>Day Part</td>
+    <td>Reason</td>
+    <td>Application Status</td>
+    <td>Applied On</td>
+    <td>Approved/Rejected On</td>
+    <td>Cancelled On</td>
+    <td>Approved/Rejected By</td>
+    <td>Remarks</td>
+{% endblock thead %}
+{% block tbody %}
+    {% for item in leave_list %}
+        <tr class="whitespace-nowrap">
+            <td>{% if item.status == 'Pending' %}<form method="POST">{% csrf_token %}<input type="hidden" name="application_id" value="{{ item.pk }}"><input type="submit" name="cancel_application" value="Cancel" class="btn btn-sm text-white bg-red-500 hover:bg-red-300"></form>{% endif %}</td>
+            <td>{{ item.application_type }}</td>
+            <td>{{ item.from_date|date:"d-m-Y" }}</td>
+            <td>{{ item.time }}</td>
+            <td>{{ item.day_part }}</td>
+            <td>{{ item.reason }}</td>
+            <td class="{% if item.status == 'Pending' %} bg-warning {% elif item.status == 'Approved' %} bg-success {% elif item.status == 'Cancelled' %} bg-gray-500 text-white {% else %} bg-error {% endif %}">{{ item.status }}</td>
+            <td>{{ item.applied_on|date:'d-m-Y' }}</td>
+            <td>{{ item.approved_on|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.cancelled_on|date:"d-m-Y h:i A" }}</td>
+            <td>{{ item.approved_by.full_name }}</td>
+            <td>{{ item.approval_remarks|default_if_none:'' }}</td>
+        </tr>
+    {% endfor %}
+
+{% endblock tbody %}

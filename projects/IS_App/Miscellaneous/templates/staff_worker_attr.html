@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+
+{% block main %} 
+<main class="overflow-x-auto">
+    <div class="bg-base-200 px-2 py-1 rounded-lg flex justify-between items-center sticky left-0">
+        <div>
+            <h1 class="font-semibold">Attrition</h1>
+        </div>
+        <div class="flex items-center space-x-2">
+            <form action="" method="GET" class="flex items-center space-x-2">
+                <label class="label !p-0 w-44">
+                    <select name="unit_code" class="select-2">
+                        <option>-- Location --</option>
+                        {% for unit_val in unit_list %}
+                        <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="label !p-0 w-32">
+                    <select name="month" class="select-2">
+                        <option>-- Month --</option>
+                        {% for item in month_list %}
+                        <option {% if request.GET.month == item.m_num %}selected{% endif %} value="{{ item.m_num }}">{{ item.m_name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="label !p-0 w-32">
+                    <select name="year" class="select-2">
+                        <option>-- Year --</option>
+                        {% for year_no in year_list %}
+                        <option {% if request.GET.year == year_no|stringformat:"i" %}selected{% endif %} value="{{ year_no }}">{{ year_no }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <button type="submit" class="btn btn-sm btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="pt-3">
+        <table class="w-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th></th>
+                    <th colspan="4">Staff</th>
+                    <th colspan="4">Worker</th>
+                    <th colspan="4">Total</th>
+                </tr>
+                <tr>
+                    <th>Unit</th>
+
+                    <th >Onroll (On 1st)</th>
+                    <th >Joined (In a Period)</th>
+                    <th >Left (In a Period)</th>
+                    <th >Attrition Rate (%)</th>
+
+                    <th >Onroll (On 1st)</th>
+                    <th >Joined (In a Period)</th>
+                    <th >Left (In a Period)</th>
+                    <th >Attrition Rate (%)</th>
+
+                    <th >Onroll (On 1st)</th>
+                    <th >Joined (In a Period)</th>
+                    <th >Left (In a Period)</th>
+                    <th >Attrition Rate (%)</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for dept in staff_worker_list %}
+                <tr id="tr{{ forloop.counter }}">
+                    <td>{{ dept.unit_name }}</td>
+
+                    <td>{{ dept.onroll_1st_staff }}</td>
+                    <td>{{ dept.joining_period_staff }}</td>
+                    <td>{{ dept.left_period_staff }}</td>
+                    <td>{{ dept.attr_staff }}</td>
+
+                    <td>{{ dept.onroll_1st_worker }}</td>
+                    <td>{{ dept.joining_period_worker }}</td>
+                    <td>{{ dept.left_period_worker }}</td>
+                    <td>{{ dept.attr_worker }}</td>
+
+                    <td>{{ dept.onroll_1st_total }}</td>
+                    <td>{{ dept.joining_period_total }}</td>
+                    <td>{{ dept.left_period_total }}</td>
+                    <td>{{ dept.attr_total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main %}
+

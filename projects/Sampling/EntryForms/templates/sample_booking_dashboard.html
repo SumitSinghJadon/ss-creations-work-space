@@ -1,0 +1,61 @@
+{% extends 'table.html' %}
+
+{% block buttonName %} New Booking {% endblock buttonName %}
+
+
+{% block tfRight %}
+<form class="flex space-x-2 w-full" method="get">
+    <select name="buyer" class="select select-sm select-bordered" title="Filter by Buyer">
+        <option value="" selected>-- Buyer --</option>
+        {% for item in buyer_list %}
+        <option value="{{ item.buyer_code }}" {% if request.GET.buyer == item.buyer_code %} selected {% endif %}>{{ item.buyer_name }}</option>
+        {% endfor %}
+    </select>
+    <input type="date" min="2024-02-01" value="{{ request.GET.from_date }}" name="from_date" class="input input-sm input-bordered min-w-[140px]">
+    <input type="date" min="2024-02-01" value="{{ request.GET.till_date }}" name="till_date" class="input input-sm input-bordered min-w-[140px]">
+    <input type="submit" class="btn btn-success btn-sm" value="search">
+</form>
+{% endblock tfRight %}
+
+
+{% block thead %}
+<tr class="sticky top-0 bg-base-200">
+    <th>Sr.</th>
+    <th>Image</th>
+    <th>Booking No</th>
+    <th>Buyer Name</th>
+    <th>Style No</th>
+    <th>Sample Group</th>
+    <th>Sample Type</th>
+    <th>Booking Type</th>
+    <th>Quantity</th>
+    <th>Booking Date</th>
+    <th>Target Date</th>
+    <th>Status</th>
+</tr>
+{% endblock thead %}
+
+{% block tbody %}
+    {% for item in data_list %}
+        <tr>
+            <th>{{ forloop.counter }}</th>
+            <th>
+                <img width="40px" src="{{ item.image1.url }}" alt="">
+            </th>
+            <td>
+                <a class="link" href="add/?bid={{item.id}}">{{ item.booking_no }}</a>
+            </td>
+            <td>{{ item.buyer_name }}</td>
+            <td>{{ item.style_no }}</td>
+            <td>{{ item.sample_group_type }}</td>
+            <td>{{ item.sample_type }}</td>
+            <td>{{ item.get_booking_type_display }}</td>
+            <td>{{ item.total_qty }}</td>
+            <td>{{ item.booking_date|date:'d-m-Y H:i' }}</td>
+            <td>{{ item.target_date|date:'d-m-Y H:i' }}</td>
+            <td class="capitalize">{{ item.booking_status }}</td>
+        </tr>
+    {% endfor %}
+{% endblock tbody %}
+
+

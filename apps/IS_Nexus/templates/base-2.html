@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{% block theme %}light{% endblock theme %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliSync</title>
+    {% include './components/head.html' %}
+</head>
+
+<body>
+    <div class="flex h-screen bg-base-100">
+        <div class="h-screen flex-grow flex flex-col overflow-hidden">
+            <!-- Site Header -->
+            {% include './components/header.html' %}
+
+            <!-- Main Content wrapper -->
+            {% block main %} {% endblock main %}
+
+            <!-- Notification panel -->
+            {% include './components/notification.html' %}
+        </div>
+    </div>
+    {% include './components/alert.html' %}
+</body>
+
+{% block script %} {% endblock script %}
+
+<style>
+    ::-webkit-scrollbar-track { width: 6px;}
+
+    ::-webkit-scrollbar-thumb {
+        width: 6px;
+        background-color: #bebeca;
+        border-radius: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: #636399;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+</style>
+
+</html>

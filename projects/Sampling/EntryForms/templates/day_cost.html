@@ -1,0 +1,122 @@
+{% extends 'blank.html' %}
+
+
+{% block main %}
+
+<div class="h-full bg-base-100 shadow-soft rounded-box overflow-hidden flex flex-col knox-table-wrapper">
+    <div class="p-3 flex justify-between items-center">
+        <h2 class="font-semibold" > Sampling Cost / {{ dayno }} </h2>
+        <style>
+            .table :where(th,td) {
+                padding: 0.15rem 1rem;
+                vertical-align: middle;
+            }
+        </style>
+        <div class="join">
+            <input class="input input-bordered input-sm join-item knox-table-search" type="search" placeholder="Search in table" />
+
+            <select class="select select-bordered select-sm join-item kt-export">
+                <option disabled selected>Export</option>
+                <option value="pdf">PDF</option>
+                <option value="excel">Excel</option>
+            </select>
+
+            <button class="btn btn-sm btn-primary join-item kt-export-btn">
+                <i class="fa-solid fa-file-arrow-down"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="table-wrapper flex-grow overflow-auto">
+        <table class="knox-table table-sm" export-name="Screen Name" id="knox-table-2">
+            <thead>
+                <tr class="sticky top-0 bg-base-200">
+                    <th>SrNo</th>
+                    <th>emp name</th>
+                    <th>emp cardno</th>
+                    <th>Department name</th>
+                    <th>designation name</th>
+                    <th>Category</th>
+                    <th>in time</th>
+                    <th>out time</th>
+                    <th>manual in time</th>
+                    <th>manual out time</th>
+                    <th>ot time</th>
+                    <th>total time</th>
+                    <th>status</th>
+                    <th>pday</th>
+                    <th>day earn sal</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in data_list %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ row.emp_name}}</td>
+                    <td>{{ row.emp_cardno}}</td>
+                    <td>{{ row.dep_name}}</td>
+                    <td>{{ row.des_name}}</td>
+                    <td>{{ row.cat_name}}</td>
+                    <td>{{ row.in_time}}</td>
+                    <td>{{ row.out_time}}</td>
+                    <td>{{ row.man_in_time}}</td>
+                    <td>{{ row.man_out_time}}</td>
+                    <td>{{ row.ot_time}}</td>
+                    <td>{{ row.total_time}}</td>
+                    <td>{{ row.status}}</td>
+                    <td>{{ row.pday}}</td>
+                    <td>{{ row.day_earn_sal}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+
+                    {% for _ in '12345678912345' %}
+                    <th></th>
+                    {% endfor %}
+                    <th class="kt-total" style="font-size: 20px;"></th>
+
+                </tr>
+                <tr class="sticky bottom-0 bg-base-200 shadow-soft">
+                    <td class="p-0"></td>
+                    {% for _ in '12345678912345' %}
+                    <td class="p-0"><input type="text" class="kt-col-search" placeholder="Search..."></td>
+                    {% endfor %}
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+ 
+
+{% endblock main %}
+
+{% block script %}
+<script>
+
+    // function check_div() {
+    //     checker_status = $("#checker_status").val()
+    //     if(checker_status =='fail') {
+    //         $("#def_div").show();
+    //         $("#total_defect_div").show();
+    //     } else {
+    //         $("#def_div").hide();
+    //         $("#total_defect_div").hide();
+    //     }
+    // }
+
+  
+
+    function show_model(id) {
+        $("#form_size" + id).show();
+    }
+
+
+
+</script>
+{% endblock script %}

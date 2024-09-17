@@ -1,0 +1,307 @@
+{% extends 'new/base.html' %}
+{% load knox_filter %}
+{% block main %}
+<div class="rounded-box bg-base-100 shadow-soft flex flex-col h-full overflow-hidden knox-table-wrapper">
+
+    <div class="table-header-wrapper">
+        <h1 class="font-semibold"> On Time Delivery </h1>
+        <div class="join">
+            <button class="btn btn-primary btn-sm join-item table-filter-toggle"><i class="fa-regular fa-filter-list"></i></button>
+            <input class="input input-sm input-primary bg-base-200 join-item knox-table-search" type="search" placeholder="Search in table" />
+            <button class="btn btn-sm btn-primary join-item kt-export-btn"><i class="fa-solid fa-file-arrow-down"></i></button>
+        </div>
+    </div>
+
+    
+
+    <div class="flex-grow table-wrapper overflow-auto">
+
+        {% if grid == 'ontimedetail' or grid == 'delaydetail' %}
+
+        <form class="table-filter-wrapper" method="get"  onsubmit="submitForm(event, '{{ grid }}')" >
+            {% csrf_token %}
+            <div class="flex flex-wrap w-full p-2">
+    
+                <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                    <div class="knox-form-input join-item">
+                        <label>
+                            <select name="unit_code" id="unit_code" class="knox-input peer" >
+                                <option value="">Select Unit</option>
+                                {% for unit_val in unit_list %}
+                                <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="label-text">Location</span>
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                    <div class="knox-form-input join-item">
+                        <label>
+                            <input type="date" name="from_date" value="{{ from_date }}" required class="knox-input peer">
+                            <span class="label-text">From Date</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                    <div class="knox-form-input join-item">
+                        <label>
+                            <input type="date" name="to_date" value="{{ to_date }}" required class="knox-input peer" gt="from_date">
+                            <span class="label-text">To Date</span>
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="p-0.5">
+                    <input type="submit" class="btn btn-md btn-success px-8">
+                </div>
+            </div>
+        </form>
+
+        <table class="knox-table table-sm">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th> S/N </th>
+                    <th> Order Date </th>
+                    <th> Del-V-Date </th>
+                    <th> Trans Date </th>
+                    <th> Lead Time </th>
+                    <th> Actual Lead Time </th>
+                    <th> Flag </th>
+                    <th> STATUS </th>
+                    <th> Buyer Name </th>
+                    <th> Merchandiser </th>
+                    <th> Total PCS </th>
+                    <th> Trans Loc </th>
+                    <th> Trans Loc Code </th>
+                    <th> JoType </th>
+                    <th> Cost Ref </th>
+                    <th> Styles </th>
+                    <th> Color </th>
+                    <th> Size </th>
+                    <th> QTY </th>
+                    <th> QTY Amount </th>
+                    <th> FN Year </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data_list %}
+                    <tr> 
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ row.orderdate_disp }}</td>
+                        <td>{{ row.delvdate_disp }}</td>
+                        <td>{{ row.Trans_date_disp }}</td>
+                        <td>{{ row.lead_time }}</td>
+                        <td>{{ row.actual_lead_time }}</td>
+                        <td>{{ row.flag }}</td>
+                        <td {% if row.flag == 1 %}class="bg-success"{% else %}class="bg-red-300"{% endif %}>
+                            {% if row.flag == 1 %}
+                                Delay
+                            {% else %}
+                                OnTime
+                            {% endif %}
+                        </td>
+                        <td>{{ row.buyer_name }}</td>
+                        <td>{{ row.merchandiser }}</td>
+                        <td>{{ row.totalpcs }}</td>
+                        <td>{{ row.Trans_loc }}</td>
+                        <td>{{ row.Trans_loc_code }}</td>
+                        <td>{{ row.JoType }}</td>
+                        <td>{{ row.Costref }}</td>
+                        <td>{{ row.Styleno }}</td>
+                        <td>{{ row.Color }}</td>
+                        <td>{{ row.Size }}</td>
+                        <td>{{ row.Qty }}</td>
+                        <td>{{ row.qty_amount }}</td>
+                        <td>{{ row.fn_year }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><span class="kt-col-total"></span></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        {% else %}
+
+        <form class="table-filter-wrapper" action="{% url 'ontimedel' %}" method="get">
+            <div class="flex flex-wrap w-full p-2">
+    
+                <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                    <div class="knox-form-input join-item">
+                        <label>
+                            <select name="unit_code" id="unit_code" class="knox-input peer" >
+                                <option value="">Select Unit</option>
+                                {% for unit_val in unit_list %}
+                                <option {% if request.GET.unit_code == unit_val.payroll_code %}selected{% endif %} value="{{ unit_val.payroll_code }}">{{ unit_val.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="label-text">Location</span>
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                    <div class="knox-form-input join-item">
+                        <label>
+                            <input type="date" name="from_date" value="{{ from_date }}" required class="knox-input peer">
+                            <span class="label-text">From Date</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/3 lg:w-1/4 p-0.5">
+                    <div class="knox-form-input join-item">
+                        <label>
+                            <input type="date" name="to_date" value="{{ to_date }}" required class="knox-input peer" gt="from_date">
+                            <span class="label-text">To Date</span>
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="p-0.5">
+                    <input type="submit" class="btn btn-md btn-success px-8">
+                </div>
+            </div>
+        </form>
+
+        <table class="knox-table table-sm">
+            <thead>
+                <tr class="sticky top-0 bg-slate-300 text-slate-800">
+                    <th> U_ID </th>
+                    <th> TOTAL SHIP PCS (PERIOD) </th>
+                    <th> TOTAL STYLE COUNT </th>
+                    <th> ON TIME PCS </th>
+                    <th> ON TIME STYLE COUNT </th>
+                    <th> ON TIME PCS % </th>
+                    <th> ON TIME STYLE % </th>
+                    <th> DELAY PCS </th>
+                    <th> DELAY STYLE COUNT </th>
+                    <th> DELAY PCS % </th>
+                    <th> DELAY STYLE % </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data_list %}
+                    <tr>
+                        <td>{{ item.Trans_loc }}</td>                     
+                        <td>{{ item.TOTAL_SHIP_PCS }}</td>                     
+                        <td>{{ item.TOTAL_STYLE_COUNT }}</td>
+                        <td>
+                            <button onclick="jump_url('{{ from_date }}', '{{ to_date }}', '{{ unit_code }}', '{{ unit_code_erp }}', 'ontimedetail')" >
+                                {{ item.ON_TIME_PCS }}
+                            </button>
+                        </td>
+                        <td>
+                            <button onclick="jump_url('{{ from_date }}', '{{ to_date }}', '{{ unit_code }}', '{{ unit_code_erp }}', 'ontimedetail')">
+                                {{ item.ON_TIME_STYLE_COUNT }}
+                            </button>
+                        </td>                                 
+                        <td>
+                            {% if item.TOTAL_SHIP_PCS %}
+                                {{ item.ON_TIME_PCS|div:item.TOTAL_SHIP_PCS|floatformat:2 }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.TOTAL_STYLE_COUNT %}
+                                {{ item.ON_TIME_STYLE_COUNT|div:item.TOTAL_STYLE_COUNT|floatformat:2 }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td> 
+                        <td>
+                            <button onclick="jump_url('{{ from_date }}', '{{ to_date }}', '{{ unit_code }}', '{{ unit_code_erp }}', 'delaydetail')">
+                                {{ item.DELAY_PCS }}
+                            </button>
+                        </td>
+                        <td>
+                            <button onclick="jump_url('{{ from_date }}', '{{ to_date }}', '{{ unit_code }}', '{{ unit_code_erp }}', 'delaydetail')">
+                                {{ item.DELAY_STYLE_COUNT }}
+                            </button>
+                        </td>                     
+                        <td>
+                            {% if item.TOTAL_SHIP_PCS %}
+                                {{ item.DELAY_PCS|div:item.TOTAL_SHIP_PCS|floatformat:2 }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if item.TOTAL_STYLE_COUNT %}
+                                {{ item.DELAY_STYLE_COUNT|div:item.TOTAL_STYLE_COUNT|floatformat:2 }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><input type="search" class="kt-col-search"></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                    <td><span class="kt-row-count"></span></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<script type="text/javascript">
+
+function submitForm(event, grid) {
+        event.preventDefault(); // Prevent the form from submitting normally
+        
+        // Fetching values from form fields
+        var from_date = document.querySelector('input[name="from_date"]').value;
+        var to_date = document.querySelector('input[name="to_date"]').value;
+        var unit_code = document.querySelector('select[name="unit_code"]').value;
+        var unit_code_erp = ""; // Assuming this value is not available from the form
+        
+        // Calling the jump_url function with form values
+        jump_url(from_date, to_date, unit_code, unit_code_erp, grid);
+    }
+
+   function jump_url(from_date, to_date, unit_code, unit_code_erp, grid) {
+    var url = '/miscellaneous/ontimedel/?grid=' + grid + '&from_date=' + from_date + '&to_date=' + to_date + '&unit_code=' + unit_code + '&unit_code_erp=' + unit_code_erp;
+    window.open(url, 'popUpWindow', 'height=500,width=950,left=100,top=100,resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,titlebar=no,menubar=no,status=yes');
+}
+</script>
+
+{% endblock main %}

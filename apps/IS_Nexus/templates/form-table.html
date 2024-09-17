@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{% block theme %}light{% endblock theme %}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IntelliSync</title>
+    {% include './components/head.html' %}
+    <style>
+        .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        }
+        .loading-bars {
+        -webkit-mask-image: url(data:image/svg+xml;base64,Cjxzdmcgd2lkdGg9JzI0JyBoZWlnaHQ9JzI0JyB2aWV3Qm94PScwIDAgMjQgMjQnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHN0eWxlPi5zcGlubmVyX2h6bEt7YW5pbWF0aW9uOnNwaW5uZXJfdmM0SCAuOHMgbGluZWFyIGluZmluaXRlO2FuaW1hdGlvbi1kZWxheTotLjhzfS5zcGlubmVyX2tvR1R7YW5pbWF0aW9uLWRlbGF5Oi0uNjVzfS5zcGlubmVyX1lGMXV7YW5pbWF0aW9uLWRlbGF5Oi0uNXN9QGtleWZyYW1lcyBzcGlubmVyX3ZjNEh7MCV7eToxcHg7aGVpZ2h0OjIycHh9OTMuNzUle3k6NXB4O2hlaWdodDoxNHB4O29wYWNpdHk6LjJ9fTwvc3R5bGU+PHJlY3QgY2xhc3M9J3NwaW5uZXJfaHpsSycgeD0nMScgeT0nMScgd2lkdGg9JzYnIGhlaWdodD0nMjInLz48cmVjdCBjbGFzcz0nc3Bpbm5lcl9oemxLIHNwaW5uZXJfa29HVCcgeD0nOScgeT0nMScgd2lkdGg9JzYnIGhlaWdodD0nMjInLz48cmVjdCBjbGFzcz0nc3Bpbm5lcl9oemxLIHNwaW5uZXJfWUYxdScgeD0nMTcnIHk9JzEnIHdpZHRoPSc2JyBoZWlnaHQ9JzIyJy8+PC9zdmc+);
+        mask-image: url(data:image/svg+xml;base64,Cjxzdmcgd2lkdGg9JzI0JyBoZWlnaHQ9JzI0JyB2aWV3Qm94PScwIDAgMjQgMjQnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PHN0eWxlPi5zcGlubmVyX2h6bEt7YW5pbWF0aW9uOnNwaW5uZXJfdmM0SCAuOHMgbGluZWFyIGluZmluaXRlO2FuaW1hdGlvbi1kZWxheTotLjhzfS5zcGlubmVyX2tvR1R7YW5pbWF0aW9uLWRlbGF5Oi0uNjVzfS5zcGlubmVyX1lGMXV7YW5pbWF0aW9uLWRlbGF5Oi0uNXN9QGtleWZyYW1lcyBzcGlubmVyX3ZjNEh7MCV7eToxcHg7aGVpZ2h0OjIycHh9OTMuNzUle3k6NXB4O2hlaWdodDoxNHB4O29wYWNpdHk6LjJ9fTwvc3R5bGU+PHJlY3QgY2xhc3M9J3NwaW5uZXJfaHpsSycgeD0nMScgeT0nMScgd2lkdGg9JzYnIGhlaWdodD0nMjInLz48cmVjdCBjbGFzcz0nc3Bpbm5lcl9oemxLIHNwaW5uZXJfa29HVCcgeD0nOScgeT0nMScgd2lkdGg9JzYnIGhlaWdodD0nMjInLz48cmVjdCBjbGFzcz0nc3Bpbm5lcl9oemxLIHNwaW5uZXJfWUYxdScgeD0nMTcnIHk9JzEnIHdpZHRoPSc2JyBoZWlnaHQ9JzIyJy8+PC9zdmc+);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-overlay content-center" id="loadingOverlay">
+        <div class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
+            <span class="loading loading-bars loading-lg text-warning"></span>
+        </div>
+    </div>
+    <div class="flex h-screen bg-base-100">
+        {% include './components/sidebar.html' %}
+
+        <div class="h-screen flex-grow flex flex-col overflow-hidden">
+            <!-- Site Header -->
+            {% include './components/header.html' %}
+
+            <!-- Main Content wrapper -->
+            <main class="flex-grow w-full overflow-auto relative">
+                <div class="rounded-lg overflow-hidden p-3 shadow-inner bg-base-200 min-h-full h-full overflow-y-auto">
+                    <div class="w-full rounded-xl space-y-2 flex flex-col h-full">
+                        <!-- Filter bar -->
+                        <div class="py-1 px-3 rounded-lg shadow-lg w-full bg-base-100" data-aos="zoom-in">
+                            <div class="flex justify-between w-full">
+                                <div class="flex space-x-2">
+                                    {% block table-filter %}
+                                    {% endblock table-filter %}
+                                    <h1 class="font-semibold capitalize">{{ page_name }}</h1>
+                                </div>
+                                <div class="text-sm font-semibold space-x-2 flex items-center">
+                                    <div class="dt-filter-top flex items-center space-x-2"></div>
+                                    {% block table-btn %}
+                                    <button id="toggle-form-btn" class="btn btn-xs btn-success">
+                                        <span><i class="fa-solid fa-plus"></i></span>
+                                        <span>Add New</span>
+                                    </button>
+                                    {% endblock table-btn %}
+                                </div>
+                            </div>
+                            <div class="pt-3 {% if not request.GET.pk %} hidden {% endif %}" id="form-wrapper">
+                                <div class="border-t">
+                                    {% block form %} {% endblock form %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table -->
+                        <div class="shadow-lg h-full w-full overflow-auto bg-base-100 rounded-lg" data-aos="zoom-in">
+                            <table class="!w-full !h-full table table-sm [&>*_th]:border [&>*_td]:border data-table">
+                                <thead>
+                                    <tr class="sticky top-0 bg-blue-500 text-slate-800">
+                                        {% block thead %} {% endblock thead %}
+                                    </tr>
+                                </thead>
+
+                                <tbody class="[&>*]:hover">
+                                    {% block tbody %} {% endblock tbody %}
+                                </tbody>
+                                
+                                <tfoot>
+                                    {% block tfoot %}
+                                    <tr class="bg-slate-300 text-black sticky -bottom-0.5 [&>th]:!p-0.5"></tr>
+                                    {% endblock tfoot %}
+                                </tfoot>
+                            </table>
+                        </div>
+
+                        <!-- Table footer -->
+                        <div data-aos="zoom-in" class="py-1 px-3 rounded-lg shadow-lg w-full bg-base-100 dt-filter-botom flex justify-between items-center"></div>
+                    </div>
+                </div>
+                {% block endMain %}
+                {% endblock endMain %}
+            </main>
+
+            <!-- Notification panel -->
+            {% include './components/notification.html' %}
+        </div> 
+    </div>
+    {% include './components/alert.html' %}
+    
+    {% block script %} {% endblock script %}
+</body>
+<script>
+    $(document).ready(function(){
+        $("#toggle-form-btn").on("click", function(){
+            $("#form-wrapper").slideToggle(300)
+        })
+    })
+</script>
+</html>
