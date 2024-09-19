@@ -85,3 +85,31 @@ class OurRefFilterView(View):
         return JsonResponse({'filterdata': formatted_rows}, safe=False)
 
 
+class ColorFilterView(View):
+    def get(self, request):
+        styleno = request.GET.get('styleno')
+        sql_query = """
+          SELECT
+                ed.color
+            FROM
+                ExpoLotDet ed
+            JOIN
+                ExpoHead ex ON ed.ourref = ex.ourref
+            WHERE
+                ed.styleno = %s
+                AND ex.closed IN ('P', 'U')
+                AND ex.orderdate > '2024-01-01'
+            GROUP BY
+                ed.ourref,
+                ed.styleno,
+                ed.color
+          
+        """
+        with connections['erp_db'].cursor() as cursor:
+            cursor.execute(sql_query, [styleno])
+            rows = cursor.fetchall()
+            columns = [desc[0] for desc in cursor.description]
+            formatted_rows = [dict(zip(columns, row)) for row in rows]
+        
+        print("formatted", formatted_rows)    
+        return JsonResponse({'filterdata': formatted_rows}, safe=False)

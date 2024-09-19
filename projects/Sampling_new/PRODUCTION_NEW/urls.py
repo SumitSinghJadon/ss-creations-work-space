@@ -23,6 +23,7 @@ urlpatterns = [
     path('buyer/', BuyerFilterView.as_view(), name='buyer'),
     path('style/', StyleFilterView.as_view(), name='style'),
     path('ourref/', OurRefFilterView.as_view(), name='ourref'),
+    path('color/', ColorFilterView.as_view(), name='color'),
     path('process/', ProcessView.as_view(), name='process'),
     path('component/', ComponentView.as_view(), name='component'),
     path('subcomp/', SubComponentView.as_view(), name='subcomp'),
@@ -30,5 +31,7 @@ urlpatterns = [
     path('ppm/', PPMsave.as_view(), name='ppm'),
     path('ppmShow/', PPMshow.as_view(), name='ppmShow'),  
     path('ppmDelete/', ProcessDelete.as_view(), name='ppmDelete'),
+    path('ppmUpdate/', ProcessUpdate.as_view(), name='ppmUpdate'),
+    path('ppmInputs/', InputsPPMshow.as_view(), name='ppmInputs'),
 ]
 
